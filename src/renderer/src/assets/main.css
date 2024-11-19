@@ -1,0 +1,81 @@
+/* Variables de colores */
+:root {
+  --color-principal: #4caf50; /* Verde principal */
+  --color-principal-hover: #45a049; /* Verde oscuro para hover */
+  --color-fondo: #f4f4f9;
+  --color-texto: #333333;
+  --color-texto-claro: #666666;
+  --color-borde: #cccccc;
+  --color-enlace: #007bff;
+}
+
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--color-fondo);
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Login container */
+.login {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 300px;
+  text-align: center;
+}
+
+/* Heading */
+.login h1 {
+  font-size: 24px;
+  color: var(--color-texto);
+  margin-bottom: 20px;
+}
+
+/* Input fields */
+.login input[type="text"],
+.login input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--color-borde);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+/* Button */
+.login button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--color-principal);
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.login button:hover {
+  background-color: var(--color-principal-hover);
+}
+
+/* Footer link */
+.login p {
+  font-size: 14px;
+  color: var(--color-texto-claro);
+  margin-top: 15px;
+}
+
+.login a {
+  color: var(--color-enlace);
+  text-decoration: none;
+}
+
+.login a:hover {
+  text-decoration: underline;
+}
