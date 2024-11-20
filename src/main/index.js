@@ -2,18 +2,23 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { authenticateUser } from "./database.js";
 
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
+    width: 750, // Ancho fijo
+    height: 550, // Altura fija
+    resizable: false, // Deshabilita redimensionar la ventana
+    fullscreenable: false, // Deshabilita el modo pantalla completa
+    maximizable: false, // Evita maximizar la ventana
+    autoHideMenuBar: true, // Oculta el menú automáticamente
+    show: false, // Ventana no visible hasta que esté lista
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      preload: join(__dirname, '../preload/index.mjs'),
+      sandbox: false,
+      nodeIntegration:true
     }
   })
 
@@ -21,10 +26,12 @@ function createWindow() {
     mainWindow.show()
   })
 
+
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -33,7 +40,33 @@ function createWindow() {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  // Cambiar la ventana a maximizable y redimensionable
+  ipcMain.on('maximize-window', () => {
+    mainWindow.maximize();
+    mainWindow.setResizable(true);
+    mainWindow.setMaximizable(true);
+  });
+
+  // Cambiar la ventana para permitir redimensionar
+  ipcMain.on('resize-window', () => {
+    mainWindow.setResizable(true);
+  });
+
+
 }
+
+ipcMain.handle('login', async (event, { username, password }) => {
+  console.log("LOGIN handler llamado");
+  try {
+    const result = await authenticateUser(username, password);
+    return result;
+  } catch (error) {
+    console.error("Error en la autenticación:", error);
+    return { success: false, error: "Error en la autenticación" };
+  }
+});
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -68,6 +101,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+  
 })
 
 // In this file you can include the rest of your app"s specific main process

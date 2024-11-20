@@ -1,0 +1,171 @@
+/* Variables de colores */
+:root {
+  --color-principal: #4caf50; /* Verde principal */
+  --color-principal-hover: #276e2a; /* Verde oscuro para hover */
+  --color-fondo: #ffffff;
+  --color-texto: #333333;
+  --color-texto-claro: #666666;
+  --color-borde: #cccccc;
+  --color-enlace: #007bff;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Ocupa toda la altura de la pantalla */
+  width: 100%; /* Ocupa todo el ancho */
+  display: flex; /* Facilita el uso de flexbox si es necesario */
+  background-color: var(--color-fondo);
+  overflow: hidden;
+}
+
+body {
+  font-family: Arial, sans-serif; /* Establece una fuente base */
+  box-sizing: border-box; /* Incluye bordes y padding en las dimensiones */
+}
+
+#root{
+  background-color: var(--color-fondo);
+  width: 100%;
+  height: 100%;
+}
+
+.login {
+  display: grid;
+  grid-template-columns: 0.75fr 1fr; /* Dos columnas iguales */
+  color: var(--color-principal);
+  background-color: var(--color-fondo);
+  height: 600px;
+  width: 750px;
+}
+
+.login-image {
+  width: 100%; /* Asegura que la imagen llene su contenedor */
+  height: auto; /* Asegura que la imagen ocupe toda la altura */
+
+}
+
+.login-content {
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+  padding: 50px;
+}
+
+.login-content h1{
+  font-size: 30px;
+  margin-bottom: 3px;
+}
+
+.login-content p{
+  font-size: 15px;
+  text-align: left;
+}
+
+form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 80%; /* Ajusta el ancho del formulario */
+  max-width: 400px; /* Tamaño máximo */
+  font-size: 15px;
+}
+
+form input{
+  height: 5px;
+  margin-bottom: 30px;
+  border: 2px solid var(--color-principal);
+  border-radius: 10px;
+}
+
+form input,
+form button {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+form button {
+  background-color: var(--color-principal);
+  font-size: 12px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+form button:hover {
+  background-color: var(--color-principal-hover);
+}
+
+.login-content .form-error{
+  margin: 0;
+  color: red;
+  font-size: 10px;
+}
+
+
+.project-manager{
+  display: grid;
+  grid-template-columns: 0.05fr 1fr; /* Dos columnas iguales */
+  color: var(--color-principal);
+  background-color: var(--color-fondo);
+  height: 100%;
+  width: 100%;
+}
+
+.project-manager .menu {
+  background-color: var(--color-principal); /* Color personalizado */
+  display: flex;
+  flex-direction: column; /* Organiza los elementos en columna */
+  /* justify-content: space-between; */
+  align-items: center; /* Centra los elementos horizontalmente */
+  padding: 2rem;
+  padding-bottom: 2rem;
+  height: 100vh; /* Esto puede ayudar a hacer que el menú ocupe toda la pantalla */
+}
+
+.project-manager .menu img {
+  width: 150px; /* Tamaño de la imagen */
+  position: relative;
+  bottom: 0; /* Coloca la imagen en la parte inferior de su contenedor */
+  margin-bottom: 3rem; /* Agrega un poco de espacio abajo si es necesario */
+}
+
+.project-manager .menu nav {
+  display: flex;
+  flex-direction: column; /* Alinea los enlaces de navegación en columna */
+  align-items: center;
+  max-height: 70%;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.project-manager .menu nav ul{
+  margin:0;
+  padding:0;
+  width: 100%;
+}
+
+.project-manager .menu nav li{
+  margin-top: 1rem;
+}
+
+.project-manager .menu nav button {
+  width: 100%;
+  text-decoration: none;
+  color: white; /* Color de texto de los enlaces */
+  font-size: 1rem; /* Tamaño de fuente */
+
+  background-color: rgba(0, 0, 0, 0.3); /* Fondo semi-transparente */
+  border-radius: 5px; /* Bordes redondeados */
+  transition: background-color 0.3s ease; /* Animación para el cambio de fondo */
+}
+
+.project-manager .menu nav button:hover {
+  background-color: var(--color-secundario); /* Fondo al pasar el cursor */
+}
+
+.project-manager .content {
+  padding: 1rem;
+}
