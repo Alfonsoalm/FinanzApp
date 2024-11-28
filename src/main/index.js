@@ -1,9 +1,14 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { handleAuth, handleCalls, handleProjects } from './services'
 import icon from '../../resources/icon.png?asset'
-import { authenticateUser } from "./database.js";
+import { handleHeadquarters } from './services/headquartersService'
 
+
+
+
+console.log(__dirname)
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -18,7 +23,8 @@ function createWindow() {
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
       sandbox: false,
-      nodeIntegration:true
+      nodeIntegration:true,
+      
     }
   })
 
@@ -52,26 +58,19 @@ function createWindow() {
   ipcMain.on('resize-window', () => {
     mainWindow.setResizable(true);
   });
-
+  
 
 }
-
-ipcMain.handle('login', async (event, { username, password }) => {
-  console.log("LOGIN handler llamado");
-  try {
-    const result = await authenticateUser(username, password);
-    return result;
-  } catch (error) {
-    console.error("Error en la autenticación:", error);
-    return { success: false, error: "Error en la autenticación" };
-  }
-});
 
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  handleAuth(ipcMain)
+  handleProjects(ipcMain); 
+  handleCalls(ipcMain)
+  handleHeadquarters(ipcMain)
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 

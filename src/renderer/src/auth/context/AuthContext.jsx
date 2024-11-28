@@ -14,13 +14,15 @@ export const AuthProvider = ({children}) => {
     const login = async (username, password) =>{
         try {
             const result = await window.api.login(username, password);
-            console.log(result)
+           
             if (result.success) {
+                const {data} = result 
+                console.log(data)
                 setUser({
-                    id:result.user.id_tecnico,
+                    id:data.id,
                     username,
-                    name:result.user.name,
-                    admin:!!result.user.is_admin,
+                    name:data.name,
+                    admin:!!data.is_admin,
                 })
 
                 return{success:true}

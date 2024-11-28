@@ -1,37 +1,50 @@
 import { useContext, useState } from "react"
-import loginImage from '../assets/login_image.png'
-import { useForm } from "../hooks/useForm"
-import { AuthContext } from "../context/AuthContext"
+import {useForm} from '../../hooks'
+import {AuthContext} from "../context"
+import loginImage from '../../assets/login_image.png'
+import { useNavigate } from "react-router-dom"
 
+export const LoginPage = () => {
 
-// eslint-disable-next-line react/prop-types
-export const Login = () => {
-
-    const {formState, onInputChange} = useForm({
+    const {user, password, onInputChange} = useForm({
         user:"",
         password:""
     })
-
-    const {login} = useContext(AuthContext)
+    
 
     const [error, setError] = useState("")
 
-    const handleSubmit = async (event) => {
+    const {login} = useContext(AuthContext)
+    const navigate = useNavigate()
+
+    const onLoginSubmit = async (event) => {
         event.preventDefault()
         setError("");
+        
+        console.log("submit")
 
-        console.log("SUBMIT")
-        if (formState.user==="" || formState.password==="") {
+        if (user==="" || password==="") {
             setError("Por favor, rellene todos los campos.");
             return;
         }
 
-        const result = await login(formState.user, formState.password)
+        console.log("LOGIN")
 
-        if (!result.success){
+        const result = await login(user, password)
+
+        console.log(result)
+
+        if (result.success){
+
+            navigate("/projects",{
+                replace:true
+            })
+            
+        }else{
             setError(result.error)
         }
     }
+
 
     return (
         <div className="login">
@@ -43,14 +56,14 @@ export const Login = () => {
                 <h1>¡Bienvenido de vuelta!</h1>
                 <p>Inicie sesión en su cuenta</p>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={onLoginSubmit}>
     
                 <label htmlFor="user">Usuario:</label>
                 <input 
                     type="text"
                     name="user"
                     id="user"
-                    value={formState.user}
+                    value={user}
                     onChange={onInputChange}
                 />
 
@@ -59,7 +72,7 @@ export const Login = () => {
                     type="password"
                     name="password"
                     id="password"
-                    value={formState.password}
+                    value={password}
                     onChange={onInputChange}
                 />
 

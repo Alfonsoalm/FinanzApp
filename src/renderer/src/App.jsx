@@ -1,19 +1,18 @@
 
-import { useContext } from 'react'
-import { Login } from './components/Login'
-import { ProjectManager } from './components/ProjectManager'
-import { AuthContext} from './context/AuthContext'
 
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AppRouter } from './router/AppRouter'
+import { AppTheme } from './theme'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 function App() {
 
-  const {user} = useContext(AuthContext)
-  
-
   return (
-    <>
-      {user.id ? <ProjectManager />:<Login />}
-    </>
+    <AppTheme>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <AppRouter />
+      </LocalizationProvider>
+    </AppTheme>
   )
 }
 

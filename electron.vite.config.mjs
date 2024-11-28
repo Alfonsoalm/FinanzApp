@@ -10,9 +10,13 @@ export default defineConfig({
       viteStaticCopy({
         targets: [
           {
-            src: 'src/main/database.js', // Ruta relativa al archivo que quieres incluir
+            src: 'src/main/database/', // Ruta relativa al archivo que quieres incluir
             dest: '.' // Copiar directamente a la raíz de la carpeta de salida
-          }
+          },
+          {
+            src: 'src/main/services/', // Ruta relativa al archivo que quieres incluir
+            dest: '.' // Copiar directamente a la raíz de la carpeta de salida
+          },
         ]
       })
     ]

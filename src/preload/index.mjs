@@ -5,6 +5,12 @@ import { electronAPI } from '@electron-toolkit/preload'
 const api = {
   login: (username, password) =>
     ipcRenderer.invoke('login', { username, password }),
+  getProjects: () => 
+    ipcRenderer.invoke('get-projects'),
+  getCalls: () =>
+    ipcRenderer.invoke("get-calls"),
+  getHeadquarters: () =>
+    ipcRenderer.invoke("get-headquarters"),
 
   maximizeWindow: () => ipcRenderer.send('maximize-window'),
   resizeWindow: () => ipcRenderer.send('resize-window')

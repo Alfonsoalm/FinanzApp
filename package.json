@@ -21,10 +21,22 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "@fontsource/roboto": "^5.1.0",
+    "@mui/icons-material": "^6.1.8",
+    "@mui/material": "^6.1.8",
+    "@mui/x-data-grid": "^7.22.3",
+    "@mui/x-date-pickers": "^7.22.3",
     "boxicons": "^2.1.4",
     "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.13",
     "electron-updater": "^6.1.7",
-    "mysql2": "^3.11.4"
+    "mysql2": "^3.11.4",
+    "query-string": "^9.1.1",
+    "react-router-dom": "^6.28.0",
+    "react-routes": "^0.2.6",
+    "sequelize": "^6.37.5"
   },
   "build": {
     "extraResources": [
