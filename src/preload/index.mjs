@@ -7,6 +7,8 @@ const api = {
     ipcRenderer.invoke('login', { username, password }),
   getProjects: () => 
     ipcRenderer.invoke('get-projects'),
+  insertProject: (project) => 
+    ipcRenderer.invoke('insert-project', project),
   getCalls: () =>
     ipcRenderer.invoke("get-calls"),
   getHeadquarters: () =>

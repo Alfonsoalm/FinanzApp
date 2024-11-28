@@ -7,6 +7,7 @@ export const Projects = sequelize.define('Projects', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    autoIncrement:true,
     primaryKey: true,
     field: "id_proyecto",
   },
@@ -35,12 +36,12 @@ export const Projects = sequelize.define('Projects', {
     allowNull: false,
     field: "presupuesto_restante",
   },
-  start_date: {
+  startDate: {
     type: DataTypes.DATE,
     allowNull: false,
     field: "fecha_inicio",
   },
-  end_date: {
+  endDate: {
     type: DataTypes.DATE,
     allowNull: true,
     field: "fecha_fin",

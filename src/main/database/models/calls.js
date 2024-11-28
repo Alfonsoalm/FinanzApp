@@ -18,7 +18,7 @@ export const Calls = sequelize.define('Calls', {
     allowNull: false,
     field: "anio",
   },
-  limit_cost_time_cp_a: {
+  limit_cost_time_cpa: {
     type: DataTypes.DOUBLE,
     allowNull: false,
     field: "limite_coste_hora_cp_a",

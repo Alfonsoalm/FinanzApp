@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 
 
-export const DataTable = ({initialRows}) => {
+export const DataTable = ({initialRows=[]}) => {
 
     const theme = useTheme()
 
@@ -22,9 +22,9 @@ export const DataTable = ({initialRows}) => {
         { field: 'name', headerName: 'Nombre', width: 200 },
         { field: 'headquarter', headerName: 'Sede', width: 100 },
         { field: 'type', headerName: 'Tipo', width: 100},
-        { field: 'start_date', headerName: 'Fecha Inicio', width: 100},
-        { field: 'end_date', headerName: 'Fecha Fin', width: 100 },
-        { field: "status", headerName:"Estado", width: 200, type: "singleSelect", valueOptions: ["Adjudicación pendiente", "En desarrollo", "Finalizado"], editable: true },
+        { field: 'startDate', headerName: 'Fecha Inicio', width: 100},
+        { field: 'endDate', headerName: 'Fecha Fin', width: 100 },
+        { field: "status", headerName:"Estado", width: 200, type: "singleSelect", valueOptions: ["Adjudicación pendiente", "En desarrollo", "Finalizado", ""], editable: false },
     ], [])
 
     return (

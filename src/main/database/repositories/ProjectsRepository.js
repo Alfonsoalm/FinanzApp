@@ -1,3 +1,4 @@
+import { duration } from "@mui/material";
 import { Calls, Headquarters, Projects } from "../models";
 import "../models/associations";
 
@@ -38,5 +39,19 @@ export class ProjectsRepository {
       }
       
       return []
+    }
+
+    static async insert(project){
+        
+        const duration = (new Date(project.endDate) - new Date(project.startDate))/(1000 * 60 * 60 * 24)  
+
+        await Projects.create({
+          ...project,
+          duration,
+          remaining_budget: project.budget,
+          type:"PRUEBA",
+          status:""
+        })
+
     }
 }

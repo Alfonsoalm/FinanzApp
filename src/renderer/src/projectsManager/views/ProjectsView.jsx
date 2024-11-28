@@ -1,33 +1,33 @@
-import { useTheme } from "@emotion/react";
 import { Button, Grid2, Typography } from "@mui/material";
 import queryString from "query-string";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { searchBy } from "../../helper/searchBy";
+import { useWindowApi } from "../../hooks";
 import { useForm } from "../../hooks/useForm";
 import { DataTable, SearchForm } from "../components";
 
-// const example = Array.from({ length: 50 }, (_, index) => ({
-//     id: index + 1, // ID único para cada fila
-//     name: `Proyecto ${index + 1}`, // Nombre del proyecto
-//     headquarter: `Sede ${Math.ceil(Math.random() * 5)}`, // Sede aleatoria (1 a 5)
-//     type: `Tipo ${Math.ceil(Math.random() * 3)}`, // Tipo aleatorio (1 a 3)
-//     start_date: `2024-01-${String(Math.ceil(Math.random() * 28)).padStart(2, '0')}`, // Fecha de inicio aleatoria
-//     end_date: `2024-12-${String(Math.ceil(Math.random() * 28)).padStart(2, '0')}`, // Fecha de fin aleatoria
-//     status: ["Adjudicación pendiente", "En desarrollo", "Finalizado"][Math.floor(Math.random() * 3)], // Estado aleatorio
-//   }));
 
-export const ProjectsView = ({projects, changeView}) => {
+const fetchProjectData = async () => {
+    return await window.api.getProjects()
+  }
+  
+const apiMethods = [fetchProjectData]
 
-    const theme = useTheme()
+export const ProjectsView = ({changeView}) => {
+    
     const navigate = useNavigate()
     const location = useLocation()
 
+    const {data, isLoading} = useWindowApi({apiMethods:apiMethods})
+    console.log(data)
+    const [{data:projects}] = isLoading ? [[]] : data;
 
     const {q=""} = queryString.parse(location.search)
+    
     const [filteredProjects, setFilteredProjects] = useState(projects)
     const {searchText, onInputChange} = useForm({
-        searchText: "",
+        searchText: q,
     })
 
 
@@ -35,7 +35,6 @@ export const ProjectsView = ({projects, changeView}) => {
         navigate(`?q=${searchText}`);
 
         const filtered = searchBy(projects, "name", searchText)
-
         setFilteredProjects(filtered)
     
     }, [searchText, projects])

@@ -31,7 +31,7 @@ export const AddProjectView = ({changeView}) => {
         </Button>
 
           
-        <ProjectForm />
+        <ProjectForm closeView={changeView} />
         <CallForm />
 
       </Grid2>

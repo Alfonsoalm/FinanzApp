@@ -1,10 +1,71 @@
 import { useTheme } from "@emotion/react"
 import { Box, Button, Grid2, TextField, Typography } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
+import dayjs from "dayjs"
+import { useState } from "react"
+import { useForm } from "../../hooks"
 
 export const CallForm = () => {
 
     const theme = useTheme()
+    const {formState, name, year, limit_cost_time_cpa, limit_cost_time_cpb, limit_cost_time_cpc, onInputChange} = useForm({
+        name:"",
+        year: "",
+        limit_cost_time_cpa: "",
+        limit_cost_time_cpb: "",
+        limit_cost_time_cpc: "",
+
+    })
+    const [error, setError] = useState({
+      errorMessage:"",
+      element:[]
+    })
+
+    // const onAddNewCall = async (event) => {
+    //     event.preventDefault()
+    //     setError({
+    //         errorMessage:"",
+    //         elements:[]
+    //     })
+    //     validate()
+
+    //     if(error.elements.length > 0) return 
+
+    //     const result = await window.api.insertProject(formState)
+    //     if(result.success){
+    //       return
+    //     } else{
+    //         setError({
+    //             errorMessage:"Error al añadir el proyecto",
+    //             elements:["text"]
+    //         })
+    //     }
+        
+    // }
+
+    const formatDates = (event, name) => {
+
+        const date = event.format('YYYY-MM-DD')
+        
+        onInputChange({
+            target:{
+                name,
+                value:date
+            }
+        })
+    }
+
+    // const validate = () => {
+
+    //     setError({
+    //         errorMessage:"",
+    //         elements:[]
+    //     })
+
+    //     if(!name) return setError({elements:["name"], errorMessage:"Este campo es obligatorio"})
+        
+    // }
+
     return (
         <Box
             sx={{
@@ -36,6 +97,10 @@ export const CallForm = () => {
                   name="name"
                   type="text"
                   label="Nombre"
+                  value={name}
+                  onChange={onInputChange}
+                  error={error.element.includes("name")}
+                  helperText={error.element.includes("name") && error.errorMessage}
                   fullWidth
                   size="small"
                   variant="outlined"
@@ -52,7 +117,8 @@ export const CallForm = () => {
                     id="year"
                     name="year"
                     label="Año"
-                    onChange={() => {}}
+                    value={dayjs(year)}
+                    onChange={(event) => formatDates(event, "year")}
                     views={['year']}
                     slotProps={{
                     textField: {size: "small" },
@@ -64,10 +130,14 @@ export const CallForm = () => {
             <Grid2 xs={8}>
                 <TextField
                   required
-                  id="cp1"
-                  name="cp1"
-                  type="text"
-                  label="Límite €/h CP1"
+                  id="cpa"
+                  name="limit_cost_time_cpa"
+                  type="number"
+                  label="Límite €/h CPA"
+                  error={error.element.includes("CPA")}
+                  helperText={error.element.includes("CPA") && error.errorMessage}
+                  value={limit_cost_time_cpa}
+                  onChange={onInputChange}
                   fullWidth
                   size="small"
                   variant="outlined"
@@ -81,10 +151,14 @@ export const CallForm = () => {
             <Grid2 xs={8}>
                 <TextField
                   required
-                  id="cp2"
-                  name="cp2"
-                  type="text"
-                  label="Límite €/h CP2"
+                  id="cpb"
+                  name="limit_cost_time_cpb"
+                  type="number"
+                  label="Límite €/h CPB"
+                  error={error.element.includes("CPB")}
+                  helperText={error.element.includes("CPB") && error.errorMessage}
+                  value={limit_cost_time_cpb}
+                  onChange={onInputChange}
                   fullWidth
                   size="small"
                   variant="outlined"
@@ -99,10 +173,14 @@ export const CallForm = () => {
             <Grid2 xs={8}>
                 <TextField
                   required
-                  id="cp3"
-                  name="cp3"
-                  type="text"
-                  label="Límite €/h CP3"
+                  id="cpc"
+                  name="limit_cost_time_cpc"
+                  type="number"
+                  label="Límite €/h CPC"
+                  error={error.element.includes("CPC")}
+                  helperText={error.element.includes("CPC") && error.errorMessage}
+                  value={limit_cost_time_cpc}
+                  onChange={onInputChange}
                   fullWidth
                   size="small"
                   variant="outlined"

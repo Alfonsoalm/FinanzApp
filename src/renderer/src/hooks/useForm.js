@@ -6,26 +6,13 @@ export const useForm = (initialForm={}) => {
     console.log(formState)
 
     const onInputChange = ({target}) => {
-        console.log(target)
+    
         const {name, value} = target
 
         console.log(name, value)
-        
         setFormState({
             ...formState,
             [name]: value,
-        })
-    }
-
-    const formatDates = (event, name) => {
-
-        const date = event.format('YYYY-MM-DD')
-        
-        onInputChange({
-            target:{
-                name,
-                value:date
-            }
         })
     }
 
