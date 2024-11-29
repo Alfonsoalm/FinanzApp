@@ -11,6 +11,8 @@ const api = {
     ipcRenderer.invoke('insert-project', project),
   getCalls: () =>
     ipcRenderer.invoke("get-calls"),
+  insertCall: (call) =>
+    ipcRenderer.invoke("insert-call", call),
   getHeadquarters: () =>
     ipcRenderer.invoke("get-headquarters"),
 

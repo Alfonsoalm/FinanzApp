@@ -1,8 +1,16 @@
 import { Button, Grid2 } from "@mui/material"
 import { CallForm, ProjectForm } from "../components"
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from "react-router-dom";
 
-export const AddProjectView = ({changeView}) => {
+export const AddProjectView = () => {
+    
+    const navigate = useNavigate()
+
+    const goToProjectsView = () => {
+      navigate("/projects")
+    }
+
 
     return (
       <Grid2
@@ -19,19 +27,19 @@ export const AddProjectView = ({changeView}) => {
         }}
       >
         <Button
-            onClick={()=>changeView("projects")}
+            onClick={goToProjectsView}
             sx={{
               position: "absolute",
               top: 10,
               right: 60,
-              color: "black", // Cambia el color del ícono si es necesario
+              color: "black",
             }}
           >
           <CloseIcon/> 
         </Button>
 
           
-        <ProjectForm closeView={changeView} />
+        <ProjectForm closeView={goToProjectsView} />
         <CallForm />
 
       </Grid2>

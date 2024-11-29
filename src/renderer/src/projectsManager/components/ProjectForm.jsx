@@ -1,29 +1,18 @@
 import { useTheme } from "@emotion/react"
 import { Box, Button, FormControl, Grid2, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
-import { useForm, useWindowApi } from "../../hooks"
 import dayjs from "dayjs"
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import { useForm } from "../../hooks"
+import { ProjectManagerContext } from "../context/ProjectsManagerContext"
 
-
-const getCalls = async () => {
-    return await window.api.getCalls()
-}
-
-const getHeadquarters = async () => {
-    return await window.api.getHeadquarters()
-}
-
-const apiMethods = [getCalls, getHeadquarters]
 
 
 export const ProjectForm = ({closeView}) => {
 
     const theme = useTheme()
-
-    const {data, isLoading} =  useWindowApi({apiMethods: apiMethods})
-    const [{data: calls}, {data: headquarters}] = isLoading ? [[], []] : data
-    const [error, setError] = useState({
+    const {calls, headquarters, getCalls, getHeadquarters, insertProject, error} = useContext(ProjectManagerContext);
+    const [errorText, setErrorText] = useState({
         errorMessage:"",
         elements:[]
     })
@@ -37,26 +26,37 @@ export const ProjectForm = ({closeView}) => {
         budget: "",
     })
 
+    useEffect(() => {
+        getCalls(); 
+        getHeadquarters();   
+    }, []);
+
     const onAddNewProject = async (event) => {
         event.preventDefault()
-        setError({
+        setErrorText({
             errorMessage:"",
             elements:[]
         })
-        validate()
-
-        if(error.elements.length > 0) return 
-
-        const result = await window.api.insertProject(formState)
-        if(result.success){
-            closeView("projects")
-        } else{
-            setError({
-                errorMessage:"Error al añadir el proyecto",
-                elements:["text"]
-            })
-        }
         
+        if(!validate()) return
+
+        try {
+            insertProject(formState);
+            if (error) {
+              setErrorText({
+                errorMessage: error,
+                elements: ["text"],
+              });
+            } else {
+              closeView()
+            }
+        } catch (err) {
+            setErrorText({
+                errorMessage: err.message || "No se pudo añadir el proyecto",
+                elements: [err.message],
+            });
+        }
+
     }
 
     const formatDates = (event, name) => {
@@ -73,18 +73,41 @@ export const ProjectForm = ({closeView}) => {
 
     const validate = () => {
 
-        setError({
+        setErrorText({
             errorMessage:"",
             elements:[]
         })
 
-        if(!name) return setError({elements:["name"], errorMessage:"Este campo es obligatorio"})
-        if(!headquarter) return setError({elements:["headquarter"], errorMessage:"Este campo es obligatorio"})
-        if(!call) return setError({elements:["call"], errorMessage:"Este campo es obligatorio"})
-        if(!startDate) return setError({elements:["startDate"], errorMessage:"Este campo es obligatorio"})
-        if(!endDate) return setError({elements:["endDate"], errorMessage:"Este campo es obligatorio"})
-        if(!budget) return setError({elements:["budget"], errorMessage:"Este campo es obligatorio"})
+        if(!name){
+            setErrorText({elements:["name"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!headquarter){
+            setErrorText({elements:["headquarter"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!call){
+            setErrorText({elements:["call"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!startDate){
+            setErrorText({elements:["startDate"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!endDate){
+            setErrorText({elements:["endDate"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!budget){
+            setErrorText({elements:["budget"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(budget < 0){
+            setErrorText({elements:["budget"], errorMessage:"Valor no  válido"})
+            return false
+        }
         
+        return true
     }
 
     
@@ -99,9 +122,6 @@ export const ProjectForm = ({closeView}) => {
             mt: 4,
             p: 3,
             gap: 1,
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: 2,
-            boxShadow: 2,
             display:"flex",
             flexDirection:"column"
             }}
@@ -115,8 +135,8 @@ export const ProjectForm = ({closeView}) => {
             <Grid2 container xs={12} marginBottom={2} >
                 <TextField
                 required
-                error = {!!error.elements.includes("name")}
-                helperText={error.elements.includes("name") && error.errorMessage}
+                error = {!!errorText.elements.includes("name")}
+                helperText={errorText.elements.includes("name") && errorText.errorMessage}
                 id="name"
                 name="name"
                 type="text"
@@ -141,7 +161,7 @@ export const ProjectForm = ({closeView}) => {
                     <InputLabel id="headquarter-label">Sede</InputLabel>
                     <Select
                     required
-                    error={!!error.elements.includes("headquarter")}
+                    error={!!errorText.elements.includes("headquarter")}
                     // helperText={error.elements.includes("headquarter") && error.errorMessage}
                     labelId="headquarter-label"
                     name="headquarter"
@@ -166,7 +186,7 @@ export const ProjectForm = ({closeView}) => {
                     <InputLabel id="call-label">Convocatoria</InputLabel>
                     <Select
                     required
-                    error={!!error.elements.includes("call")}
+                    error={!!errorText.elements.includes("call")}
                     labelId="call-label"
                     name="call"
                     id="call"
@@ -192,7 +212,7 @@ export const ProjectForm = ({closeView}) => {
                     required
                     disablePast
                     maxDate={dayjs(endDate)}
-                    error={!!error.elements.includes("startDate")}
+                    error={!!errorText.elements.includes("startDate")}
                     // helperText={error.elements.includes("startDate") && error.errorMessage}
                     id="startDate"
                     name="startDate"
@@ -210,7 +230,7 @@ export const ProjectForm = ({closeView}) => {
                     required
                     disablePast
                     minDate={dayjs(startDate)}
-                    error={!!error.elements.includes("endDate")}
+                    error={!!errorText.elements.includes("endDate")}
                     // helperText={error.elements.includes("endDate") && error.errorMessage}
                     id="endDate"
                     name="endDate"
@@ -229,8 +249,8 @@ export const ProjectForm = ({closeView}) => {
             <Grid2 container xs={12} mt={2}>
                 <TextField
                 required
-                error={!!error.elements.includes("budget")}
-                helperText={error.elements.includes("budget") && error.errorMessage}
+                error={!!errorText.elements.includes("budget")}
+                helperText={errorText.elements.includes("budget") && errorText.errorMessage}
                 id="budget"
                 name="budget"
                 type="number"
@@ -253,10 +273,10 @@ export const ProjectForm = ({closeView}) => {
             </Grid2>
             
       
-            <p style={{color:theme.palette.error.main, textAlign:"center", marginBottom:0}}>{!!error.elements.includes("text") && error.errorMessage}</p>
+            <p style={{color:theme.palette.error.main, textAlign:"center", marginBottom:0}}>{!!errorText.elements.includes("text") && errorText.errorMessage}</p>
 
             {/* Botón Añadir */}
-            <Grid2 xs={12} display="flex" justifyContent="center" mt={1}>
+            <Grid2 xs={12} display="flex" justifyContent="center" mt={2}>
                 <Button onClick={onAddNewProject} variant="contained" color="primary" width="100%" sx={{color: "text.contrast"}}>
                     Añadir
                 </Button>

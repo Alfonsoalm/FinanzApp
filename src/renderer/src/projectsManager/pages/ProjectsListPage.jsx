@@ -1,23 +1,20 @@
-import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ProjectManagerLayout } from "../layout/ProjectManagerLayout";
 import { AddProjectView, ProjectsView } from "../views";
 
-
+const viewsMap = {
+  "/projects": ProjectsView,
+  "/projects/add": AddProjectView,
+};
 
 export const ProjectsListPage = () => {
 
-  const [currentView, setCurrentView] = useState("projects")
-
-  const changeCurrentView = (viewName) => {
-    setCurrentView(viewName)
-  }
-
+  const location = useLocation();
+  const ViewComponent = viewsMap[location.pathname] || ProjectsView; // Vista por defecto
 
   return (
     <ProjectManagerLayout>
-        {currentView === "projects" && <ProjectsView changeView={changeCurrentView}/>}
-        {currentView === "addProjects" && <AddProjectView changeView={changeCurrentView} />}
-
+        <ViewComponent/>
     </ProjectManagerLayout>
   )
 }

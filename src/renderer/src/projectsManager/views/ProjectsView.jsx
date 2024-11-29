@@ -1,27 +1,19 @@
 import { Button, Grid2, Typography } from "@mui/material";
 import queryString from "query-string";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { searchBy } from "../../helper/searchBy";
-import { useWindowApi } from "../../hooks";
 import { useForm } from "../../hooks/useForm";
 import { DataTable, SearchForm } from "../components";
+import { ProjectManagerContext } from "../context/ProjectsManagerContext";
 
 
-const fetchProjectData = async () => {
-    return await window.api.getProjects()
-  }
-  
-const apiMethods = [fetchProjectData]
-
-export const ProjectsView = ({changeView}) => {
+export const ProjectsView = () => {
     
     const navigate = useNavigate()
     const location = useLocation()
 
-    const {data, isLoading} = useWindowApi({apiMethods:apiMethods})
-    console.log(data)
-    const [{data:projects}] = isLoading ? [[]] : data;
+    const {projects, getProjects} = useContext(ProjectManagerContext)
 
     const {q=""} = queryString.parse(location.search)
     
@@ -30,15 +22,32 @@ export const ProjectsView = ({changeView}) => {
         searchText: q,
     })
 
+    useEffect(() => {
+
+        const fetchProjects= async () => {
+            await getProjects()
+        }
+
+        fetchProjects()
+    
+    },[])
+
 
     useEffect(() => {
-        navigate(`?q=${searchText}`);
 
         const filtered = searchBy(projects, "name", searchText)
         setFilteredProjects(filtered)
+
+        if (searchText !== q) {
+            navigate(`?q=${searchText}`, { replace: true }); // Reemplaza en lugar de agregar al historial
+        }
     
     }, [searchText, projects])
-    
+
+
+    const goToAddProjectView = () => {
+        navigate("/projects/add")
+    }
 
     return (
         <Grid2 
@@ -61,7 +70,7 @@ export const ProjectsView = ({changeView}) => {
                                 
                 {/* Botón Añadir */}
                 <Grid2>
-                    <Button sx={{ width: "auto" }} variant="contained" color="secondary" onClick={() => changeView("addProjects")}>
+                    <Button sx={{ width: "auto" }} variant="contained" color="secondary" onClick={goToAddProjectView}>
                         <Typography color="white">+ Añadir</Typography>
                     </Button>
                 </Grid2>

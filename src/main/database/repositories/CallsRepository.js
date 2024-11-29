@@ -16,4 +16,13 @@ export class CallsRepository {
       
       return []
     }
+
+    static async insert(call){
+      console.log(call)
+      await Calls.create({
+        ...call,
+        infoURL: "",
+      })
+
+  }
 }

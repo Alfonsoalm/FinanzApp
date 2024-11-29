@@ -2,50 +2,59 @@ import { useTheme } from "@emotion/react"
 import { Box, Button, Grid2, TextField, Typography } from "@mui/material"
 import { DatePicker } from "@mui/x-date-pickers"
 import dayjs from "dayjs"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useForm } from "../../hooks"
+import { ProjectManagerContext } from "../context/ProjectsManagerContext"
 
 export const CallForm = () => {
 
     const theme = useTheme()
-    const {formState, name, year, limit_cost_time_cpa, limit_cost_time_cpb, limit_cost_time_cpc, onInputChange} = useForm({
-        name:"",
-        year: "",
-        limit_cost_time_cpa: "",
-        limit_cost_time_cpb: "",
-        limit_cost_time_cpc: "",
+    const {insertCall, error} = useContext(ProjectManagerContext);
+    const {formState, type, year, limit_cost_time_cp_a, limit_cost_time_cp_b, limit_cost_time_cp_c, onInputChange, onResetForm} = useForm({
+        type:"",
+        year: null,
+        limit_cost_time_cp_a: "",
+        limit_cost_time_cp_b: "",
+        limit_cost_time_cp_c: "",
 
     })
-    const [error, setError] = useState({
+
+    const [errorText, setErrorText] = useState({
       errorMessage:"",
-      element:[]
+      elements:[]
     })
 
-    // const onAddNewCall = async (event) => {
-    //     event.preventDefault()
-    //     setError({
-    //         errorMessage:"",
-    //         elements:[]
-    //     })
-    //     validate()
-
-    //     if(error.elements.length > 0) return 
-
-    //     const result = await window.api.insertProject(formState)
-    //     if(result.success){
-    //       return
-    //     } else{
-    //         setError({
-    //             errorMessage:"Error al añadir el proyecto",
-    //             elements:["text"]
-    //         })
-    //     }
+    const onAddNewCall = async (event) => {
+        event.preventDefault()
+        setErrorText({
+            errorMessage:"",
+            elements:[]
+        })
         
-    // }
+        if(!validate()) return
+
+        try{
+            insertCall(formState)
+
+            if(error){
+                setErrorText({
+                    errorMessage: error,
+                    elements: ["text"],
+                  });
+            }else{
+                onResetForm()
+            }
+        }catch(err){
+            setErrorText({
+                errorMessage: err.message || "No se pudo añadir la convocatoria",
+                elements: [err.message],
+            });
+        }           
+    }
 
     const formatDates = (event, name) => {
 
-        const date = event.format('YYYY-MM-DD')
+        const date = event.format('YYYY')
         
         onInputChange({
             target:{
@@ -55,16 +64,48 @@ export const CallForm = () => {
         })
     }
 
-    // const validate = () => {
+    const validate = () => {
 
-    //     setError({
-    //         errorMessage:"",
-    //         elements:[]
-    //     })
+        setErrorText({
+            errorMessage:"",
+            elements:[]
+        })
 
-    //     if(!name) return setError({elements:["name"], errorMessage:"Este campo es obligatorio"})
+        if(!type){
+            setErrorText({elements:["type"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!year){
+            setErrorText({elements:["year"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!limit_cost_time_cp_a){
+            setErrorText({elements:["CPA"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!limit_cost_time_cp_b){
+            setErrorText({elements:["CPB"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(!limit_cost_time_cp_c){
+            setErrorText({elements:["CPC"], errorMessage:"Este campo es obligatorio"})
+            return false
+        }
+        if(limit_cost_time_cp_a <= 0){
+            setErrorText({elements:["CPA"], errorMessage:"Valor no válido"})
+            return false
+        }
+        if(limit_cost_time_cp_b <= 0){
+            setErrorText({elements:["CPB"], errorMessage:"Valor no válido"})
+            return false
+        }
+        if(limit_cost_time_cp_c <= 0){
+            setErrorText({elements:["CPC"], errorMessage:"Valor no válido"})
+            return false
+        }
         
-    // }
+        return true
+    }
 
     return (
         <Box
@@ -75,10 +116,7 @@ export const CallForm = () => {
             mx: "auto", // Centra horizontalmente
             mt: 4,
             p: 3,
-            gap: 2,
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: 2,
-            boxShadow: 2,
+            gap: 3,
             display:"flex",
             flexDirection:"column"
             }}
@@ -93,14 +131,14 @@ export const CallForm = () => {
               <Grid2 container xs={8} flexGrow={1}>
                 <TextField
                   required
-                  id="name"
-                  name="name"
+                  id="type"
+                  name="type"
                   type="text"
                   label="Nombre"
-                  value={name}
+                  value={type}
                   onChange={onInputChange}
-                  error={error.element.includes("name")}
-                  helperText={error.element.includes("name") && error.errorMessage}
+                  error={errorText.elements.includes("type")}
+                  helperText={errorText.elements.includes("type") && errorText.errorMessage}
                   fullWidth
                   size="small"
                   variant="outlined"
@@ -114,6 +152,7 @@ export const CallForm = () => {
               <Grid2 container xs={4}>
                 <DatePicker
                     required
+                    disablePast
                     id="year"
                     name="year"
                     label="Año"
@@ -131,12 +170,12 @@ export const CallForm = () => {
                 <TextField
                   required
                   id="cpa"
-                  name="limit_cost_time_cpa"
+                  name="limit_cost_time_cp_a"
                   type="number"
                   label="Límite €/h CPA"
-                  error={error.element.includes("CPA")}
-                  helperText={error.element.includes("CPA") && error.errorMessage}
-                  value={limit_cost_time_cpa}
+                  error={errorText.elements.includes("CPA")}
+                  helperText={errorText.elements.includes("CPA") && errorText.errorMessage}
+                  value={limit_cost_time_cp_a}
                   onChange={onInputChange}
                   fullWidth
                   size="small"
@@ -152,12 +191,12 @@ export const CallForm = () => {
                 <TextField
                   required
                   id="cpb"
-                  name="limit_cost_time_cpb"
+                  name="limit_cost_time_cp_b"
                   type="number"
                   label="Límite €/h CPB"
-                  error={error.element.includes("CPB")}
-                  helperText={error.element.includes("CPB") && error.errorMessage}
-                  value={limit_cost_time_cpb}
+                  error={errorText.elements.includes("CPB")}
+                  helperText={errorText.elements.includes("CPB") && errorText.errorMessage}
+                  value={limit_cost_time_cp_b}
                   onChange={onInputChange}
                   fullWidth
                   size="small"
@@ -174,12 +213,12 @@ export const CallForm = () => {
                 <TextField
                   required
                   id="cpc"
-                  name="limit_cost_time_cpc"
+                  name="limit_cost_time_cp_c"
                   type="number"
                   label="Límite €/h CPC"
-                  error={error.element.includes("CPC")}
-                  helperText={error.element.includes("CPC") && error.errorMessage}
-                  value={limit_cost_time_cpc}
+                  error={errorText.elements.includes("CPC")}
+                  helperText={errorText.elements.includes("CPC") && errorText.errorMessage}
+                  value={limit_cost_time_cp_c}
                   onChange={onInputChange}
                   fullWidth
                   size="small"
@@ -193,11 +232,12 @@ export const CallForm = () => {
             </Grid2>
 
 
-           
+            <p style={{color:theme.palette.error.main, textAlign:"center", marginTop:0, marginBottom:0}}>{!!errorText.elements.includes("text") && errorText.errorMessage}</p>
+
 
             {/* Botón Añadir */}
             <Grid2 xs={12} display="flex" justifyContent="center" mt={1} >
-                <Button variant="contained" color="primary" width="100%" sx={{color: "text.contrast"}}>
+                <Button onClick={onAddNewCall} variant="contained" color="primary" width="100%" sx={{color: "text.contrast"}}>
                 Añadir
                 </Button>
             </Grid2>

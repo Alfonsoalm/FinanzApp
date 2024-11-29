@@ -1,57 +1,36 @@
 import { useEffect, useState } from "react"
 
 
-export const useWindowApi = ({apiMethods=[]}) => {
+export const useWindowApi = (apiMethod) => {
   
   const [data, setData] = useState([])
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null)
 
-
-
   useEffect(() => {
-    const fetchProjects = async () => {
-        try{
-            setIsLoading(true)
-            setError("")
-            setData({})
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        setData(null);
 
-            const results = await Promise.all(
-                apiMethods.map((apiMethod, index) => {
-                  return apiMethod().then(result => ({
-                    success: result.success,
-                    data: result.data,
-                    error: result.error,
-                    apiIndex: index, // Añadimos el índice para identificar la promesa
-                  }));
-                })
-              );
-      
-            // Procesamos los resultados con el identificador 'apiIndex'
-            const processedData = results.reduce((acc, { success, data, error, apiIndex }) => {
-                if (success) {
-                  // Si es exitoso, agregamos los datos
-                  acc.push({ data, apiIndex });
-                } else {
-                  // Si hay un error, lo guardamos con el índice correspondiente
-                  setError(`Error en la consulta ${apiIndex + 1}: ${error || 'Desconocido'}`);
-                }
-                return acc;
-              }, []);
-      
-            setData(processedData);
+        const result = await apiMethod(); // Llamada al único apiMethod
 
-        }catch(error){
-            console.error(error)
-            setError(error)
-        }finally{
-            setIsLoading(false)
+        if (result.success) {
+          setData(result.data); // Si la llamada es exitosa, guarda los datos
+        } else {
+          setError(result.error || 'Error desconocido'); // Si hubo un error, guarda el mensaje de error
         }
-    }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        setError(err.message || 'Error desconocido');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    fetchProjects()
-  
-  }, [apiMethods])
+    fetchData();
+  }, [apiMethod]);
   
   
   

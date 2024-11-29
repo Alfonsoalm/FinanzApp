@@ -1,7 +1,7 @@
 import { ProjectsRepository } from '../database/repositories';
 
 // Obtener todos los proyectos
-export async function getProjects() {
+async function getProjects() {
   try{
     const projects = await ProjectsRepository.getAll()
     return {success: true, data: projects};
@@ -13,7 +13,7 @@ export async function getProjects() {
    
 }
 
-export async function insertProject(project) {
+async function insertProject(project) {
   try{
       await ProjectsRepository.insert(project)
       return {success: true};

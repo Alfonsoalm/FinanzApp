@@ -50,7 +50,7 @@ export class ProjectsRepository {
           duration,
           remaining_budget: project.budget,
           type:"PRUEBA",
-          status:""
+          status:"Sin definir"
         })
 
     }

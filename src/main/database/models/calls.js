@@ -6,6 +6,7 @@ export const Calls = sequelize.define('Calls', {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
+    autoIncrement: true,
     field: "id_convocatoria",
   },
   type: {
@@ -18,7 +19,7 @@ export const Calls = sequelize.define('Calls', {
     allowNull: false,
     field: "anio",
   },
-  limit_cost_time_cpa: {
+  limit_cost_time_cp_a: {
     type: DataTypes.DOUBLE,
     allowNull: false,
     field: "limite_coste_hora_cp_a",

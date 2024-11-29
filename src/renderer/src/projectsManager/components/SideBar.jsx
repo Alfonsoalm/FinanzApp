@@ -1,5 +1,39 @@
+import { NavLink } from 'react-router-dom';
 import logo from '../../assets/logo.png'
 import {Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography, useTheme } from "@mui/material"
+
+
+const navLinks = [
+  {
+    name:"Tu area",
+    path:"/",
+  },
+  {
+    name:"Proyectos",
+    path:"/projects",
+  },
+  {
+    name:"Personal",
+    path:"/technicians",
+  },
+  {
+    name:"Informes",
+    path:"/",
+  },
+  {
+    name:"Avisos",
+    path:"/",
+  },
+  {
+    name:"Ajustes",
+    path:"/",
+  },
+  {
+    name:"Información",
+    path:"/",
+  },
+]
+
 
 export const SideBar = ({drawerWidth = 240}) => {
   const theme = useTheme();
@@ -29,14 +63,23 @@ export const SideBar = ({drawerWidth = 240}) => {
 
         <List>
           {
-            ["Tu área", "Proyectos", "Personal", "Informes", "Avisos", "Ajustes", "Información"].map(text => (
-              <ListItem key={text} disablePadding >
-                <ListItemButton sx={{textAlign:"center"}}>
+            navLinks.map((item) => (
+              <ListItem key={item.name} disablePadding > 
+                  <ListItemButton sx={{textAlign:"center"}}>
+                     <NavLink to={item.path} style={{width:"100%", color: "inherit", textDecoration:"none"}}>
+                      {item.name}
+                    </NavLink>
+                  </ListItemButton>
+          
+                {/* <ListItemButton sx={{textAlign:"center"}}>
                   <ListItemText primary={text}/>
-                </ListItemButton>
+                </ListItemButton>*/}
               </ListItem>
+
             ))
           }
+             
+          
         </List>
 
         <Box sx={{

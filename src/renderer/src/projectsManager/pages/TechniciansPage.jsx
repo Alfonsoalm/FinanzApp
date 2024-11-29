@@ -1,7 +1,11 @@
+import { ProjectManagerLayout } from "../layout/ProjectManagerLayout"
 
 
 export const TechniciansPage = () => {
   return (
-    <h1>TechniciansPage</h1>
+    <ProjectManagerLayout>
+          <h1>TechniciansPage</h1>
+    </ProjectManagerLayout>
+
   )
 }

@@ -14,10 +14,8 @@ export const ProjectManagerLayout = ({children}) => {
   useEffect(() => {
     if (navRef.current) {
       setNavHeight(navRef.current.offsetHeight);
-      console.log(navHeight)
     }
 
-    console.log(navRef)
   }, [navRef]);
 
   return (
