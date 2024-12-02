@@ -1,2 +1,2 @@
-export * from "./ProjectsListPage"
+export * from "./ProjectsPage"
 export * from "./TechniciansPage"

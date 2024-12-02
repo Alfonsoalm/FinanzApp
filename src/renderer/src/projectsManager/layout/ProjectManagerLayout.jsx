@@ -32,7 +32,8 @@ export const ProjectManagerLayout = ({children}) => {
             width: "100%",
             marginLeft: `${drawerWidth}px`, // Asegura que el contenido no quede debajo del Sidebar
             // overflowY: "auto", // Asegura que el contenido sea desplazable si es más largo que la vista
-            paddingTop: "64px"
+            paddingTop: "64px",
+            paddingLeft: 6,
           }}
         >
             {children}

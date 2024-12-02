@@ -1,11 +1,11 @@
 import { useTheme } from "@emotion/react";
 import { Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 
 
-export const DataTable = ({initialRows=[]}) => {
+export const DataTable = ({initialRows=[], columns, onRowDoubleClick}) => {
 
     const theme = useTheme()
 
@@ -14,18 +14,6 @@ export const DataTable = ({initialRows=[]}) => {
     useEffect(() => {
         setRows(initialRows);
     }, [initialRows]);
-
-
-
-    const columns = useMemo(() => [
-        { field: 'id', headerName: 'ID', width: 50, type:"number" },
-        { field: 'name', headerName: 'Nombre', width: 200 },
-        { field: 'headquarter', headerName: 'Sede', width: 100 },
-        { field: 'type', headerName: 'Tipo', width: 100},
-        { field: 'startDate', headerName: 'Fecha Inicio', width: 100},
-        { field: 'endDate', headerName: 'Fecha Fin', width: 100 },
-        { field: "status", headerName:"Estado", width: 200, type: "singleSelect", valueOptions: ["Adjudicación pendiente", "En desarrollo", "Finalizado", ""], editable: false },
-    ], [])
 
     return (
         <Box sx={{ width: "auto", maxWidth: "100%", height:"471px", mt:4}}>
@@ -36,7 +24,7 @@ export const DataTable = ({initialRows=[]}) => {
                     columns={columns} 
                     getRowId={row => row.id}
                     autoPageSize
-        
+                    onRowDoubleClick={onRowDoubleClick}
                     rowHeight={40}
                     sx={{
                         color: theme.palette.text.tercitary,

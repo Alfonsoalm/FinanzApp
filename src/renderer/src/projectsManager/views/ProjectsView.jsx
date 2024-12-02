@@ -8,6 +8,16 @@ import { DataTable, SearchForm } from "../components";
 import { ProjectManagerContext } from "../context/ProjectsManagerContext";
 
 
+const columns =[
+    { field: 'id', headerName: 'ID', width: 50, type:"number" },
+    { field: 'name', headerName: 'Nombre', width: 200 },
+    { field: 'headquarter', headerName: 'Sede', width: 100 },
+    { field: 'type', headerName: 'Tipo', width: 100},
+    { field: 'startDate', headerName: 'Fecha Inicio', width: 100},
+    { field: 'endDate', headerName: 'Fecha Fin', width: 100 },
+    { field: "status", headerName:"Estado", width: 200, type: "singleSelect", valueOptions: ["Adjudicación pendiente", "En desarrollo", "Finalizado", ""], editable: false },
+]
+
 export const ProjectsView = () => {
     
     const navigate = useNavigate()
@@ -23,13 +33,7 @@ export const ProjectsView = () => {
     })
 
     useEffect(() => {
-
-        const fetchProjects= async () => {
-            await getProjects()
-        }
-
-        fetchProjects()
-    
+        getProjects()
     },[])
 
 
@@ -49,13 +53,20 @@ export const ProjectsView = () => {
         navigate("/projects/add")
     }
 
+    const goToProjectDetailsView = (event) => {
+        const {id} = event
+
+        navigate(`/projects/${id}`)
+    }
+
+
     return (
         <Grid2 
             container
             spacing={2}  // Ajuste del espaciado
             direction="column"
             alignItems="flex-start"  // Alineación a la izquierda del contenido
-            sx={{ ml: 2, pt: 2, pl: 4, pr:4,}}
+            sx={{pt: 2, pr:4,}}
             width={"100%"}
         >
 
@@ -77,7 +88,7 @@ export const ProjectsView = () => {
             </Grid2>
 
             <Grid2 container variant="div" display="flex" justifyContent="center" sx={{ width: "100%", pl: 4 , pr:4}} spacing={1} alignItems="center">
-                <DataTable initialRows={filteredProjects}/>
+                <DataTable initialRows={filteredProjects} columns={columns} onRowDoubleClick={goToProjectDetailsView}/>
             </Grid2>
 
         </Grid2>

@@ -1,7 +1,7 @@
-import { Button, Grid2 } from "@mui/material"
-import { CallForm, ProjectForm } from "../components"
 import CloseIcon from '@mui/icons-material/Close';
+import { Button, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { CallForm, ProjectForm } from "../components";
 
 export const AddProjectView = () => {
     
@@ -18,9 +18,7 @@ export const AddProjectView = () => {
         sx={{
           height: "100%",
           width: "100%",
-          ml: 1,
           pt: 2,
-          pl: 4,
           pr: 4,
           mt: 2,
           position: "relative",
