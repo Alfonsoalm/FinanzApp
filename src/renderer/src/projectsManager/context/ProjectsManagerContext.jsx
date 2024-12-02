@@ -86,6 +86,7 @@ export const ProjectManagerProvider = ({ children }) => {
           setError(error)
       }finally{
         setIsLoading(false)
+        console.log(projects)
       }
     };
 
@@ -107,9 +108,30 @@ export const ProjectManagerProvider = ({ children }) => {
           setIsLoading(false)
         }
     }
+
+    const getProjectDetails = async (id_project) => {
+      try {
+        console.log("ProjectDetails")
+        setIsLoading(true)
+        setError(null)
+        const result = await window.api.getDetails(id_project)
+        console.log(result)
+
+        if(result.success){
+          return result.data;
+        }
+        else{
+          setError(result.error)
+        }
+      }catch(error){
+          setError(error)
+      }finally{
+        setIsLoading(false)
+      }
+    };
   
     return (
-      <ProjectManagerContext.Provider value={{error, projects, calls, headquarters, getCalls, getHeadquarters, getProjects, insertProject, insertCall }}>
+      <ProjectManagerContext.Provider value={{error, projects, calls, headquarters, getCalls, getHeadquarters, getProjects, insertProject, insertCall, getProjectDetails }}>
         {children}
       </ProjectManagerContext.Provider>
     );

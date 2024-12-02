@@ -1,7 +1,7 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { handleAuth, handleCalls, handleProjects } from './services'
+import {handleCalls, handleProjects, handleTechnicians } from './services'
 import icon from '../../resources/icon.png?asset'
 import { handleHeadquarters } from './services/headquartersService'
 
@@ -67,7 +67,7 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  handleAuth(ipcMain)
+  handleTechnicians(ipcMain)
   handleProjects(ipcMain); 
   handleCalls(ipcMain)
   handleHeadquarters(ipcMain)

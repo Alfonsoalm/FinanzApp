@@ -1,5 +1,5 @@
 import { Calls } from "../models";
-import "../models/associations";
+import "../models/relations";
 
 
 export class CallsRepository {

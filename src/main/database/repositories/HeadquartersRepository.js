@@ -1,5 +1,5 @@
 import {Headquarters} from "../models";
-import "../models/associations";
+import "../models/relations";
 
 
 export class HeadquartersRepository {

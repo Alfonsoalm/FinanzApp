@@ -27,13 +27,13 @@ export async function authenticateUser(username, password) {
 
 
 
-export function handleAuth(ipcMain) {
+export function handleTechnicians(ipcMain) {
     ipcMain.handle('login', async (event, { username, password }) => {
       try {   
         return await authenticateUser(username, password); // Llamada a la base de datos
         
       } catch (error) {
-        console.error('Error in handleAuth:', error); 
+        console.error('Error in handleTechnicians:', error); 
         return { success: false, error: 'Error en la autenticación' };
       }
     });

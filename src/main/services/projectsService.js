@@ -1,4 +1,6 @@
-import { ProjectsRepository } from '../database/repositories';
+import { ProjectsRepository, TechnicianRepository } from '../database/repositories';
+import { AssignmentsRepository } from '../database/repositories/AssignmentsRepository';
+import { PhasesRepository } from '../database/repositories/PhasesRepository';
 
 // Obtener todos los proyectos
 async function getProjects() {
@@ -25,6 +27,31 @@ async function insertProject(project) {
    
 }
 
+async function getDetails(id_project) {
+  try {
+
+    const phases = await PhasesRepository.getByProjectId(id_project)
+
+    if(phases){
+      const phasesIds = phases.map(phase => phase.id)
+
+      const assignments = await AssignmentsRepository.getByPhasesIds(phasesIds);
+
+      if(assignments){
+        const techIds = assignments.map(assignment => assignment.technician)
+        const technicians = await TechnicianRepository.findByIds( [...new Set(techIds)]);
+        return {success: true, data: {phases: phases, assignments:assignments, technicians: technicians}};
+      }
+
+      return {success: true, data: {phases: phases, assignments:assignments, technicians: []}};
+    }
+    return {success: true, data: []};
+
+  } catch (error) {
+    console.error('Error al obtener asignaciones:', error);
+    return {success: false, error: 'Error interno del servidor.' };
+  } 
+}
 
 
 
@@ -44,6 +71,15 @@ export function handleProjects(ipcMain) {
       } catch (error) {
         console.error('Error in insertProject:', error); 
         return { success: false, error: "No se pudo añadir el nuevo proyecto" };
+      }
+    });
+
+    ipcMain.handle('get-details', async (event, id_project) => {
+      try {
+        return await getDetails(id_project); 
+      } catch (error) {
+        console.error('Error in getAssignments:', error); 
+        return { success: false, error: "No se pudo obtener las asignaciones" };
       }
     });
 }

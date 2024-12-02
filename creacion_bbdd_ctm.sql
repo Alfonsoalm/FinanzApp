@@ -180,14 +180,14 @@ CREATE TABLE jornadas_reales (
 -- Creacion tabla asignaciones
 CREATE TABLE asignaciones (
   id_asignacion int NOT NULL auto_increment,
-  id_proyecto int NOT NULL,
+  -- id_proyecto int NOT NULL,
   id_tecnico int,
   id_fase int NOT NULL,
   horas int NOT NULL,
   fecha_inicio date NOT NULL,
   fecha_fin date NOT NULL,
   PRIMARY KEY (id_asignacion),
-  FOREIGN KEY(id_proyecto) REFERENCES proyectos(id_proyecto) ON DELETE CASCADE,
+  -- FOREIGN KEY(id_proyecto) REFERENCES proyectos(id_proyecto) ON DELETE CASCADE,
   FOREIGN KEY(id_tecnico) REFERENCES tecnicos(id_tecnico) ON DELETE CASCADE,
   FOREIGN KEY(id_fase) REFERENCES fases(id_fase) ON DELETE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=00000 DEFAULT CHARSET=utf8mb4;
@@ -472,16 +472,16 @@ VALUES -- AGROSEC
 
 -- Insertar las asignaciones
 -- AGROSEC
-INSERT INTO asignaciones (id_proyecto, id_tecnico, id_fase, horas, fecha_inicio, fecha_fin) 
-VALUES (1, 3, 1, 150, '2023-05-01','2023-06-30'),
-(1, 2, 2, 100, '2023-06-01','2023-10-31'),
-(1, 3, 3, 957, '2023-10-01', '2024-05-30'),
-(1, 2, 3, 300, '2023-10-01', '2024-05-30'),
-(1, 2, 4, 400, '2024-04-01','2025-02-28'),
-(1, 3, 5, 700, '2024-04-01', '2025-02-28'),
-(1, 3, 6, 62, '2023-11-01', '2023-11-30'),
-(1, 3, 6, 63, '2024-02-01', '2024-02-29'),
-(1, 3, 6, 125, '2025-03-01', '2025-04-30'),
+INSERT INTO asignaciones (id_tecnico, id_fase, horas, fecha_inicio, fecha_fin) 
+VALUES ( 3, 1, 150, '2023-05-01','2023-06-30'),
+( 2, 2, 100, '2023-06-01','2023-10-31'),
+( 3, 3, 957, '2023-10-01', '2024-05-30'),
+( 2, 3, 300, '2023-10-01', '2024-05-30'),
+( 2, 4, 400, '2024-04-01','2025-02-28'),
+( 3, 5, 700, '2024-04-01', '2025-02-28'),
+( 3, 6, 62, '2023-11-01', '2023-11-30'),
+( 3, 6, 63, '2024-02-01', '2024-02-29'),
+( 3, 6, 125, '2025-03-01', '2025-04-30'),
 -- BIOTERRABOT
 -- id_proyecto: 2, Miguel de la O: 13, FP II: 4, Jose Manuel Martinez: 2
 -- 'PT01 Estudio Promenorizado del Estado del arte', '2023-07-01', '2023-10-31'), -- 7
