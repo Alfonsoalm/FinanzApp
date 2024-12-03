@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react"
 import { ProjectManagerContext } from "../context/ProjectsManagerContext"
 import { useParams } from "react-router-dom"
 import { Box, Card, CardContent, Divider, Grid2, Typography } from "@mui/material";
+import { DataTable } from "../components";
+import { Details } from "@mui/icons-material";
 
 
 const columns =[
@@ -14,25 +16,57 @@ const columns =[
     { field: "status", headerName:"Estado", width: 200, type: "singleSelect", valueOptions: ["Adjudicación pendiente", "En desarrollo", "Finalizado", ""], editable: false },
 ]
 
+
+const formatData = (data) => {
+    console.log("Format")
+
+    const transformedData = data.phases.map(phase => {
+        // Filtrar las asignaciones asociadas a la fase actual
+        const relatedAssignments = data.assignments.filter(assignment => assignment.phase === phase.id);
+        
+        // Obtener los nombres de los técnicos asociados a estas asignaciones
+        const techniciansNames = relatedAssignments.map(assignment => {
+            const technician = data.technicians.find(tech => tech.id === assignment.technician);
+            return technician ? technician.name : null;
+        }).filter(name => name !== null);
+    
+        // Obtener las horas de las asignaciones
+        const techniciansHours = relatedAssignments.map(assignment => assignment.hours);
+    
+        // Devolver la fase transformada
+        return {
+            ...phase,
+            technicians: techniciansNames,
+            assignmentHours: techniciansHours,
+        };
+    });
+
+    return transformedData;
+
+}
+
+
+
 export const ProjectDetailsView = () => {
 
     const { "*": id } = useParams();
     const {projects, getProjectDetails} = useContext(ProjectManagerContext)
     const [project, setProject] = useState(null)
-    const [details, setDetails] = useState({
-        phases: [],
-        assignments: [],
-        technicians: [],
-    })
+    const [details, setDetails] = useState([])
 
     
     const fetchDetails = async () => {
         const data = await getProjectDetails(id)
-        setDetails({
-        phases: data.phases,
-        assignments: data.assignments,
-        technicians: data.technicians,
-        })
+        console.log(data)
+        const formattedData = formatData(data)
+        setDetails(formattedData)
+
+
+        // setDetails({
+        // phases: data.phases,
+        // assignments: data.assignments,
+        // technicians: data.technicians,
+        // })
     }
 
     useEffect(() => {
@@ -42,7 +76,8 @@ export const ProjectDetailsView = () => {
             fetchDetails();
         }
     }, [projects, id]); 
-    
+
+
 
     console.log(details)
     return (
@@ -89,6 +124,8 @@ export const ProjectDetailsView = () => {
                 </Grid2>
 
             </Box>
+
+            {details && <DataTable initialRows={details}  columns={columns}/>}
 
       
 

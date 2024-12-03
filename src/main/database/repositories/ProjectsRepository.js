@@ -21,6 +21,8 @@ export class ProjectsRepository {
         }
       })
 
+      console.log(projects)
+
       if (projects) {
         return projects.map(project => {
           const projectData = project.dataValues;

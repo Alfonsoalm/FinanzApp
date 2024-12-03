@@ -32,17 +32,17 @@ export const Assignments = sequelize.define('Assignments', {
   hours:{
     type: DataTypes.INTEGER,
     allowNull: false,
-    field: "id_fase",
+    field: "horas",
   },
   startDate:{
     type: DataTypes.DATE,
     allowNull: false,
-    field: "id_fase",
+    field: "fecha_inicio",
   },
   endDate:{
     type: DataTypes.DATE,
     allowNull: false,
-    field: "id_fase",
+    field: "fecha_fin",
   }
 }, {
   tableName: 'asignaciones',

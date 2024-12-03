@@ -9,7 +9,7 @@ export class PhasesRepository {
             const phases = await Phases.findAll({
                 where: { project: id_project }, // Filtramos por el ID del proyecto
             });
-
+            console.log(phases)
             if (phases) {
                 return phases.map(phase => {
                 const phaseData = phase.dataValues;
