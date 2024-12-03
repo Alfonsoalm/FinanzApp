@@ -90,6 +90,25 @@ export const ProjectManagerProvider = ({ children }) => {
       }
     };
 
+    const deleteProject = async (id_project) => {
+          try {
+            setIsLoading(true)
+            setError(null)
+            const result = await window.api.deleteProject(id_project)
+
+            if(result.success){
+              getProjects()
+            }
+            else{
+              setError(result.error)
+            }
+        }catch(error){
+            setError(error)
+        }finally{
+          setIsLoading(false)
+        }
+    }
+
     const insertProject = async (project) => {
         try {
             setIsLoading(true)
@@ -131,7 +150,7 @@ export const ProjectManagerProvider = ({ children }) => {
     };
   
     return (
-      <ProjectManagerContext.Provider value={{error, projects, calls, headquarters, getCalls, getHeadquarters, getProjects, insertProject, insertCall, getProjectDetails }}>
+      <ProjectManagerContext.Provider value={{error, projects, calls, headquarters, getCalls, getHeadquarters, getProjects, insertProject, insertCall, getProjectDetails, deleteProject }}>
         {children}
       </ProjectManagerContext.Provider>
     );

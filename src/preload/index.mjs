@@ -9,6 +9,8 @@ const api = {
     ipcRenderer.invoke('get-projects'),
   insertProject: (project) => 
     ipcRenderer.invoke('insert-project', project),
+  deleteProject: (id_project) =>
+    ipcRenderer.invoke('delete-project', id_project),
   getDetails: (id_project) => 
     ipcRenderer.invoke('get-details', id_project),
   getCalls: () =>

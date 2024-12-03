@@ -1,21 +1,10 @@
-import { useContext, useEffect, useState } from "react"
-import { ProjectManagerContext } from "../context/ProjectsManagerContext"
-import { useParams } from "react-router-dom"
-import { Box, Card, CardContent, Divider, Grid2, Typography } from "@mui/material";
+import { Box, Card, CardContent, Grid2, Typography } from "@mui/material";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import { DataTable } from "../components";
-import { Details } from "@mui/icons-material";
-
-
-const columns =[
-    { field: 'name', headerName: 'Nombre', width: 200 },
-    { field: 'technicians', headerName: 'Técnicos', width: 300},
-    { field: 'hours', headerName: 'Horas', width: 100 },
-    { field: 'hours_assigned', headerName: 'Horas Asignadas', width: 100 },
-    { field: 'startDate', headerName: 'Fecha Inicio', width: 100},
-    { field: 'endDate', headerName: 'Fecha Fin', width: 100 },
-    { field: "status", headerName:"Estado", width: 200, type: "singleSelect", valueOptions: ["Adjudicación pendiente", "En desarrollo", "Finalizado", ""], editable: false },
-]
-
+import { ProjectManagerContext } from "../context/ProjectsManagerContext";
+import { GridActionsCellItem, GridDeleteIcon } from "@mui/x-data-grid";
+import EditIcon from '@mui/icons-material/Edit';
 
 const formatData = (data) => {
     console.log("Format")
@@ -27,7 +16,7 @@ const formatData = (data) => {
         // Obtener los nombres de los técnicos asociados a estas asignaciones
         const techniciansNames = relatedAssignments.map(assignment => {
             const technician = data.technicians.find(tech => tech.id === assignment.technician);
-            return technician ? technician.name : null;
+            return technician ? " "+technician.name : null;
         }).filter(name => name !== null);
     
         // Obtener las horas de las asignaciones
@@ -38,12 +27,14 @@ const formatData = (data) => {
             ...phase,
             technicians: techniciansNames,
             assignmentHours: techniciansHours,
+            hours_assigned: techniciansHours.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
         };
     });
 
     return transformedData;
 
 }
+
 
 
 
@@ -60,13 +51,6 @@ export const ProjectDetailsView = () => {
         console.log(data)
         const formattedData = formatData(data)
         setDetails(formattedData)
-
-
-        // setDetails({
-        // phases: data.phases,
-        // assignments: data.assignments,
-        // technicians: data.technicians,
-        // })
     }
 
     useEffect(() => {
@@ -77,6 +61,35 @@ export const ProjectDetailsView = () => {
         }
     }, [projects, id]); 
 
+    const columns =useMemo(() => [
+        { field: 'name', headerName: 'Nombre', width: 300 },
+        { field: 'technicians', headerName: 'Técnicos', width: 300},
+        { field: 'hours', headerName: 'Horas', width: 100 },
+        { field: 'hours_assigned', headerName: 'Horas Asignadas', width: 100 },
+        { field: 'startDate', headerName: 'Fecha Inicio', width: 100},
+        { field: 'endDate', headerName: 'Fecha Fin', width: 100 },
+        {
+            field: 'actions',
+            type: 'actions',
+            width: 80,
+            getActions: (params) => [
+                <GridActionsCellItem
+                key={"edit"}
+                icon={<EditIcon />}
+                label="Editar"
+                onClick={() => {}}
+                />,
+                <GridActionsCellItem
+                key={"delete"}
+                icon={<GridDeleteIcon />}
+                label="Borrar"
+                onClick={() => {}}
+                />,
+            ],
+        },
+    
+    ],[])
+
 
 
     console.log(details)
@@ -84,11 +97,12 @@ export const ProjectDetailsView = () => {
         project && (
         <Grid2
             container
-            spacing={2}  // Ajuste del espaciado
+            spacing={1}  // Ajuste del espaciado
             display="flex"
             alignItems="flex-start"  // Alineación a la izquierda del contenido
-            sx={{pt: 2, pr:4,}}
+            sx={{pt: 2, pr:4, overflowY: "auto", height:"120%"}}
             width={"100%"}
+            overflow
         >
             <Typography variant="h2" fontSize={30} fontWeight={500} sx={{width:"100%", alignSelf: "flex-start" }}>
                 {project && project.name}
@@ -99,7 +113,7 @@ export const ProjectDetailsView = () => {
             </Typography>
 
                 
-            <Box sx={{ width:"100%", mt: 1, p: 3 }}>
+            <Box sx={{ width:"100%", mt: 1 }}>
 
                 {/* Información del Proyecto */}
                 <Grid2 container spacing={2} sx={{display:"flex", flexDirection:"row"}}>
@@ -123,26 +137,14 @@ export const ProjectDetailsView = () => {
 
                 </Grid2>
 
-            </Box>
-
-            {details && <DataTable initialRows={details}  columns={columns}/>}
-
+                
       
-
-                {/* Diagrama de Gantt
-                <Divider sx={{ my: 4 }} />
-                <Typography variant="h6">Diagrama de Gantt</Typography>
-                <Box sx={{ mt: 2 }}>
-                    <GanttChart
-                    data={proyecto.ganttData} // La data debe tener la estructura adecuada para el diagrama
-                    columns={[
-                        { name: 'task', label: 'Tarea' },
-                        { name: 'start', label: 'Inicio' },
-                        { name: 'end', label: 'Fin' },
-                    ]}
-                    />
-                </Box> */}
-            
+        </Box>
+        <Box>
+            <Grid2 container variant="div" display="flex" justifyContent="center" sx={{ width: "100%", pl: 0 , pr:4}} alignItems="center">
+                <DataTable initialRows={details}  columns={columns}/>
+            </Grid2>
+        </Box>
 
         </Grid2>
         ) 
