@@ -9,15 +9,20 @@ const api = {
     ipcRenderer.invoke('get-projects'),
   insertProject: (project) => 
     ipcRenderer.invoke('insert-project', project),
-  getDetails: (id_project) => 
-    ipcRenderer.invoke('get-details', id_project),
+  getProjectDetails: (id_project) =>
+    ipcRenderer.invoke('get-project-details', id_project),
+  getTechnicianDetails: (id_technician) => 
+    ipcRenderer.invoke('get-technician-details', id_technician),
   getCalls: () =>
     ipcRenderer.invoke("get-calls"),
   insertCall: (call) =>
     ipcRenderer.invoke("insert-call", call),
   getHeadquarters: () =>
     ipcRenderer.invoke("get-headquarters"),
-
+  getTechnicians: () =>
+    ipcRenderer.invoke('get-technicians'),
+  insertTechnician: (technician) =>
+    ipcRenderer.invoke('insert-technician', technician),
   maximizeWindow: () => ipcRenderer.send('maximize-window'),
   resizeWindow: () => ipcRenderer.send('resize-window')
 };

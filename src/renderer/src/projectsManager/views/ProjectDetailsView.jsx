@@ -43,8 +43,6 @@ export const ProjectDetailsView = () => {
         }
     }, [projects, id]); 
     
-
-    console.log(details)
     return (
         project && (
         <Grid2

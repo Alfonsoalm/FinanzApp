@@ -1,17 +1,15 @@
 import { createContext, useState } from "react";
 
-
 export const ProjectManagerContext = createContext();
-
 
 export const ProjectManagerProvider = ({ children }) => {
     const [projects, setProjects] = useState([]);
+    const [technicians, setTechnicians] = useState([]);
     const [calls, setCalls] = useState([]);
     const [headquarters, setHeadquarters] = useState([]);
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
-    
     const getCalls = async () => {
         try {
           setIsLoading(true)
@@ -75,7 +73,6 @@ export const ProjectManagerProvider = ({ children }) => {
         setError(null)
         const result = await window.api.getProjects()
         
-
         if(result.success){
           setProjects(result.data)
         }
@@ -86,7 +83,6 @@ export const ProjectManagerProvider = ({ children }) => {
           setError(error)
       }finally{
         setIsLoading(false)
-        console.log(projects)
       }
     };
 
@@ -107,14 +103,15 @@ export const ProjectManagerProvider = ({ children }) => {
         }finally{
           setIsLoading(false)
         }
-    }
+    };
+
 
     const getProjectDetails = async (id_project) => {
       try {
         console.log("ProjectDetails")
         setIsLoading(true)
         setError(null)
-        const result = await window.api.getDetails(id_project)
+        const result = await window.api.getProjectDetails(id_project)
         console.log(result)
 
         if(result.success){
@@ -129,9 +126,73 @@ export const ProjectManagerProvider = ({ children }) => {
         setIsLoading(false)
       }
     };
+
+
+    const getTechnicianDetails = async (id_technician) => {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const result = await window.api.getTechnicianDetails(id_technician)
+
+        if(result.success){
+          return result.data;
+        }
+        else{
+          setError(result.error)
+        }
+      }catch(error){
+          setError(error)
+      }finally{
+        setIsLoading(false)
+      }
+    };
+
   
+    const getTechnicians = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const result = await window.api.getTechnicians()
+        
+        if(result.success){
+          setTechnicians(result.data)
+        }
+        else{
+          setError(result.error)
+        }
+      }catch(error){
+          setError(error)
+      }finally{
+        setIsLoading(false)
+      }
+    };
+
+    const insertTechnician = async (technician) => {
+        try {
+          setIsLoading(true)
+          setError(null)
+          const result = await window.api.insertTechnician(technician)
+
+          if(result.success){
+            getTechnicians()
+          }
+          else{
+            setError(result.error)
+          }
+      }catch(error){
+          setError(error)
+      }finally{
+        setIsLoading(false)
+      }
+    };
+
     return (
-      <ProjectManagerContext.Provider value={{error, projects, calls, headquarters, getCalls, getHeadquarters, getProjects, insertProject, insertCall, getProjectDetails }}>
+      <ProjectManagerContext.Provider value={{
+        error, projects, calls, headquarters, 
+        getCalls, getHeadquarters, getProjects, 
+        insertProject, insertCall, getProjectDetails, 
+        technicians, setTechnicians, getTechnicians, 
+        insertTechnician, getTechnicianDetails }}>
         {children}
       </ProjectManagerContext.Provider>
     );

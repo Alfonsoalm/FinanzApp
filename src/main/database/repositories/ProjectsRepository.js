@@ -1,7 +1,6 @@
 import { Calls, Headquarters, Projects } from "../models";
 import "../models/relations";
 
-
 export class ProjectsRepository {
     // Método estático para obtener un técnico por su nombre de usuario
     static async getAll() {
@@ -36,14 +35,11 @@ export class ProjectsRepository {
           return projectData;
         });
       }
-      
       return []
     }
 
     static async insert(project){
-        
         const duration = (new Date(project.endDate) - new Date(project.startDate))/(1000 * 60 * 60 * 24)  
-
         await Projects.create({
           ...project,
           duration,

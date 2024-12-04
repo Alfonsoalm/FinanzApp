@@ -32,6 +32,7 @@ export const DataTable = ({initialRows=[], columns, onRowDoubleClick}) => {
                         maxWidth: "100%",  // Asegura que no se expanda más allá de su contenedor
                     }}
                 />
+                
             }
         </Box>
   )
