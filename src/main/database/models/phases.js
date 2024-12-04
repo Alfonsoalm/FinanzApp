@@ -27,17 +27,17 @@ export const Phases = sequelize.define('Phases', {
   hours:{
     type: DataTypes.INTEGER,
     allowNull: false,
-    field: "id_fase",
+    field: "horas",
   },
   startDate:{
     type: DataTypes.DATE,
     allowNull: false,
-    field: "id_fase",
+    field: "fecha_inicio",
   },
   endDate:{
     type: DataTypes.DATE,
     allowNull: false,
-    field: "id_fase",
+    field: "fecha_fin",
   }
 }, {
   tableName: 'fases',

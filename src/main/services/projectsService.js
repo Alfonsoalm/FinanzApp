@@ -27,6 +27,18 @@ async function insertProject(project) {
   }
 }
 
+async function deleteProject(id_project) {
+  try{
+    await ProjectsRepository.deleteById(id_project)
+    return {success: true};
+
+  }catch(error){
+    console.error('Error in deleteProject:', error); 
+    return {success: false, error: "Error al borrar el proyecto"}
+  }
+   
+}
+
 async function getProjectDetails(id_project) {
   try {
 
@@ -74,12 +86,21 @@ export function handleProjects(ipcMain) {
       }
     });
 
+    ipcMain.handle('delete-project', async (event, id_project) => {
+      try {
+        return await deleteProject(id_project); 
+      } catch (error) {
+        console.error('Error in deleteProject:', error); 
+        return { success: false, error: "No se pudo eliminar el proyecto" };
+      }
+    });
+
     ipcMain.handle('get-project-details', async (event, id_project) => {
       try {
         return await getProjectDetails(id_project); 
       } catch (error) {
-        console.error('Error in getAssignments:', error); 
-        return { success: false, error: "No se pudo obtener las asignaciones" };
+        console.error('Error in getDetails:', error); 
+        return { success: false, error: "No se pudo obtener los detalles del proyecto" };
       }
     });
 }

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 
 
-export const DataTable = ({initialRows=[], columns, onRowDoubleClick}) => {
+export const DataTable = ({initialRows=[], columns, onRowDoubleClick={}}) => {
 
     const theme = useTheme()
 
@@ -17,8 +17,7 @@ export const DataTable = ({initialRows=[], columns, onRowDoubleClick}) => {
 
     return (
         <Box sx={{ width: "auto", maxWidth: "100%", height:"471px", mt:4}}>
-            {
-                rows.length > 0 && 
+            
                 <DataGrid 
                     rows={rows} 
                     columns={columns} 
@@ -32,8 +31,7 @@ export const DataTable = ({initialRows=[], columns, onRowDoubleClick}) => {
                         maxWidth: "100%",  // Asegura que no se expanda más allá de su contenedor
                     }}
                 />
-                
-            }
+            
         </Box>
   )
 }

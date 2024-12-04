@@ -1,29 +1,20 @@
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Button, Grid2, Typography } from "@mui/material";
+import { GridActionsCellItem, GridDeleteIcon } from "@mui/x-data-grid";
 import queryString from "query-string";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { searchBy } from "../../helper/searchBy";
 import { useForm } from "../../hooks/useForm";
 import { DataTable, SearchForm } from "../components";
 import { ProjectManagerContext } from "../context/ProjectsManagerContext";
 
-
-const columns =[
-    { field: 'id', headerName: 'ID', width: 50, type:"number" },
-    { field: 'name', headerName: 'Nombre', width: 200 },
-    { field: 'headquarter', headerName: 'Sede', width: 100 },
-    { field: 'type', headerName: 'Tipo', width: 100},
-    { field: 'startDate', headerName: 'Fecha Inicio', width: 100},
-    { field: 'endDate', headerName: 'Fecha Fin', width: 100 },
-    { field: "status", headerName:"Estado", width: 200, type: "singleSelect", valueOptions: ["Adjudicación pendiente", "En desarrollo", "Finalizado", ""], editable: false },
-]
-
 export const ProjectsView = () => {
     
     const navigate = useNavigate()
     const location = useLocation()
 
-    const {projects, getProjects} = useContext(ProjectManagerContext)
+    const {projects, getProjects, deleteProject} = useContext(ProjectManagerContext)
 
     const {q=""} = queryString.parse(location.search)
     
@@ -53,11 +44,39 @@ export const ProjectsView = () => {
         navigate("/projects/add")
     }
 
-    const goToProjectDetailsView = (event) => {
-        const {id} = event
-
+    const goToProjectDetailsView = (id) => {
         navigate(`/projects/${id}`)
     }
+
+    const columns = useMemo(() => [
+        { field: 'id', headerName: 'ID', width: 50, type:"number" },
+        { field: 'name', headerName: 'Nombre', width: 200 },
+        { field: 'headquarter', headerName: 'Sede', width: 100 },
+        { field: 'type', headerName: 'Tipo', width: 100},
+        { field: 'startDate', headerName: 'Fecha Inicio', width: 100},
+        { field: 'endDate', headerName: 'Fecha Fin', width: 100 },
+        { field: "status", headerName:"Estado", width: 200, type: "singleSelect", valueOptions: ["Adjudicación pendiente", "En desarrollo", "Finalizado", ""], editable: false },
+        {
+            field: 'actions',
+            type: 'actions',
+            width: 80,
+            getActions: (params) => [
+                <GridActionsCellItem
+                key={"edit"}
+                icon={<VisibilityIcon />}
+                label="Editar"
+                onClick={() => goToProjectDetailsView(params.id)}
+                />,
+                <GridActionsCellItem
+                key={"delete"}
+                icon={<GridDeleteIcon />}
+                label="Borrar"
+                onClick={() => deleteProject(params.id)}
+                />,
+            ],
+        },
+    ], [])
+
 
 
     return (
@@ -88,7 +107,7 @@ export const ProjectsView = () => {
             </Grid2>
 
             <Grid2 container variant="div" display="flex" justifyContent="center" sx={{ width: "100%", pl: 4 , pr:4}} spacing={1} alignItems="center">
-                <DataTable initialRows={filteredProjects} columns={columns} onRowDoubleClick={goToProjectDetailsView}/>
+                <DataTable initialRows={filteredProjects} columns={columns}/>
             </Grid2>
 
         </Grid2>

@@ -20,6 +20,7 @@ export class ProjectsRepository {
         }
       })
 
+
       if (projects) {
         return projects.map(project => {
           const projectData = project.dataValues;
@@ -39,7 +40,9 @@ export class ProjectsRepository {
     }
 
     static async insert(project){
-        const duration = (new Date(project.endDate) - new Date(project.startDate))/(1000 * 60 * 60 * 24)  
+        
+        const duration = (new Date(project.endDate) - new Date(project.startDate))/(8640000)  
+
         await Projects.create({
           ...project,
           duration,
@@ -49,4 +52,14 @@ export class ProjectsRepository {
         })
 
     }
+
+    static async deleteById(id_project){
+      
+      await Projects.destroy({
+        where:{
+          id: id_project
+        }
+      })
+
+  }
 }

@@ -13,6 +13,8 @@ const api = {
     ipcRenderer.invoke('get-project-details', id_project),
   getTechnicianDetails: (id_technician) => 
     ipcRenderer.invoke('get-technician-details', id_technician),
+  deleteProject: (id_project) =>
+    ipcRenderer.invoke('delete-project', id_project),
   getCalls: () =>
     ipcRenderer.invoke("get-calls"),
   insertCall: (call) =>
