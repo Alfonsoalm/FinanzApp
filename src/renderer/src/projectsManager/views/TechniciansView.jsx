@@ -1,11 +1,13 @@
 import { Button, Grid2, Typography } from "@mui/material";
 import queryString from "query-string";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { searchBy } from "../../helper/searchBy";
 import { useForm } from "../../hooks/useForm";
 import { DataTable, SearchForm } from "../components";
 import { ProjectManagerContext } from "../context/ProjectsManagerContext";
+import { GridActionsCellItem, GridDeleteIcon } from "@mui/x-data-grid";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
 export const TechniciansView = () => {
@@ -48,7 +50,7 @@ export const TechniciansView = () => {
     
     }, [searchText, technicians])
 
-    const columns = [
+    const columns = useMemo(() => [
         { field: 'id', headerName: 'ID', width: 50, type:"number" },
         { field: 'name', headerName: 'Nombre', width: 200 },
         { field: 'role', headerName: 'Puesto', width: 100 },
@@ -61,37 +63,25 @@ export const TechniciansView = () => {
         { field: "is_active", headerName:"Está activo", width: 100},
         { field: "is_admin", headerName:"Es administrador", width: 100},
         {
-            field: "",
-            headerName: "",
-            width: 200,
-            renderCell: (params) => (
-                <div style={{ display: "flex", gap: "12px" }}>
-                    {/* Botón Ver */}
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        onClick={() => {
-                            goToTechnicianDetailsView(params.row.id)
-                        }}
-                    >
-                        Ver
-                    </Button>
-                    {/* Botón Borrar */}
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        onClick={() => {
-                            deleteTechnician(params.row.id)  
-                        }}
-                    >
-                        Borrar
-                    </Button>
-                </div>
-            ),
-        },
-    ]
+            field: 'actions',
+            type: 'actions',
+            width: 80,
+            getActions: (params) => [
+                <GridActionsCellItem
+                key={"edit"}
+                icon={<VisibilityIcon />}
+                label="Editar"
+                onClick={() => goToTechnicianDetailsView(params.id)}
+                />,
+                <GridActionsCellItem
+                key={"delete"}
+                icon={<GridDeleteIcon />}
+                label="Borrar"
+                onClick={() => deleteTechnician(params.id)}
+                />,
+            ],
+        }
+    ], [])
 
     return (
         <Grid2 

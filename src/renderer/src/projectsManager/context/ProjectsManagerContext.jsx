@@ -208,7 +208,7 @@ export const ProjectManagerProvider = ({ children }) => {
     return (
       <ProjectManagerContext.Provider value={{
         error, projects, calls, headquarters, 
-        getCalls, getHeadquarters, getProjects, 
+        getCalls, getHeadquarters, getProjects, deleteProject,
         insertProject, insertCall, getProjectDetails, 
         technicians, setTechnicians, getTechnicians, 
         insertTechnician, getTechnicianDetails }}>
