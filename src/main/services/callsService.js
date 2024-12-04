@@ -10,14 +10,13 @@ async function getCalls() {
     console.error('Error in getCalls:', error); 
     return {success: false, error: "Error al cargar las convocatorias"}
   }
-   
 }
+
 
 async function insertCall(call) {
   try{
       await CallsRepository.insert(call)
       return {success: true};
-
   }catch(error){
     console.error('Error in insertCall:', error); 
     return {success: false, error: "Error al insertar la nueva convocatoria"}

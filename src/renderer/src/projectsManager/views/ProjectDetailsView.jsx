@@ -87,9 +87,6 @@ export const ProjectDetailsView = () => {
     
     ],[])
 
-
-
-    console.log(details)
     return (
         project && (
         <Grid2

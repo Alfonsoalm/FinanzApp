@@ -5,9 +5,6 @@ import {handleCalls, handleProjects, handleTechnicians } from './services'
 import icon from '../../resources/icon.png?asset'
 import { handleHeadquarters } from './services/headquartersService'
 
-
-
-
 console.log(__dirname)
 function createWindow() {
   // Create the browser window.

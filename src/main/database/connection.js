@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('gestion_de_proyectos', 'IZRA', 'izra', {
+const sequelize = new Sequelize('gestion_de_proyectos', 'root', '1234', {
   host: 'localhost',
   dialect: 'mysql',
   port: 3306,

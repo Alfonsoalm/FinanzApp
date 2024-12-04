@@ -16,6 +16,7 @@ async function getProjects() {
 }
 
 async function insertProject(project) {
+
   try{
       await ProjectsRepository.insert(project)
       return {success: true};
@@ -24,7 +25,6 @@ async function insertProject(project) {
     console.error('Error in insertProject:', error); 
     return {success: false, error: "Error al insertar el nuevo proyecto"}
   }
-   
 }
 
 async function deleteProject(id_project) {
@@ -39,7 +39,7 @@ async function deleteProject(id_project) {
    
 }
 
-async function getDetails(id_project) {
+async function getProjectDetails(id_project) {
   try {
 
     const phases = await PhasesRepository.getByProjectId(id_project)
@@ -95,9 +95,9 @@ export function handleProjects(ipcMain) {
       }
     });
 
-    ipcMain.handle('get-details', async (event, id_project) => {
+    ipcMain.handle('get-project-details', async (event, id_project) => {
       try {
-        return await getDetails(id_project); 
+        return await getProjectDetails(id_project); 
       } catch (error) {
         console.error('Error in getDetails:', error); 
         return { success: false, error: "No se pudo obtener los detalles del proyecto" };

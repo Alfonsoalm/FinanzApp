@@ -9,8 +9,8 @@ import { Technicians } from './technicians';
 Calls.hasMany(Projects, { foreignKey: 'id_convocatoria' });
 Projects.belongsTo(Calls, { foreignKey: 'id_convocatoria' });
 
-Calls.hasMany(Technicians, { foreignKey: 'id_sede' });
-Technicians.belongsTo(Calls, { foreignKey: 'id_sede' });
+Headquarters.hasMany(Technicians, { foreignKey: 'id_sede' });
+Technicians.belongsTo(Headquarters, { foreignKey: 'id_sede' });
 
 Headquarters.hasMany(Projects, { foreignKey: 'id_sede' });
 Projects.belongsTo(Headquarters, { foreignKey: 'id_sede' });

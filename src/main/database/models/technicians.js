@@ -1,11 +1,12 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../connection';
-import { Calls } from './calls';
+import { Headquarters } from './headquarters';
 
 export const Technicians = sequelize.define('Technicians', {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    autoIncrement:true, // Añadido
     primaryKey: true,
     field: "id_tecnico",
   },
@@ -24,11 +25,11 @@ export const Technicians = sequelize.define('Technicians', {
     allowNull: false,
     field: "disminuciones_salariales",
   },
-  call: {
+  headquarter: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Calls,
+      model: Headquarters,
       key: 'id',
     },
     field: "id_sede",

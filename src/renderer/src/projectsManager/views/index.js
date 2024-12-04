@@ -1,3 +1,6 @@
 export * from "./ProjectsView"
 export * from "./AddProjectView"
 export * from "./ProjectDetailsView"
+export * from "./TechniciansView"
+export * from "./AddTechnicianView"
+export * from "./TechnicianDetailsView"
