@@ -110,7 +110,7 @@ export const TechniciansView = () => {
             </Grid2>
 
             <Grid2 container variant="div" display="flex" justifyContent="center" sx={{ width: "100%", pl: 4 , pr:4}} spacing={1} alignItems="center">
-                <DataTable initialRows={filteredTechnicians} columns={columns} onRowDoubleClick={goToTechnicianDetailsView}/>
+                <DataTable initialRows={filteredTechnicians} columns={columns}/>
             </Grid2>
 
         </Grid2>
