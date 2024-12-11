@@ -1,9 +1,8 @@
 import { formatData } from '../../helpers/formatData';
-import { Technicians } from '../models';
+import { Technicians, Headquarters } from '../models';
 
 
 export class TechnicianRepository {
-
   static async findByUsername(username) {
     const user = await Technicians.findOne({
       where: { username },
@@ -34,16 +33,15 @@ export class TechnicianRepository {
 
   static async getAll() {
     const technicians = await Technicians.findAll({
-      // include: [
-      //   {
-      //     model: Headquarters,
-      //     attributes: ['name'],  
-      //   }
-      // ],
-      // attributes: {
-      //   exclude: ['id_sede'], 
-      // }
-      
+      include: [
+        {
+          model: Headquarters,
+          attributes: ['name'],  
+        }
+      ],
+      attributes: {
+        exclude: ['id_sede'], 
+      }
     })
 
     if (technicians) {
@@ -53,8 +51,10 @@ export class TechnicianRepository {
           techniciansData.headquarter = techniciansData.Headquarter.name; // Extraemos el nombre de la sede
           delete techniciansData.Headquarter; // Eliminamos el objeto Headquarter 
         }
+        console.log("techniciansData",techniciansData);
         return techniciansData;
       });
+    
     }
     return []
   }
@@ -71,16 +71,33 @@ export class TechnicianRepository {
     try {
       const technician = await Technicians.findOne({
         where: { id: id_technician }, // Filtrar por ID del técnico
+        include: [
+          {
+            model: Headquarters,
+            attributes: ['name'],  
+          }
+        ],
+        attributes: {
+          exclude: ['id_sede'], 
+        }
       });
 
-      return technician ? technician.dataValues : "No encontrado"; // Devuelve los datos o null si no se encuentra
+      if (technician) {
+          const technicianData = technician.dataValues;
+          // console.log("technicianData",technicianData);
+          if (technicianData.Headquarter) {
+            technicianData.headquarter = technicianData.Headquarter.name; // Extraemos el nombre de la sede
+            delete technicianData.Headquarter; // Eliminamos el objeto Headquarter 
+          }
+          return technicianData;
+        };
     } catch (error) {
       console.error('Error al obtener técnico por ID:', error);
       throw error; 
     }
   }
 
-    // Método estático para eliminar un técnico por su ID
+  // Método estático para eliminar un técnico por su ID
   static async deleteById(id_technician) {
     try {
       const deletedCount = await Technicians.destroy({

@@ -9,7 +9,6 @@ import { ProjectManagerContext } from "../context/ProjectsManagerContext";
 import { GridActionsCellItem, GridDeleteIcon } from "@mui/x-data-grid";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-
 export const TechniciansView = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -19,15 +18,11 @@ export const TechniciansView = () => {
     }
     
     const goToTechnicianDetailsView = (id) => {
-        console.log("Ir a vista de detalle de técnico con ID:", id);
+        console.log("Ir a vista de detalle de técnico con ID:", id.toString);
         navigate(`/technicians/${id}`);
     }
-    
-    const deleteTechnician = (id) => {
-        console.log("Borrar técnico con ID:", id);
-    }
 
-    const {technicians, getTechnicians} = useContext(ProjectManagerContext)
+    const {technicians, getTechnicians, deleteTechnician} = useContext(ProjectManagerContext)
 
     const {q=""} = queryString.parse(location.search)
     const [filteredTechnicians, setFilteredTechnicians] = useState(technicians)
@@ -110,7 +105,10 @@ export const TechniciansView = () => {
             </Grid2>
 
             <Grid2 container variant="div" display="flex" justifyContent="center" sx={{ width: "100%", pl: 4 , pr:4}} spacing={1} alignItems="center">
-                <DataTable initialRows={filteredTechnicians} columns={columns}/>
+                <DataTable 
+                initialRows={filteredTechnicians} 
+                columns={columns} 
+                onRowDoubleClick={(params) => goToTechnicianDetailsView(params.row.id)}/>
             </Grid2>
 
         </Grid2>

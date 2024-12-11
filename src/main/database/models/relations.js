@@ -3,6 +3,7 @@ import { Calls } from './calls';
 import { Headquarters } from './headquarters';
 import { Phases } from './phases';
 import { Projects } from './projects';
+import { Salaries } from './salaries';
 import { Technicians } from './technicians';
 
 // Establecer relaciones entre los modelos
@@ -20,6 +21,9 @@ Phases.hasMany(Assignments, { foreignKey: 'id_fase' });
 
 Assignments.belongsTo(Technicians, { foreignKey: 'id_tecnico' });
 Technicians.hasMany(Assignments, { foreignKey: 'id_tecnico' });
+
+Salaries.belongsTo(Technicians, { foreignKey: 'id_tecnico' });
+Technicians.hasMany(Salaries, { foreignKey: 'id_tecnico' });
 
 Phases.belongsTo(Projects, { foreignKey: 'id_proyecto' });
 Projects.hasMany(Phases, { foreignKey: 'id_proyecto' });

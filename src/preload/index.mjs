@@ -15,6 +15,8 @@ const api = {
     ipcRenderer.invoke('get-technician-details', id_technician),
   deleteProject: (id_project) =>
     ipcRenderer.invoke('delete-project', id_project),
+  deleteTechnician: (id_technician) =>
+    ipcRenderer.invoke('delete-technician', id_technician),
   getCalls: () =>
     ipcRenderer.invoke("get-calls"),
   insertCall: (call) =>
@@ -25,6 +27,16 @@ const api = {
     ipcRenderer.invoke('get-technicians'),
   insertTechnician: (technician) =>
     ipcRenderer.invoke('insert-technician', technician),
+  getSalaries: () =>
+    ipcRenderer.invoke('get-salaries'),
+  insertSalary: (salary) =>
+    ipcRenderer.invoke('insert-salary',salary),
+  deleteSalary: (id_salary) =>
+    ipcRenderer.invoke('delete-salary',id_salary),
+  editSalary: (salary) =>
+    ipcRenderer.invoke('edit-salary',salary),
+  getSalariesByTechnician: (id_technician) =>
+    ipcRenderer.invoke('get-salaries-technician', id_technician),
   maximizeWindow: () => ipcRenderer.send('maximize-window'),
   resizeWindow: () => ipcRenderer.send('resize-window')
 };
