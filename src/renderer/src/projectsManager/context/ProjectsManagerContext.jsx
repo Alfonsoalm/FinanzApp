@@ -201,6 +201,22 @@ export const ProjectManagerProvider = ({ children }) => {
     }
   }
 
+  const deleteSoftTechnician = async (id_technician) => {
+    try {
+      setError(null)
+      const result = await window.api.deleteSoftTechnician(id_technician)
+
+      if(result.success){
+        getTechnicians()
+      }
+      else{
+        setError(result.error)
+      }
+  }catch(error){
+      setError(error)
+  }
+}
+
     const insertTechnician = async (technician) => {
         try {
           setIsLoading(true)
@@ -255,6 +271,22 @@ export const ProjectManagerProvider = ({ children }) => {
         setIsLoading(false);
       }
     };
+
+    const getAssignmentsByTechnician = async (id) => {
+      try {
+        setError(null);
+        const result = await window.api.getTechnicianAssignments(id);
+        console.log("resultado_asignaciones:",result);
+        if(result.success){
+          return result.data;
+        }
+        else{
+          setError(result.error);
+        }
+      }catch(error){
+        setError(error);
+      }
+    }
 
     const insertSalary = async (salary) => {
       console.log(salary);
@@ -316,8 +348,8 @@ export const ProjectManagerProvider = ({ children }) => {
         error, projects, calls, headquarters, 
         getCalls, getHeadquarters, getProjects, deleteProject,
         insertProject, insertCall, getProjectDetails, 
-        technicians, setTechnicians, getTechnicians, deleteTechnician,
-        insertTechnician, getTechnicianDetails,
+        technicians, setTechnicians, getTechnicians, deleteTechnician, deleteSoftTechnician,
+        insertTechnician, getTechnicianDetails, getAssignmentsByTechnician,
         getSalaries,  getSalariesByTechnician, insertSalary, deleteSalary, editSalary }}>
         {children}
       </ProjectManagerContext.Provider>

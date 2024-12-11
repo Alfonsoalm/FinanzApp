@@ -49,7 +49,18 @@ async function deleteTechnician(id_technician) {
 
   }catch(error){
     console.error('Error in deleteProject:', error); 
-    return {success: false, error: "Error al borrar el proyecto"}
+    return {success: false, error: "Error al borrar el tecnico"}
+  }
+}
+
+async function deleteSoftTechnician(id_technician) {
+  try{
+    await TechnicianRepository.deleteSoftById(id_technician)
+    return {success: true};
+
+  }catch(error){
+    console.error('Error in deleteSoftById:', error); 
+    return {success: false, error: "Error al borrar suave el tecnico"}
   }
 }
 
@@ -66,6 +77,23 @@ async function getTechnicianDetails(id_technician) {
     return { success: false, error: 'Técnico no encontrado' };
   } catch (error) {
     console.error('Error al obtener detalles del técnico:', error);
+    return { success: false, error: 'Error interno del servidor.' };
+  }
+}
+
+async function getTechnicianAssignments(id_technician) {
+  try {
+    // Obtiene los datos del tecnico
+    console.log("getAssignments");
+    const assignments = await TechnicianRepository.getAssignments(id_technician);
+    
+    if (assignments) {
+      console.log("assignments",assignments);
+      return { success: true, data: assignments }; // Éxito: devolver los datos del técnico
+    }
+    return { success: false, error: 'Asignaciones no encontradas' };
+  } catch (error) {
+    console.error('Error al obtener asignaciones del técnico:', error);
     return { success: false, error: 'Error interno del servidor.' };
   }
 }
@@ -98,24 +126,41 @@ export function handleTechnicians(ipcMain) {
       }
     });
 
-    
     ipcMain.handle('delete-technician', async (event, id_technician) => {
       try {
         return await deleteTechnician(id_technician); 
       } catch (error) {
         console.error('Error in deleteTechnician:', error); 
-        return { success: false, error: "No se pudo eliminar el proyecto" };
+        return { success: false, error: "No se pudo eliminar el tecnico" };
       }
     });
-    
+
+    ipcMain.handle('delete-soft-technician', async (event, id_technician) => {
+      try {
+        return await deleteSoftTechnician(id_technician); 
+      } catch (error) {
+        console.error('Error in deleteSoftTechnician:', error); 
+        return { success: false, error: "No se pudo eliminar suave el tecnico" };
+      }
+    });
 
     ipcMain.handle('get-technician-details', async (event, id_technician) => {
       try {
         console.log("get-technician-details")
         return await getTechnicianDetails(id_technician); 
       } catch (error) {
+        console.error('Error in getTechnicianDetails:', error); 
+        return { success: false, error: "No se pudo obtener los detalles del tecnico" };
+      }
+    });
+
+    ipcMain.handle('get-technician-assignments', async (event, id_technician) => {
+      try {
+        console.log("get-technician-assignments")
+        return await getTechnicianAssignments(id_technician); 
+      } catch (error) {
         console.error('Error in getAssignments:', error); 
-        return { success: false, error: "No se pudo obtener las asignaciones" };
+        return { success: false, error: "No se pudo obtener las asignaciones del tecnico" };
       }
     });
 }

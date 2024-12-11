@@ -22,7 +22,7 @@ export const TechniciansView = () => {
         navigate(`/technicians/${id}`);
     }
 
-    const {technicians, getTechnicians, deleteTechnician} = useContext(ProjectManagerContext)
+    const {technicians, getTechnicians, deleteSoftTechnician} = useContext(ProjectManagerContext)
 
     const {q=""} = queryString.parse(location.search)
     const [filteredTechnicians, setFilteredTechnicians] = useState(technicians)
@@ -72,7 +72,7 @@ export const TechniciansView = () => {
                 key={"delete"}
                 icon={<GridDeleteIcon />}
                 label="Borrar"
-                onClick={() => deleteTechnician(params.id)}
+                onClick={() => deleteSoftTechnician(params.id)}
                 />,
             ],
         }
@@ -94,7 +94,6 @@ export const TechniciansView = () => {
             </Typography>
 
             <Grid2 container sx={{ width: "100%", pl: 4 , pr:4}} spacing={1} alignItems="center">
-
                 <SearchForm searchText={searchText} onInputChange={onInputChange}/>     
                 {/* Botón Añadir */}
                 <Grid2>

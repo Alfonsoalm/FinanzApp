@@ -36,7 +36,8 @@
     "query-string": "^9.1.1",
     "react-router-dom": "^6.28.0",
     "react-routes": "^0.2.6",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "xlsx": "^0.18.5"
   },
   "build": {
     "extraResources": [
