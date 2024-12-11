@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 
 
-export const DataTable = ({initialRows=[], columns}) => {
+export const DataTable = ({initialRows=[], columns, getRowClassNameFunction = () => {}}) => {
 
     const theme = useTheme()
 
@@ -16,13 +16,14 @@ export const DataTable = ({initialRows=[], columns}) => {
     }, [initialRows]);
 
     return (
-        <Box sx={{ width: "auto", maxWidth: "100%", height:"471px", mt:4}}>
+        <Box sx={{ display: "flex", flexDirection:"column", width: "auto", maxWidth: "100%", height:"auto", m:0}}>
             
                 <DataGrid 
                     rows={rows} 
                     columns={columns} 
                     getRowId={row => row.id}
-                    autoPageSize
+                    getRowClassName={getRowClassNameFunction}
+                    pagination={false}
                     rowHeight={40}
                     sx={{
                         color: theme.palette.text.tercitary,

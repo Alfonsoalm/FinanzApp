@@ -235,7 +235,7 @@ export const ProjectManagerProvider = ({ children }) => {
         setIsLoading(false)
       }
     };
-
+    
     const getSalaries = async () => {
       try {
         setIsLoading(true);
@@ -345,10 +345,10 @@ export const ProjectManagerProvider = ({ children }) => {
 
     return (
       <ProjectManagerContext.Provider value={{
-        error, projects, calls, headquarters, 
+        error, projects, calls, headquarters, technicians,
         getCalls, getHeadquarters, getProjects, deleteProject,
         insertProject, insertCall, getProjectDetails, 
-        technicians, setTechnicians, getTechnicians, deleteTechnician, deleteSoftTechnician,
+        setTechnicians, getTechnicians, deleteTechnician, deleteSoftTechnician,
         insertTechnician, getTechnicianDetails, getAssignmentsByTechnician,
         getSalaries,  getSalariesByTechnician, insertSalary, deleteSalary, editSalary }}>
         {children}
