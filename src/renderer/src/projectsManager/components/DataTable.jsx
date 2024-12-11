@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 
 
-export const DataTable = ({initialRows=[], columns, onRowDoubleClick={}}) => {
+export const DataTable = ({initialRows=[], columns}) => {
 
     const theme = useTheme()
 
@@ -23,7 +23,6 @@ export const DataTable = ({initialRows=[], columns, onRowDoubleClick={}}) => {
                     columns={columns} 
                     getRowId={row => row.id}
                     autoPageSize
-                    onRowDoubleClick={onRowDoubleClick}
                     rowHeight={40}
                     sx={{
                         color: theme.palette.text.tercitary,

@@ -7,7 +7,6 @@ import { GridActionsCellItem, GridDeleteIcon } from "@mui/x-data-grid";
 import EditIcon from '@mui/icons-material/Edit';
 
 const formatData = (data) => {
-    console.log("Format")
 
     const transformedData = data.phases.map(phase => {
         // Filtrar las asignaciones asociadas a la fase actual
@@ -34,8 +33,6 @@ const formatData = (data) => {
     return transformedData;
 
 }
-
-
 
 
 export const ProjectDetailsView = () => {
