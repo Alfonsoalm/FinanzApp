@@ -65,6 +65,19 @@ async function getProjectDetails(id_project) {
   } 
 }
 
+async function deleteProjectAssignment(){
+  try{
+
+    console.log("Borrar asignacion")
+
+  }catch(error) {
+    console.error('Error al borrar asignaciones:', error);
+    return {success: false, error: 'Error interno del servidor.' };
+  }
+
+
+}
+
 
 
 export function handleProjects(ipcMain) {
@@ -98,6 +111,15 @@ export function handleProjects(ipcMain) {
     ipcMain.handle('get-project-details', async (event, id_project) => {
       try {
         return await getProjectDetails(id_project); 
+      } catch (error) {
+        console.error('Error in getDetails:', error); 
+        return { success: false, error: "No se pudo obtener los detalles del proyecto" };
+      }
+    });
+
+    ipcMain.handle('delete-project-assignment', async (event, phase_id, technician_name) => {
+      try {
+        return await deleteProjectAssignment(phase_id, technician_name); 
       } catch (error) {
         console.error('Error in getDetails:', error); 
         return { success: false, error: "No se pudo obtener los detalles del proyecto" };

@@ -205,13 +205,20 @@ export const ProjectManagerProvider = ({ children }) => {
       }
     };
 
+    const deleteAssignment = async (phase, technician) => {
+
+      console.log(phase)
+      console.log(technician)
+
+    }
+
     return (
       <ProjectManagerContext.Provider value={{
         error, projects, calls, headquarters, 
         getCalls, getHeadquarters, getProjects, deleteProject,
         insertProject, insertCall, getProjectDetails, 
         technicians, setTechnicians, getTechnicians, 
-        insertTechnician, getTechnicianDetails }}>
+        insertTechnician, getTechnicianDetails, deleteAssignment }}>
         {children}
       </ProjectManagerContext.Provider>
     );

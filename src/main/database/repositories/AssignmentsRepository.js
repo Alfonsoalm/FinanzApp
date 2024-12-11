@@ -24,4 +24,16 @@ export class AssignmentsRepository {
             return [];
         }
     }
+
+
+    static async delete(id_phase, id_technician) {
+       
+        await Assignments.destroy({
+            where:{
+              phase: id_phase,
+              technician: id_technician 
+            }
+        })
+    
+    }
 }
