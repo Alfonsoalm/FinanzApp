@@ -36,7 +36,6 @@ async function deleteProject(id_project) {
     console.error('Error in deleteProject:', error); 
     return {success: false, error: "Error al borrar el proyecto"}
   }
-   
 }
 
 async function getProjectDetails(id_project) {

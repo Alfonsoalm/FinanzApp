@@ -1,7 +1,7 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import {handleCalls, handleProjects, handleTechnicians } from './services'
+import {handleCalls, handleProjects, handleSalaries, handleTechnicians } from './services'
 import icon from '../../resources/icon.png?asset'
 import { handleHeadquarters } from './services/headquartersService'
 
@@ -68,6 +68,7 @@ app.whenReady().then(() => {
   handleProjects(ipcMain); 
   handleCalls(ipcMain)
   handleHeadquarters(ipcMain)
+  handleSalaries(ipcMain)
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 

@@ -9,8 +9,6 @@ async function authenticateUser(username, password) {
       // Si el usuario no se encuentra, devolver un error
       return { success: false, error: 'Usuario no encontrado' };
     }
-  
-  
     // Comparar la contraseña
     if (password === user.password) {
       return { success: true, data: user };
@@ -21,7 +19,6 @@ async function authenticateUser(username, password) {
     console.error('Error in authenticateUser:', error); 
     return { success: false, error: 'Error en la autenticación' };
   }
- 
 }
 
 
@@ -35,7 +32,6 @@ async function getTechnicians(){
   }  
 }
 
-
 async function insertTechnician(technician){
   try{
     await TechnicianRepository.insert(technician)
@@ -46,12 +42,25 @@ async function insertTechnician(technician){
   }
 }
 
+async function deleteTechnician(id_technician) {
+  try{
+    await TechnicianRepository.deleteById(id_technician)
+    return {success: true};
+
+  }catch(error){
+    console.error('Error in deleteProject:', error); 
+    return {success: false, error: "Error al borrar el proyecto"}
+  }
+}
+
 async function getTechnicianDetails(id_technician) {
   try {
     // Obtiene los datos del tecnico
+    console.log("getTechnicianDetails");
     const technician = await TechnicianRepository.findById(id_technician);
-
+    
     if (technician) {
+      console.log("technician",technician);
       return { success: true, data: technician }; // Éxito: devolver los datos del técnico
     }
     return { success: false, error: 'Técnico no encontrado' };
@@ -62,7 +71,6 @@ async function getTechnicianDetails(id_technician) {
 }
 
 export function handleTechnicians(ipcMain) {
-  
     ipcMain.handle('login', async (event, { username, password }) => {
       try {   
         return await authenticateUser(username, password); // Llamada a la base de datos
@@ -90,8 +98,20 @@ export function handleTechnicians(ipcMain) {
       }
     });
 
+    
+    ipcMain.handle('delete-technician', async (event, id_technician) => {
+      try {
+        return await deleteTechnician(id_technician); 
+      } catch (error) {
+        console.error('Error in deleteTechnician:', error); 
+        return { success: false, error: "No se pudo eliminar el proyecto" };
+      }
+    });
+    
+
     ipcMain.handle('get-technician-details', async (event, id_technician) => {
       try {
+        console.log("get-technician-details")
         return await getTechnicianDetails(id_technician); 
       } catch (error) {
         console.error('Error in getAssignments:', error); 

@@ -7,6 +7,7 @@ export const ProjectManagerProvider = ({ children }) => {
     const [technicians, setTechnicians] = useState([]);
     const [calls, setCalls] = useState([]);
     const [headquarters, setHeadquarters] = useState([]);
+    const [salaries, setSalaries] = useState([]);
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
 
@@ -124,10 +125,8 @@ export const ProjectManagerProvider = ({ children }) => {
         }
     };
 
-
     const getProjectDetails = async (id_project) => {
       try {
-        console.log("ProjectDetails")
         setIsLoading(true)
         setError(null)
         const result = await window.api.getProjectDetails(id_project)
@@ -146,13 +145,11 @@ export const ProjectManagerProvider = ({ children }) => {
       }
     };
 
-
     const getTechnicianDetails = async (id_technician) => {
       try {
         setIsLoading(true)
         setError(null)
         const result = await window.api.getTechnicianDetails(id_technician)
-
         if(result.success){
           return result.data;
         }
@@ -165,7 +162,6 @@ export const ProjectManagerProvider = ({ children }) => {
         setIsLoading(false)
       }
     };
-
   
     const getTechnicians = async () => {
       try {
@@ -186,6 +182,25 @@ export const ProjectManagerProvider = ({ children }) => {
       }
     };
 
+    const deleteTechnician = async (id_technician) => {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const result = await window.api.deleteTechnician(id_technician)
+
+        if(result.success){
+          getTechnicians()
+        }
+        else{
+          setError(result.error)
+        }
+    }catch(error){
+        setError(error)
+    }finally{
+      setIsLoading(false)
+    }
+  }
+
     const insertTechnician = async (technician) => {
         try {
           setIsLoading(true)
@@ -205,13 +220,105 @@ export const ProjectManagerProvider = ({ children }) => {
       }
     };
 
+    const getSalaries = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const result = await window.api.getSalaries();
+        if(result.success){
+          setSalaries(result.data);
+        }
+        else{
+          setError(result.error);
+        }
+      }catch(error){
+        setError(error);
+      }finally{
+        setIsLoading(false);
+      }
+    };
+
+    const getSalariesByTechnician = async (id) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const result = await window.api.getSalariesByTechnician(id);
+        if(result.success){
+          return result.data;
+        }
+        else{
+          setError(result.error);
+        }
+      }catch(error){
+        setError(error);
+      }finally{
+        setIsLoading(false);
+      }
+    };
+
+    const insertSalary = async (salary) => {
+      console.log(salary);
+      try {
+        setIsLoading(true);
+        setError(null);
+        const result = await window.api.insertSalary(salary);
+
+        if(result.success){
+          getSalaries();
+        }
+        else{
+          setError(result.error);
+        }
+    }catch(error){
+        setError(error);
+    }finally{
+      setIsLoading(false);
+    }
+  };
+
+    const deleteSalary = async (id_salary) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const result = await window.api.deleteSalary(id_salary);
+
+        if(result.success){
+          getSalaries();
+        }
+        else{
+          setError(result.error);
+        }
+    }catch(error){
+        setError(error);
+    }finally{
+      setIsLoading(false);
+    }
+  }
+
+    const editSalary = async (salary) => {
+      try {
+        setError(null);
+        const result = await window.api.editSalary(salary);
+
+        if(result.success){
+          console.log("Salario editado con exito")
+        }
+        else{
+          setError(result.error);
+        }
+    }catch(error){
+        setError(error);
+    }
+  }
+
     return (
       <ProjectManagerContext.Provider value={{
         error, projects, calls, headquarters, 
         getCalls, getHeadquarters, getProjects, deleteProject,
         insertProject, insertCall, getProjectDetails, 
-        technicians, setTechnicians, getTechnicians, 
-        insertTechnician, getTechnicianDetails }}>
+        technicians, setTechnicians, getTechnicians, deleteTechnician,
+        insertTechnician, getTechnicianDetails,
+        getSalaries,  getSalariesByTechnician, insertSalary, deleteSalary, editSalary }}>
         {children}
       </ProjectManagerContext.Provider>
     );
