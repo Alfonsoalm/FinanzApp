@@ -1,4 +1,4 @@
-import { Assignments } from "../models";
+import { Assignments, Phases } from "../models";
 import "../models/relations";
 
 export class AssignmentsRepository {
@@ -25,7 +25,6 @@ export class AssignmentsRepository {
         }
     }
 
-
     static async delete(id_phase, id_technician) {
        
         await Assignments.destroy({
@@ -36,4 +35,38 @@ export class AssignmentsRepository {
         })
     
     }
+
+    
+  static async getAssignments(id_technician) {
+    try {
+      const assignments = await Assignments.findAll({
+        where: { technician: id_technician }, // Filtrar por ID del técnico
+        include: [
+          {
+            model: Phases,
+            attributes: ['name'],  
+          }
+        ],
+        attributes: {
+          exclude: ['id_fase'], 
+        }
+      });
+
+      if (assignments) {
+        return assignments.map(assignment => {
+          const assignmentsData = assignment.dataValues;
+          if (assignmentsData.phase) {
+            assignmentsData.phase = assignmentsData.phase.name;
+            delete assignmentsData.phase;
+          }
+          console.log("techniciansData",assignmentsData);
+          return assignmentsData;
+        });
+      }; 
+
+    } catch (error) {
+      console.error('Error al obtener asignaciones del tecnico:', error);
+      throw new Error("Error interno al obtener asignaciones");
+    }
+  }
 }

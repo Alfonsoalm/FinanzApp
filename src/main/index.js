@@ -4,6 +4,9 @@ import { join } from 'path'
 import {handleCalls, handleProjects, handleSalaries, handleTechnicians } from './services'
 import icon from '../../resources/icon.png?asset'
 import { handleHeadquarters } from './services/headquartersService'
+import { handleWorkdays } from './services/workdaysService'
+import { handleHolidays } from './services/holidaysService'
+import { handleVacations } from './services/vacationService'
 
 console.log(__dirname)
 function createWindow() {
@@ -64,11 +67,14 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  handleTechnicians(ipcMain)
+  handleTechnicians(ipcMain);
   handleProjects(ipcMain); 
-  handleCalls(ipcMain)
-  handleHeadquarters(ipcMain)
-  handleSalaries(ipcMain)
+  handleCalls(ipcMain);
+  handleHeadquarters(ipcMain);
+  handleSalaries(ipcMain);
+  handleWorkdays(ipcMain);
+  handleHolidays(ipcMain);
+  handleVacations(ipcMain);
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 

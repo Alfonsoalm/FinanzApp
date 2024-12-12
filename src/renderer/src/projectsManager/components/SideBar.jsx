@@ -6,7 +6,7 @@ import {Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Tool
 const navLinks = [
   {
     name:"Tu area",
-    path:"/",
+    path:"/area",
   },
   {
     name:"Proyectos",

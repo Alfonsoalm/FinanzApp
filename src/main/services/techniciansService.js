@@ -1,4 +1,5 @@
 import { TechnicianRepository } from '../database/repositories';
+import { AssignmentsRepository } from '../database/repositories/AssignmentsRepository';
 
 
 async function authenticateUser(username, password) {
@@ -55,6 +56,9 @@ async function deleteTechnician(id_technician) {
 
 async function deleteSoftTechnician(id_technician) {
   try{
+    // ############################################
+    // MODIFICAR PARA SEPARA LOGICA EN EL SERVICIO
+    // ############################################
     await TechnicianRepository.deleteSoftById(id_technician)
     return {success: true};
 
@@ -85,7 +89,7 @@ async function getTechnicianAssignments(id_technician) {
   try {
     // Obtiene los datos del tecnico
     console.log("getAssignments");
-    const assignments = await TechnicianRepository.getAssignments(id_technician);
+    const assignments = await AssignmentsRepository.getAssignments(id_technician);
     
     if (assignments) {
       console.log("assignments",assignments);

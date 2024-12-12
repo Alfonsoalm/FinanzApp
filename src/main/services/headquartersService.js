@@ -10,9 +10,7 @@ export async function getHeadquarters() {
     console.error('Error in getHeadquarters:', error); 
     return {success: false, error: "Error al cargar las sedes"}
   }
-   
 }
-
 
 export function handleHeadquarters(ipcMain) {
     ipcMain.handle('get-headquarters', async () => {

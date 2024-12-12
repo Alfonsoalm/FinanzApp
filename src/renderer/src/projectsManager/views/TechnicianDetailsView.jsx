@@ -140,16 +140,43 @@ export const TechnicianDetailsView = () => {
         setEditingSalary(null); // Cancela el modo de edición
     };
 
-    const exportToExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(details.salaries);
+    const exportAssignmentsToExcel = () => {
+        const formattedAssignments = assignments.map((assignment) => ({
+            Fase: assignment.Phase.dataValues.name,
+            Horas: assignment.hours,
+            "Fecha Inicio": assignment.startDate,
+            "Fecha Fin": assignment.endDate,
+        }));
+        const worksheet = XLSX.utils.json_to_sheet(formattedAssignments);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Asignaciones");
+        XLSX.writeFile(workbook, "asignaciones.xlsx");
+    };
+
+    const exportSalariesToExcel = () => {
+        const formattedSalaries = details.salaries.map((salary) => ({
+            "Grupo Cotización": salary.contributionGroup,
+            "Coste Hora (€)": salary.hourCost,
+            "Fecha Inicio": salary.startDate,
+            "Fecha Fin": salary.endDate || "N/A",
+        }));
+        const worksheet = XLSX.utils.json_to_sheet(formattedSalaries);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Salarios");
         XLSX.writeFile(workbook, "salarios.xlsx");
     };
 
+
     return (
         technician && (
-            <Box sx={{ p: 3, width: "100%" }}>
+            <Box
+    sx={{
+        height: "100vh", // Ocupa toda la ventana del navegador
+        overflowY: "auto", // Scroll vertical
+        overflowX: "hidden", // Oculta el scroll horizontal globalmente
+        padding: 2, // Espaciado opcional
+    }}
+>
                 {/* Nombre del Técnico */}
                 <Typography variant="h4" sx={{ mb: 2 }}>
                     {details.name}
@@ -212,6 +239,14 @@ export const TechnicianDetailsView = () => {
                         <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
                             Salario:
                         </Typography>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            startIcon={<ExportIcon />}
+                            onClick={exportSalariesToExcel}
+                            sx={{ mb: 2 }}>
+                            Exportar Salarios a Excel
+                        </Button>
                         <Divider sx={{ mb: 2 }} />
                         <Table>
                             <TableHead>
@@ -383,6 +418,15 @@ export const TechnicianDetailsView = () => {
                             <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
                                 Tabla de Costos:
                             </Typography>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<ExportIcon />}
+                                onClick={exportAssignmentsToExcel}
+                                sx={{ mb: 2 }}
+>
+                                Exportar Asignaciones a Excel
+                            </Button>
                             <Divider sx={{ mb: 2 }} />
                             <Table>
                                 <TableHead>

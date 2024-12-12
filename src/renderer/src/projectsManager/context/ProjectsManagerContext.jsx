@@ -8,8 +8,12 @@ export const ProjectManagerProvider = ({ children }) => {
     const [calls, setCalls] = useState([]);
     const [headquarters, setHeadquarters] = useState([]);
     const [salaries, setSalaries] = useState([]);
+    const [workdays, setWorkdays] = useState([]);
+    const [vacations, setVacations] = useState([]);
+    const [holidays, setHolidays] = useState([]);
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const id = 1;
 
     const getCalls = async () => {
         try {
@@ -111,7 +115,7 @@ export const ProjectManagerProvider = ({ children }) => {
             setIsLoading(true)
             setError(null)
             const result = await window.api.insertProject(project)
-  
+
             if(result.success){
               getProjects()
             }
@@ -343,14 +347,112 @@ export const ProjectManagerProvider = ({ children }) => {
     }
   }
 
+  const insertWorkday = async (workday) => {
+    console.log(workday);
+    try {
+      setError(null);
+      const result = await window.api.insertWorkday(workday);
+
+      if(result.success){
+        getWorkdays();
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+        setError(error);
+    }
+  };
+
+  const getWorkdays = async () => {
+    try {
+      setError(null);
+      const result = await window.api.getWorkdays();
+      if(result.success){
+        setWorkdays(result.data);
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+      setError(error);
+    }
+  };
+
+  const insertVacation = async (vacation) => {
+    console.log(vacation);
+    try {
+      setError(null);
+      const result = await window.api.insertVacation(vacation);
+
+      if(result.success){
+        getVacations();
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+        setError(error);
+    }
+  };
+
+  const getVacations = async () => {
+    try {
+      setError(null);
+      const result = await window.api.getVacations();
+      if(result.success){
+        setVacations(result.data);
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+      setError(error);
+    }
+  };
+
+  const insertHoliday = async (holiday) => {
+    console.log(holiday);
+    try {
+      setError(null);
+      const result = await window.api.insertHoliday(holiday);
+
+      if(result.success){
+        getHolidays();
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+        setError(error);
+    }
+  };
+
+  const getHolidays = async () => {
+    try {
+      setError(null);
+      const result = await window.api.getHolidays();
+      if(result.success){
+        setHolidays(result.data);
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+      setError(error);
+    }
+  };
+
     return (
       <ProjectManagerContext.Provider value={{
-        error, projects, calls, headquarters, technicians,
+        id, error, projects, calls, headquarters, technicians, 
+        salaries, workdays, vacations, holidays,
         getCalls, getHeadquarters, getProjects, deleteProject,
         insertProject, insertCall, getProjectDetails, 
         setTechnicians, getTechnicians, deleteTechnician, deleteSoftTechnician,
         insertTechnician, getTechnicianDetails, getAssignmentsByTechnician,
-        getSalaries,  getSalariesByTechnician, insertSalary, deleteSalary, editSalary }}>
+        getSalaries,  getSalariesByTechnician, insertSalary, deleteSalary, editSalary,
+        insertWorkday, getWorkdays, insertVacation, getVacations, insertHoliday, getHolidays }}>
         {children}
       </ProjectManagerContext.Provider>
     );

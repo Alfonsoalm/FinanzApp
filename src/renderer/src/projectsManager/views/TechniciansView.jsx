@@ -81,11 +81,12 @@ export const TechniciansView = () => {
     return (
         <Grid2 
             container
-            spacing={2}  // Ajuste del espaciado
-            direction="column"
+            spacing={1}  // Ajuste del espaciado
+            display="flex"
             alignItems="flex-start"  // Alineación a la izquierda del contenido
-            sx={{pt: 2, pr:4,}}
-            width={"90%"}
+            sx={{pt: 4, pl:4, pr:4, overflowY: "auto", height:"120%", width:"80%"}}
+            width={"100%"}
+            overflow
         >
 
             {/* Título alineado a la izquierda */}
