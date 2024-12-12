@@ -7,8 +7,8 @@ export const ProjectManagerProvider = ({ children }) => {
     const [technicians, setTechnicians] = useState([]);
     const [calls, setCalls] = useState([]);
     const [headquarters, setHeadquarters] = useState([]);
-    const [salaries, setSalaries] = useState([]);
     const [error, setError] = useState("")
+    const [salaries, setSalaries] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
 
     const getCalls = async () => {
@@ -220,13 +220,48 @@ export const ProjectManagerProvider = ({ children }) => {
       }
     };
 
-    const deleteAssignment = async (phase, technician) => {
+    const addAssignment = async (assignment) => {
 
-      console.log(phase)
-      console.log(technician)
+      try {
+        setIsLoading(true);
+        setError(null);
+        console.log("ADD")
+        const result = await window.api.addAssignment(assignment);
+        if(result.success){
+          console.log(result)
+        }
+        else{
+          setError(result.error);
+        }
+      }catch(error){
+        setError(error);
+      }finally{
+        setIsLoading(false);
+      }
 
     }
-    
+
+    const deleteAssignment = async (phase_id, technician_id) => {
+
+      try {
+        setIsLoading(true);
+        setError(null);
+        console.log("DELETE")
+        const result = await window.api.deleteAssignment(phase_id, technician_id);
+        if(result.success){
+          console.log(result)
+        }
+        else{
+          setError(result.error);
+        }
+      }catch(error){
+        setError(error);
+      }finally{
+        setIsLoading(false);
+      }
+
+    }
+
     const getSalaries = async () => {
       try {
         setIsLoading(true);
@@ -244,7 +279,7 @@ export const ProjectManagerProvider = ({ children }) => {
         setIsLoading(false);
       }
     };
-
+    
     const getSalariesByTechnician = async (id) => {
       try {
         setIsLoading(true);
@@ -320,13 +355,13 @@ export const ProjectManagerProvider = ({ children }) => {
 
     return (
       <ProjectManagerContext.Provider value={{
-        error, projects, calls, headquarters, technicians,
+        error, projects, calls, headquarters, technicians, salaries,
         getCalls, getHeadquarters, getProjects, deleteProject,
         insertProject, insertCall, getProjectDetails, 
         setTechnicians, getTechnicians, 
-        insertTechnician, getTechnicianDetails,
-        getSalaries,  getSalariesByTechnician, insertSalary, deleteSalary, editSalary, 
-        deleteAssignment }}>
+        insertTechnician, getTechnicianDetails, deleteTechnician,
+        getSalariesByTechnician, insertSalary, deleteSalary, editSalary, 
+        deleteAssignment, addAssignment, getSalaries }}>
         {children}
       </ProjectManagerContext.Provider>
     );

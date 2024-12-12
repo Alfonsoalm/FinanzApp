@@ -64,20 +64,27 @@ async function getProjectDetails(id_project) {
   } 
 }
 
-async function deleteProjectAssignment(){
+async function addProjectAssignment(assignment){
   try{
+    await AssignmentsRepository.insert(assignment)
+    return {success: true};
 
-    console.log("Borrar asignacion")
-
-  }catch(error) {
-    console.error('Error al borrar asignaciones:', error);
-    return {success: false, error: 'Error interno del servidor.' };
+  }catch(error){
+    console.error('Error in addProjectAssignment:', error); 
+    return {success: false, error: "Error al asignar un tecnico a un proyecto"}
   }
-
-
 }
 
+async function deleteProjectAssignment(id_phase, id_technician){
+  try{
+    await AssignmentsRepository.delete(id_phase, id_technician)
+    return {success: true};
 
+  }catch(error){
+    console.error('Error in deleteProjectAssignment:', error); 
+    return {success: false, error: "Error al borrar la asignacion"}
+  }
+}
 
 export function handleProjects(ipcMain) {
     ipcMain.handle('get-projects', async () => {
@@ -116,12 +123,21 @@ export function handleProjects(ipcMain) {
       }
     });
 
-    ipcMain.handle('delete-project-assignment', async (event, phase_id, technician_name) => {
+    ipcMain.handle('delete-project-assignment', async (event, id_phase, id_technician) => {
       try {
-        return await deleteProjectAssignment(phase_id, technician_name); 
+        return await deleteProjectAssignment(id_phase, id_technician); 
       } catch (error) {
-        console.error('Error in getDetails:', error); 
-        return { success: false, error: "No se pudo obtener los detalles del proyecto" };
+        console.error('Error in deleteProjectAssignment:', error); 
+        return { success: false, error: "No se pudo borrar la asignacion del proyecto" };
+      }
+    });
+
+    ipcMain.handle('add-project-assignment', async (event, assignment) => {
+      try {
+        return await addProjectAssignment(assignment); 
+      } catch (error) {
+        console.error('Error in deleteProjectAssignment:', error); 
+        return { success: false, error: "No se pudo borrar la asignacion del proyecto" };
       }
     });
 }

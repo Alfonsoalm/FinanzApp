@@ -37,6 +37,10 @@ const api = {
     ipcRenderer.invoke('edit-salary',salary),
   getSalariesByTechnician: (id_technician) =>
     ipcRenderer.invoke('get-salaries-technician', id_technician),
+  deleteAssignment: (id_phase, id_technician) => 
+    ipcRenderer.invoke("delete-project-assignment", id_phase, id_technician),
+  addAssignment: (assignment) =>
+    ipcRenderer.invoke("add-project-assignment", assignment),
   maximizeWindow: () => ipcRenderer.send('maximize-window'),
   resizeWindow: () => ipcRenderer.send('resize-window')
 };
