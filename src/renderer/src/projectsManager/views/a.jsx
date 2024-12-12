@@ -23,8 +23,8 @@ import { Visibility as EditIcon, Delete as DeleteIcon, FileDownload as ExportIco
 export const TechnicianDetailsView = () => {
     const { "*": id } = useParams();
     const { technicians, getSalariesByTechnician, getAssignmentsByTechnician, insertSalary, deleteSalary, editSalary } = useContext(ProjectManagerContext);
-    const [technician, setTechnician] = useState([]);
 
+    const [technician, setTechnician] = useState([]);
     const [details, setDetails] = useState({
         name: "",
         role: "",
@@ -39,6 +39,7 @@ export const TechnicianDetailsView = () => {
         salaries: [],
     });
 
+    const [assignments, setAssignments] = useState([]); // Asignaciones
     const [newSalary, setNewSalary] = useState({
         contributionGroup: "",
         hourCost: "",
@@ -49,7 +50,6 @@ export const TechnicianDetailsView = () => {
     const [editingSalary, setEditingSalary] = useState(null); // Estado para el salario que se está editando
     const [showSalariesSection, setShowSalariesSection] = useState(false); // Mostrar sección de salarios
     const [showCostsSection, setShowCostsSection] = useState(false); // Mostrar sección de costos
-    const [assignments, setAssignments] = useState([]); // Asignaciones
 
     const fetchDetails = async () => {
         const salaries = await getSalariesByTechnician(id);
@@ -61,7 +61,6 @@ export const TechnicianDetailsView = () => {
 
     const fetchAssignments = async () => {
         const assignments = await getAssignmentsByTechnician(id);
-        console.log("assignments",assignments);
         setAssignments(assignments);
     };
 
@@ -77,68 +76,6 @@ export const TechnicianDetailsView = () => {
             fetchAssignments();
         }
     }, [technicians, id]);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewSalary({
-            ...newSalary,
-            [name]: value,
-        });
-    };
-
-    const handleSaveSalary = async () => {
-        if (!newSalary.contributionGroup || !newSalary.hourCost || !newSalary.startDate) {
-            alert("Por favor, rellena todos los campos obligatorios.");
-            return;
-        }
-
-        await insertSalary({
-            ...newSalary,
-            id_technician: id, // Asegúrate de enviar el ID del técnico
-        });
-
-        fetchDetails(); // Refresca la lista de salarios
-        setNewSalary({ contributionGroup: "", hourCost: "", startDate: "", endDate: "" }); // Limpia el formulario
-    };
-
-    const handleDeleteSalary = async (salaryId) => {
-        if (window.confirm("¿Estás seguro de que deseas eliminar este salario?")) {
-            try {
-                await deleteSalary(salaryId);
-                fetchDetails(); // Refresca la lista de salarios
-            } catch (error) {
-                console.error("Error al eliminar el salario:", error);
-                alert("Hubo un error al eliminar el salario. Por favor, inténtalo de nuevo.");
-            }
-        }
-    };
-
-    const handleEditSalary = (salary) => {
-        setEditingSalary({ ...salary }); // Copia los datos del salario a editar en el estado
-    };
-
-    const handleEditInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditingSalary({
-            ...editingSalary,
-            [name]: value,
-        });
-    };
-
-    const handleSaveEditedSalary = async () => {
-        try {
-            await editSalary({ ...editingSalary }); // Actualiza el salario
-            fetchDetails(); // Refresca la lista de salarios
-            setEditingSalary(null); // Limpia el modo de edición
-        } catch (error) {
-            console.error("Error al guardar los cambios:", error);
-            alert("Hubo un error al guardar los cambios. Por favor, inténtalo de nuevo.");
-        }
-    };
-
-    const handleCancelEdit = () => {
-        setEditingSalary(null); // Cancela el modo de edición
-    };
 
     const exportToExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(details.salaries);
@@ -285,10 +222,10 @@ export const TechnicianDetailsView = () => {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <TableCell>{salary.contributionGroup.toString()}</TableCell>
-                                                    <TableCell>{salary.hourCost.toString()}</TableCell>
-                                                    <TableCell>{salary.startDate.toString()}</TableCell>
-                                                    <TableCell>{salary.endDate.toString() || "N/A"}</TableCell>
+                                                    <TableCell>{salary.contributionGroup}</TableCell>
+                                                    <TableCell>{salary.hourCost}</TableCell>
+                                                    <TableCell>{salary.startDate}</TableCell>
+                                                    <TableCell>{salary.endDate || "N/A"}</TableCell>
                                                     <TableCell>
                                                         <IconButton
                                                             color="primary"
@@ -394,13 +331,13 @@ export const TechnicianDetailsView = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {assignments ? (
+                                    {assignments.length > 0 ? (
                                         assignments.map((assignment, index) => (
                                             <TableRow key={index}>
-                                                <TableCell>{assignment.Phase.dataValues.name.toString()}</TableCell>
-                                                <TableCell>{assignment.hours.toString()}</TableCell>
-                                                <TableCell>{assignment.startDate.toString()}</TableCell>
-                                                <TableCell>{assignment.endDate.toString()}</TableCell>
+                                                <TableCell>{assignment.fase}</TableCell>
+                                                <TableCell>{assignment.horas}</TableCell>
+                                                <TableCell>{assignment.fecha_inicio}</TableCell>
+                                                <TableCell>{assignment.fecha_fin}</TableCell>
                                             </TableRow>
                                         ))
                                     ) : (

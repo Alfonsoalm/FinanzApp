@@ -1,6 +1,6 @@
 import { formatData } from '../../helpers/formatData';
-import { Technicians, Headquarters } from '../models';
-
+import { Technicians, Headquarters, Assignments, Phases } from '../models';
+import { Op } from 'sequelize';
 
 export class TechnicianRepository {
   static async findByUsername(username) {
@@ -110,6 +110,76 @@ export class TechnicianRepository {
     } catch (error) {
       console.error('Error al eliminar técnico por ID:', error);
       throw new Error("Error interno al eliminar el técnico");
+    }
+  }
+
+  static async deleteSoftById(id_technician) {
+    try {
+      const technicianUpdate = await Technicians.update(
+        { is_active: false },
+        { where: { id: id_technician } }
+      );
+
+      if (technicianUpdate[0] === 0) {
+        throw new Error(`No se encontro el tecnico con id ${id_technician} o ya esta inactivo.`);
+      }
+
+      console.log(`Tecnico con id ${id_technician} desactivado.`);
+
+      // Paso 2: Eliminar asignaciones con fecha_inicio posterior a la actual
+      const currentDate = new Date();
+      const deletedAssignments = await Assignments.destroy({
+          where: {
+              technician: id_technician,
+              startDate: { [Op.gt]: currentDate },
+          },
+      });
+
+      console.log(
+          `${deletedAssignments} asignaciones eliminadas para el técnico con id ${id_technician}.`
+      );
+
+      return {
+          message: `Tecnico con id ${id_technician} desactivado y ${deletedAssignments} asignaciones eliminadas.`,
+      };
+    } catch (error) {
+        console.error('Error desactivando tecnico y eliminando asignaciones:', error.message);
+        throw new Error(
+          `Hubo un problema al desactivar el tecnico y eliminar asignaciones: ${error.message}`
+      );
+    }
+  }
+
+  static async getAssignments(id_technician) {
+    try {
+      const assignments = await Assignments.findAll({
+        where: { technician: id_technician }, // Filtrar por ID del técnico
+        include: [
+          {
+            model: Phases,
+            attributes: ['name'],  
+          }
+        ],
+        attributes: {
+          exclude: ['id_fase'], 
+        }
+      });
+
+      if (assignments) {
+        return assignments.map(assignment => {
+          const assignmentsData = assignment.dataValues;
+          if (assignmentsData.phase) {
+            assignmentsData.phase = assignmentsData.phase.name;
+            delete assignmentsData.phase;
+          }
+          console.log("techniciansData",assignmentsData);
+          return assignmentsData;
+        });
+      }; 
+
+    } catch (error) {
+      console.error('Error al obtener asignaciones del tecnico:', error);
+      throw new Error("Error interno al obtener asignaciones");
     }
   }
 }                                                                                                                                                                                                                                                                                                                 
