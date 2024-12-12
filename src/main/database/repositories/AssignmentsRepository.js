@@ -26,7 +26,7 @@ export class AssignmentsRepository {
     }
 
     static async delete(id_phase, id_technician) {
-       
+       console.log(id_technician)
         await Assignments.destroy({
             where:{
               phase: id_phase,
@@ -69,4 +69,11 @@ export class AssignmentsRepository {
       throw new Error("Error interno al obtener asignaciones");
     }
   }
+    static async insert(assignment){
+
+        await Assignments.create({
+          ...assignment,
+        })
+
+    }
 }

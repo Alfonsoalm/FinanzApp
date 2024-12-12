@@ -45,6 +45,10 @@ const api = {
   getSalariesByTechnician: (id_technician) =>
     ipcRenderer.invoke('get-salaries-technician', id_technician),
   // Assignments
+  deleteAssignment: (id_phase, id_technician) => 
+    ipcRenderer.invoke("delete-project-assignment", id_phase, id_technician),
+  addAssignment: (assignment) =>
+    ipcRenderer.invoke("add-project-assignment", assignment),
   getTechnicianAssignments: (id_technician) =>
     ipcRenderer.invoke('get-technician-assignments', id_technician),
   // Holidays

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 
 
-export const DataTable = ({initialRows=[], columns, getRowClassNameFunction = () => {}}) => {
+export const DataTable = ({initialRows=[], columns, getRowClassNameFunction = () => {}, rowModesModel={}, handleRowModesModelChange= () => {}, handleRowEditStop= () => {}, processRowUpdate= () => {}, isCellEditable=() => {return true}}) => {
 
     const theme = useTheme()
 
@@ -23,8 +23,14 @@ export const DataTable = ({initialRows=[], columns, getRowClassNameFunction = ()
                     columns={columns} 
                     getRowId={row => row.id}
                     getRowClassName={getRowClassNameFunction}
-                    pagination={false}
+                    pagination
                     rowHeight={40}
+                    editMode="row"
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={handleRowModesModelChange}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    isCellEditable={isCellEditable}
                     sx={{
                         color: theme.palette.text.tercitary,
                         width: "auto",  // Esto asegura que el DataGrid ocupe solo el ancho mínimo necesario

@@ -239,7 +239,49 @@ export const ProjectManagerProvider = ({ children }) => {
         setIsLoading(false)
       }
     };
-    
+
+    const addAssignment = async (assignment) => {
+
+      try {
+        setIsLoading(true);
+        setError(null);
+        console.log("ADD")
+        const result = await window.api.addAssignment(assignment);
+        if(result.success){
+          console.log(result)
+        }
+        else{
+          setError(result.error);
+        }
+      }catch(error){
+        setError(error);
+      }finally{
+        setIsLoading(false);
+      }
+
+    }
+
+    const deleteAssignment = async (phase_id, technician_id) => {
+
+      try {
+        setIsLoading(true);
+        setError(null);
+        console.log("DELETE")
+        const result = await window.api.deleteAssignment(phase_id, technician_id);
+        if(result.success){
+          console.log(result)
+        }
+        else{
+          setError(result.error);
+        }
+      }catch(error){
+        setError(error);
+      }finally{
+        setIsLoading(false);
+      }
+
+    }
+
     const getSalaries = async () => {
       try {
         setIsLoading(true);
@@ -257,7 +299,7 @@ export const ProjectManagerProvider = ({ children }) => {
         setIsLoading(false);
       }
     };
-
+    
     const getSalariesByTechnician = async (id) => {
       try {
         setIsLoading(true);
@@ -451,8 +493,10 @@ export const ProjectManagerProvider = ({ children }) => {
         insertProject, insertCall, getProjectDetails, 
         setTechnicians, getTechnicians, deleteTechnician, deleteSoftTechnician,
         insertTechnician, getTechnicianDetails, getAssignmentsByTechnician,
-        getSalaries,  getSalariesByTechnician, insertSalary, deleteSalary, editSalary,
-        insertWorkday, getWorkdays, insertVacation, getVacations, insertHoliday, getHolidays }}>
+        getSalaries, getSalariesByTechnician, insertSalary, deleteSalary, editSalary,
+        insertWorkday, getWorkdays, insertVacation, getVacations, insertHoliday, getHolidays,
+        deleteAssignment, addAssignment
+        }}>
         {children}
       </ProjectManagerContext.Provider>
     );
