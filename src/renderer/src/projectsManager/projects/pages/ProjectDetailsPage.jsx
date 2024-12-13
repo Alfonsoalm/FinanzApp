@@ -2,90 +2,39 @@ import AddIcon from '@mui/icons-material/Add';
 import CancelIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import { Box, Button, Card, CardContent, Divider, Grid2, Typography } from "@mui/material";
-import { GridActionsCellItem, GridDeleteIcon, GridRowEditStopReasons, GridRowModes } from "@mui/x-data-grid";
+import { Box, Button, Card, CardContent, Divider, FormControl, Grid2, MenuItem, Select, Typography } from "@mui/material";
+import { GridActionsCellItem, GridDeleteIcon, GridRowEditStopReasons, GridRowModes, GridToolbarContainer } from "@mui/x-data-grid";
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { DataTable } from "../components";
-import { ProjectManagerContext } from "../context/ProjectsManagerContext";
-
-const formatData = (data) => {
-
-    const transformedData = data.phases.map(phase => {
-        // Filtrar las asignaciones asociadas a la fase actual
-        const relatedAssignments = data.assignments.filter(assignment => assignment.phase === phase.id);
-        
-        // Obtener los nombres de los técnicos asociados a estas asignaciones
-        const techniciansNames = relatedAssignments.map(assignment => {
-            const technician = data.technicians.find(tech => tech.id === assignment.technician);
-            return technician ? " "+technician.name : null;
-        }).filter(name => name !== null);
-    
-        // Obtener las horas de las asignaciones
-        const techniciansHours = relatedAssignments.map(assignment => assignment.hours);
-
-        const techniciansIds = relatedAssignments.map(assignment => assignment.technician);
-    
-        // Devolver la fase transformada
-        return {
-            ...phase,
-            startDate: dayjs(phase.startDate).format('YYYY-MM-DD'),
-            endDate: dayjs(phase.endDate).format('YYYY-MM-DD'),
-            technicians: techniciansNames,
-            techniciansIds: techniciansIds,
-            assignmentHours: techniciansHours,
-            hours_assigned: techniciansHours.reduce((accumulator, currentValue) => accumulator + currentValue, 0),
-            isNew: false, 
-        };
-    });
-
-    return transformedData;
-
-}
+import { DataTable } from "../../components";
+import { ProjectManagerContext } from "../../context/ProjectsManagerContext";
+import { EditToolbar } from '../components/EditToolbar';
+import { formatDetailsProjects } from '../helpers/formatDetailsProjects';
 
 
-
-// function EditToolbar(props) {
-//     const { setRows, setRowModesModel } = props;
-  
-//     const handleClick = () => {
-//       const id = randomId();
-//       setRows((oldRows) => [
-//         ...oldRows,
-//         { id, name: '', age: '', role: '', isNew: true },
-//       ]);
-//       setRowModesModel((oldModel) => ({
-//         ...oldModel,
-//         [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-//       }));
-//     };
-  
-//     return (
-//       <GridToolbarContainer>
-//         <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-//           Add record
-//         </Button>
-//       </GridToolbarContainer>
-//     );
-//   }
-
-
-export const ProjectDetailsView = () => {
+export const ProjectDetailsPage = () => {
 
     const { "*": id } = useParams();
-    const {projects, getProjectDetails, deleteAssignment, addAssignment} = useContext(ProjectManagerContext)
+    const {projects, technicians, getProjectDetails, deleteAssignment, addAssignment} = useContext(ProjectManagerContext)
     const [project, setProject] = useState(null)
     const [details, setDetails] = useState([])
     const [expandedRows, setExpandedRows] = useState({});
     const [rowModesModel, setRowModesModel] = useState({});
     const [changes, setChanges] = useState([]);
-
     
+    useEffect(() => {
+        if (projects && id) {
+            const projectFound = projects.find(proj => String(proj.id) === String(id)); // Busca el proyecto por ID
+            setProject(projectFound);
+            fetchDetails();
+        }
+    }, []); 
+
     const fetchDetails = async () => {
         const data = await getProjectDetails(id)
-        const formattedData = formatData(data)
+        const formattedData = formatDetailsProjects(data)
         setDetails(formattedData)
     }
 
@@ -98,13 +47,6 @@ export const ProjectDetailsView = () => {
     }, [projects, id]); 
 
     
-    useEffect(() => {
-        if (projects && id) {
-            const projectFound = projects.find(proj => String(proj.id) === String(id)); // Busca el proyecto por ID
-            setProject(projectFound);
-            fetchDetails();
-        }
-    }, []); 
 
 
 
@@ -112,9 +54,12 @@ export const ProjectDetailsView = () => {
         const mainRow = { ...row, isMain: true }; // Identifica fila principal
         const isExpanded = expandedRows[row.id];
         // Si está expandido, genera filas secundarias para técnicos
+
         const technicianRows = isExpanded
             ? row.technicians.map((tech, index) => ({
                 id: `tech-${row.id}-${index}`,
+                index: row.id,
+                technician_id: technicians.filter(technician => technician.name === tech)[0].id,
                 technicians: tech,
                 // hours: "--",
                 hours_assigned: row.assignmentHours[index],
@@ -133,7 +78,6 @@ export const ProjectDetailsView = () => {
     };
 
     const handleAddClick = async (rowId) => {
-        
             const index = details.findIndex(item => item.id === rowId);
 
             if (index !== -1) {
@@ -158,60 +102,86 @@ export const ProjectDetailsView = () => {
     };
 
     const handleEditClick = (id) => {
-        console.log(id)
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     };
 
     const handleSaveClick = (id) => {
-        console.log("SAVE")
- 
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-        
-    
     };
 
-    const handleDeleteClick = (id) => {
-        setDetails(details.filter((row) => row.id !== id));
+    const handleDeleteClick = (deletedRow) => {
+
+        if (!deletedRow.isMain){
+
+            const index = details.findIndex(item => item.id === deletedRow.index);
+
+            if (index === -1) return
+
+            const newData = JSON.parse(JSON.stringify(details[index]))
+
+                
+            if(deletedRow.technician_id >= newData.technicians.length ) return
+            
+            newData.technicians.splice(deletedRow.technician_id, 1);
+            newData.techniciansIds.splice(deletedRow.technician_id, 1);
+            newData.assignmentHours.splice(deletedRow.technician_id, 1);
+
+            const newChange = {
+                type:"assignment",
+                action:"delete",
+                prevData: details[index],
+                newData: newData,
+            }
+
+            setChanges([...changes, newChange])
+
+            setDetails(details.map((row) => (row.id === deletedRow.index ? newData : row)));
+
+            
+        
+        }else{
+
+            const deteledDetails = details.filter((row) => row.id === deletedRow.index)
+            setDetails(details.filter((row) => row.id !== deletedRow.index));
+    
+            const newChange = {
+                type:"phase",
+                action:"delete",
+                prevData: deteledDetails,
+                newData: {},
+            }
+    
+            setChanges([...changes, newChange])
+
+        }
       };
 
-    const handleCancelClick = (id) => {
-        console.log(id)
-        console.log(details)
+    const handleCancelClick = (cancelRow) => {
         setRowModesModel({
           ...rowModesModel,
           [id]: { mode: GridRowModes.View, ignoreModifications: true },
         });
     
-        const editedRow = details.find((row) => row.id === id);
-        console.log(editedRow)
+        const editedRow = details.find((row) => row.id === cancelRow.index);
         if (editedRow.isNew) {
-          setDetails(details.filter((row) => row.id !== id));
+          setDetails(details.filter((row) => row.id !== cancelRow.index));
         }
     };
 
     const processRowUpdate = (newRow) => {
-        console.log("PROCESS")
-        console.log(newRow)
+        
         let updatedRow
-
         if (!newRow.isMain){
-            const parts =newRow.id.split("-");
+           
+            const index = details.findIndex(item => item.id === newRow.index);
 
-            const indexPhase = parts[1]; 
-            const indexTech = parts[2];
-            console.log(indexPhase)
-            const index = details.findIndex(item => String(item.id) === indexPhase);
-
-            console.log(index)
             if (index === -1) return
 
             const newData = JSON.parse(JSON.stringify(details[index]))
-
-            console.log(newData)
                 
-            if(newData.technicians[indexTech] === newRow.technicians ){
+            if(newData.technicians[newRow.technician_id] === newRow.technicians ){
             
-                newData.assignmentHours[indexTech] = Number(newRow.hours_assigned)
+                newData.assignmentHours[newRow.technician_id] = Number(newRow.hours_assigned)
 
                 const newChange = {
                     type:"assignment",
@@ -220,19 +190,16 @@ export const ProjectDetailsView = () => {
                     newData: newData,
                 }
 
-                console.log("newChange")
-
-                console.log(newChange)
-
                 setChanges([...changes, newChange])
 
             }else{
 
-                newData.technicians[indexTech] = newRow.technicians
-                newData.assignmentHours[indexTech] = Number(newRow.hours_assigned)
+                newData.technicians[newRow.technician_id] = newRow.technicians
+                newData.assignmentHours[newRow.technician_id] = Number(newRow.hours_assigned)
                 
                 const newChange = {
                     type:"assignment",
+                    action:"edit",
                     prevData: details[index],
                     newData: newData,
                 }
@@ -245,7 +212,7 @@ export const ProjectDetailsView = () => {
                 
         }else{
 
-            const index = details.findIndex(item => item.id === newRow.id);
+            const index = details.findIndex(item => item.id === newRow.index);
         
             if(index === -1) return
 
@@ -267,7 +234,7 @@ export const ProjectDetailsView = () => {
         }
         
         updatedRow = { ...newRow, isNew: false };
-        setDetails(details.map((row) => (row.id === newRow.id ? updatedRow : row)));
+        setDetails(details.map((row) => (row.id === newRow.index ? updatedRow : row)));
          
         return updatedRow;
     };
@@ -289,56 +256,56 @@ export const ProjectDetailsView = () => {
             switch(field){
                 case "name": return false
                 case "hours": return false
+                case "startDate": return false
+                case "endDate": return false
 
                 default: return true
             }
         }
     }
     
-    console.log(details)
-    console.log(changes)
+    const selectOptions = (params) => {
 
-    // const handleDeleteClick =  async (row) => {
+        const index = details.findIndex(item => item.id === params.row.index);
+        if (index === -1) return [];
+    
+        // Filtrando los técnicos ya asignados a esta fase
+        const technicians_assigned = details[index].technicians.map(technician => technician.trim());
+        
+        // Filtrando los técnicos disponibles que aún no están asignados
+        const filteredTechnicians = technicians
+            .filter(technician => !technicians_assigned.includes(technician.name.trim()))
+            .map(technician => ({
+                id: technician.id,
+                name: technician.name,
+            }));
+   
+        return filteredTechnicians;
+    };
 
-    //         console.log(row)
-    //         const isMain = row.isMain
+    const handleSelectChange = (event, rowId) => {
+        // const selectedTechnicianId = event.target.value;
+        // const updatedDetails = details.map(row => {
+        //     if (row.id === rowId) {
+        //         const updatedTechnicians = [...row.techniciansIds, selectedTechnicianId];
+        //         row.techniciansIds = updatedTechnicians;
+        //         // Si tienes otro estado para manejar las horas, también las agregarías aquí
+        //     }
+        //     return row;
+        // });
+        // setDetails(updatedDetails);
+    };
 
-    //         if(isMain){
-    //             console.log(row.id)
-    //             console.log(details)
-    //             const index = details.findIndex(item => item.id === row.id);
-    //             console.log(index)
-    //             if(index >= 0){
-    //                 const newDetails = details.filter(item => item.id !== row.id);
-    //                 setDetails(newDetails)
-    //             }
-
-    //         }else{
-    //             const parts = row.id.split("-");
-
-    //             const indexPhase = parts[1]; 
-    //             const indexTech = parts[2]; 
-       
-    //             const index = details.findIndex(item => String(item.id) === indexPhase);
-
-
-    //             if(index>=0){
-    //                 console.log(details[index])
-    //                 await deleteAssignment(indexPhase, details[index].techniciansIds[indexTech])
-    //                 fetchDetails()
-    //             }
-            
-    //         }
-    //     }
-
-    const columns =/*useMemo(() =>*/ [
+    const columns = [
         { field: 'name', headerName: 'Nombre', width: 300, editable:true},
         {   editable: true,
             field: 'technicians', 
             headerName: 'Técnicos', 
             width: 200, 
             renderCell: (params) => {
+
                 const isMain = params.row.isMain;
+             
                 return isMain ? (
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Button
@@ -347,10 +314,24 @@ export const ProjectDetailsView = () => {
                     >
                       {expandedRows[params.row.id] ? "▼" : "►"}
                     </Button>
-                    {params.value.join(", ")}
+                    {"Ver Técnicos"}
                   </Box>
                 ) : (
-                  params.value
+                    <FormControl fullWidth>
+                        <Select
+                            value={params.row.technician_id}
+                            onChange={(event) => handleSelectChange(event, params.row.id)}
+                        >
+                               <MenuItem key={params.row.technician_id} value={params.row.technician_id}>
+                                 {params.row.technicians}
+                                </MenuItem>
+                            {selectOptions(params).map((technician) => (
+                                <MenuItem key={technician.id} value={technician.id}>
+                                    {technician.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 );
             },
         },
@@ -391,7 +372,7 @@ export const ProjectDetailsView = () => {
                           key="delete"
                           icon={<GridDeleteIcon />}
                           label="Borrar"
-                          onClick={() => {handleDeleteClick(params.row.id)}}
+                          onClick={() => {handleDeleteClick(params.row)}}
                         />,
                       ];
                   
@@ -421,7 +402,7 @@ export const ProjectDetailsView = () => {
                           key="cancel"
                           icon={<CancelIcon />}
                           label="Cancelar"
-                          onClick={() => {handleCancelClick(params.row.id)}}
+                          onClick={() => {handleCancelClick(params.row)}}
                         />,
                       ];
                   
@@ -474,6 +455,8 @@ export const ProjectDetailsView = () => {
                             handleRowModesModelChange={handleRowModesModelChange}
                             processRowUpdate={processRowUpdate}
                             isCellEditable={isCellEditable}
+                            toolbar={EditToolbar}
+                            toolbarProps={{setDetails, setChanges, id}}
                             />
                     </Box>
                 </Card>

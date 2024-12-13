@@ -1,9 +1,9 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Button, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { CallForm, ProjectForm } from "../components";
+import { CallForm, ProjectForm } from "../../components";
 
-export const AddProjectView = () => {
+export const AddProjectPage = () => {
     
     const navigate = useNavigate()
 

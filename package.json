@@ -31,7 +31,7 @@
     "@mui/x-date-pickers-pro": "^7.23.1",
     "boxicons": "^2.1.4",
     "crypto-js": "^4.2.0",
-    "date-fns": "^2.29.3",
+    "date-fns": "^2.30.0",
     "dayjs": "^1.11.13",
     "electron-updater": "^6.1.7",
     "mysql2": "^3.11.4",

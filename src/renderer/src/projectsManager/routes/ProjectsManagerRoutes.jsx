@@ -1,7 +1,8 @@
-import { useEffect } from "react"
+import { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { AreaPage, ProjectsPage, TechniciansPage } from "../pages";
 import { ProjectManagerProvider } from "../context/ProjectsManagerContext";
+import { AreaPage, TechniciansPage } from "../pages";
+import { ProjectsRoutes } from "../projects/routes/ProjectsRoutes";
 
 
 export const ProjectsManagerRoutes = () => {
@@ -14,7 +15,7 @@ export const ProjectsManagerRoutes = () => {
   return (
     <ProjectManagerProvider>
       <Routes>
-          <Route path="projects/*" element={<ProjectsPage />} />
+          <Route path="projects/*" element={<ProjectsRoutes />} />
           <Route path="technicians/*" element={<TechniciansPage />} />
           <Route path="area/*" element={<AreaPage />} />
 

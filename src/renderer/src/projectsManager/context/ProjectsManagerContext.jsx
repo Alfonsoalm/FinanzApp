@@ -98,7 +98,8 @@ export const ProjectManagerProvider = ({ children }) => {
             const result = await window.api.deleteProject(id_project)
 
             if(result.success){
-              getProjects()
+              console.log("delete")
+              // getProjects()
             }
             else{
               setError(result.error)
