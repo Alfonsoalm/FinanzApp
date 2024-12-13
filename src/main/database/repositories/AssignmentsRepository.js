@@ -26,7 +26,6 @@ export class AssignmentsRepository {
     }
 
     static async delete(id_phase, id_technician) {
-       console.log(id_technician)
         await Assignments.destroy({
             where:{
               phase: id_phase,
@@ -59,7 +58,6 @@ export class AssignmentsRepository {
             assignmentsData.phase = assignmentsData.phase.name;
             delete assignmentsData.phase;
           }
-          console.log("techniciansData",assignmentsData);
           return assignmentsData;
         });
       }; 

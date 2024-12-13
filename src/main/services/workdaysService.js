@@ -14,7 +14,6 @@ async function getWorkdays() {
 }
 
 async function insertWorkday(workday) {
-
   try{
       await WorkDaysRepository.insert(workday)
       return {success: true};
@@ -33,6 +32,17 @@ async function deleteWorkday(id_workday) {
   }catch(error){
     console.error('Error in deleteWorkday:', error); 
     return {success: false, error: "Error al borrar la jornada laboral"}
+  }
+}
+
+async function getWorkdaysByTechnician(id_technician) {
+  try{
+    const workdays = await WorkDaysRepository.findByTechnicianId(id_technician)
+   
+    return {success: true, data: workdays};
+  }catch(error){
+    console.error('Error in getWorkdaysByTechnician:', error); 
+    return {success: false, error: "Error al obtener jornadas laborales del tecnico"}
   }
 }
 
@@ -63,4 +73,13 @@ export function handleWorkdays(ipcMain) {
         return { success: false, error: "No se pudo eliminar la jornada laboral" };
       }
     });
+
+    ipcMain.handle('get-workdays-technician', async (event, id_technician) => {
+      try {
+          return await getWorkdaysByTechnician(id_technician); 
+      } catch (error) {
+          console.error('Error in getWorkdaysByTechnician:', error); 
+          return { success: false, error: "No se pudo obtener las jornadas laborales del tecnico" };
+      }
+  });
 }

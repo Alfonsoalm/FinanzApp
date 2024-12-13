@@ -45,7 +45,7 @@ export const WorkDays = sequelize.define('WorkDays', {
         field: "hora_entrada",
     },
     endHour: {
-        type: DataTypes.DATE,
+        type: DataTypes.TIME,
         allowNull: true,
         field: "hora_salida",
     },

@@ -62,7 +62,7 @@ export const ProjectForm = ({closeView}) => {
     const formatDates = (event, name) => {
 
         const date = event.format('YYYY-MM-DD')
-        
+        console.log("event: ", event)
         onInputChange({
             target:{
                 name,

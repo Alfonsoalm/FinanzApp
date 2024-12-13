@@ -2,11 +2,11 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import {handleCalls, handleProjects, handleSalaries, handleTechnicians } from './services'
-import icon from '../../resources/icon.png?asset'
 import { handleHeadquarters } from './services/headquartersService'
 import { handleWorkdays } from './services/workdaysService'
 import { handleHolidays } from './services/holidaysService'
 import { handleVacations } from './services/vacationService'
+import icon from '../../resources/icon.png?asset'
 
 console.log(__dirname)
 function createWindow() {

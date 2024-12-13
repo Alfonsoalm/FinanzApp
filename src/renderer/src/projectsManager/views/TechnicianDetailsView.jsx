@@ -61,7 +61,6 @@ export const TechnicianDetailsView = () => {
 
     const fetchAssignments = async () => {
         const assignments = await getAssignmentsByTechnician(id);
-        console.log("assignments",assignments);
         setAssignments(assignments);
     };
 
@@ -190,22 +189,22 @@ export const TechnicianDetailsView = () => {
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
                         <Grid2 container spacing={2}>
-                            <Grid2 item xs={12} sm={6}>
+                            <Grid2  xs={12} sm={6}>
                                 <Typography>
                                     <strong>Puesto:</strong> {details.role}
                                 </Typography>
                             </Grid2>
-                            <Grid2 item xs={12} sm={6}>
+                            <Grid2  xs={12} sm={6}>
                                 <Typography>
                                     <strong>Sede:</strong> {details.headquarter}
                                 </Typography>
                             </Grid2>
-                            <Grid2 item xs={12} sm={6}>
+                            <Grid2  xs={12} sm={6}>
                                 <Typography>
                                     <strong>Fecha de Incorporación:</strong> {new Date(details.join_date).toLocaleDateString()}
                                 </Typography>
                             </Grid2>
-                            <Grid2 item xs={12} sm={6}>
+                            <Grid2  xs={12} sm={6}>
                                 <Typography>
                                     <strong>DNI:</strong> {details.nationalId}
                                 </Typography>
@@ -359,7 +358,7 @@ export const TechnicianDetailsView = () => {
                                 Agregar Salario
                             </Typography>
                             <Grid2 container spacing={2}>
-                                <Grid2 item xs={12} sm={3}>
+                                <Grid2  xs={12} sm={3}>
                                     <TextField
                                         label="Grupo Cotización"
                                         name="contributionGroup"
@@ -368,7 +367,7 @@ export const TechnicianDetailsView = () => {
                                         fullWidth
                                     />
                                 </Grid2>
-                                <Grid2 item xs={12} sm={3}>
+                                <Grid2  xs={12} sm={3}>
                                     <TextField
                                         label="Coste Hora (€)"
                                         name="hourCost"
@@ -378,7 +377,7 @@ export const TechnicianDetailsView = () => {
                                         fullWidth
                                     />
                                 </Grid2>
-                                <Grid2 item xs={12} sm={3}>
+                                <Grid2  xs={12} sm={3}>
                                     <TextField
                                         label="Fecha Inicio"
                                         name="startDate"
@@ -389,7 +388,7 @@ export const TechnicianDetailsView = () => {
                                         fullWidth
                                     />
                                 </Grid2>
-                                <Grid2 item xs={12} sm={3}>
+                                <Grid2  xs={12} sm={3}>
                                     <TextField
                                         label="Fecha Fin"
                                         name="endDate"
@@ -400,7 +399,7 @@ export const TechnicianDetailsView = () => {
                                         fullWidth
                                     />
                                 </Grid2>
-                                <Grid2 item xs={12}>
+                                <Grid2  xs={12}>
                                     <Button variant="contained" color="primary" onClick={handleSaveSalary}>
                                         Guardar Salario
                                     </Button>

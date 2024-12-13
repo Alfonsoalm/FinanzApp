@@ -51,7 +51,6 @@ export class TechnicianRepository {
           techniciansData.headquarter = techniciansData.Headquarter.name; // Extraemos el nombre de la sede
           delete techniciansData.Headquarter; // Eliminamos el objeto Headquarter 
         }
-        console.log("techniciansData",techniciansData);
         return techniciansData;
       });
     
@@ -84,7 +83,6 @@ export class TechnicianRepository {
 
       if (technician) {
           const technicianData = technician.dataValues;
-          // console.log("technicianData",technicianData);
           if (technicianData.Headquarter) {
             technicianData.headquarter = technicianData.Headquarter.name; // Extraemos el nombre de la sede
             delete technicianData.Headquarter; // Eliminamos el objeto Headquarter 

@@ -26,7 +26,7 @@ async function deleteSalary(id_salary) {
     return {success: true};
   }catch(error){
     console.error('Error in deleteSalary:', error); 
-    return {success: false, error: "Error al borrar el proyecto"}
+    return {success: false, error: "Error al borrar salario del tecnico"}
   }
 }
 
@@ -36,19 +36,17 @@ async function editSalary(salary) {
     return {success: true};
   }catch(error){
     console.error('Error in editSalary:', error); 
-    return {success: false, error: "Error al borrar el proyecto"}
+    return {success: false, error: "Error al editar salario del tecnico"}
   }
 }
 
 async function getSalariesByTechnician(id_technician) {
   try{
     const salaries = await SalariesRepository.findByTechnicianId(id_technician)
-    console.log("salarios getsalaries",salaries);
-   
     return {success: true, data: salaries};
   }catch(error){
     console.error('Error in getSalariesByTechnician:', error); 
-    return {success: false, error: "Error al borrar el proyecto"}
+    return {success: false, error: "Error al obtener salario del tecnico"}
   }
 }
 
@@ -58,7 +56,7 @@ export function handleSalaries(ipcMain) {
         return await getSalaries(); 
       } catch (error) {
         console.error('Error in getSalaries:', error); 
-        return { success: false, error: "No se pudo cargar los proyectos" };
+        return { success: false, error: "No se pudo cargar los salarios" };
       }
     });
 
@@ -67,7 +65,7 @@ export function handleSalaries(ipcMain) {
         return await insertSalary(salary); 
       } catch (error) {
         console.error('Error in insertSalary:', error); 
-        return { success: false, error: "No se pudo añadir el nuevo proyecto" };
+        return { success: false, error: "No se pudo añadir el nuevo salario" };
       }
     });
 
@@ -76,7 +74,7 @@ export function handleSalaries(ipcMain) {
         return await deleteSalary(id_project); 
       } catch (error) {
         console.error('Error in deleteSalary:', error); 
-        return { success: false, error: "No se pudo eliminar el proyecto" };
+        return { success: false, error: "No se pudo eliminar el salario" };
       }
     });
 
