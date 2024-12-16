@@ -71,11 +71,9 @@ async function deleteSoftTechnician(id_technician) {
 async function getTechnicianDetails(id_technician) {
   try {
     // Obtiene los datos del tecnico
-    console.log("getTechnicianDetails");
     const technician = await TechnicianRepository.findById(id_technician);
     
     if (technician) {
-      console.log("technician",technician);
       return { success: true, data: technician }; // Éxito: devolver los datos del técnico
     }
     return { success: false, error: 'Técnico no encontrado' };
@@ -88,11 +86,10 @@ async function getTechnicianDetails(id_technician) {
 async function getTechnicianAssignments(id_technician) {
   try {
     // Obtiene los datos del tecnico
-    console.log("getAssignments");
+
     const assignments = await AssignmentsRepository.getAssignments(id_technician);
     
     if (assignments) {
-      console.log("assignments",assignments);
       return { success: true, data: assignments }; // Éxito: devolver los datos del técnico
     }
     return { success: false, error: 'Asignaciones no encontradas' };

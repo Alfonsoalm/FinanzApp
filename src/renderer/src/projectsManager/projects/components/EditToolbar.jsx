@@ -2,14 +2,16 @@ import { Button } from "@mui/material";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import AddIcon from '@mui/icons-material/Add';
 
-export const EditToolbar = ({setDetails, setChanges, id_project}) => {
+export const EditToolbar = (props) => {
+
+    const {setData, setChanges, id} = props
     
     const handleClick = () => {  
         const id = Date.now();
         const newPhase = {
             id,
             name: '',
-            project: id_project, 
+            project: id, 
             hours:0, 
             startDate:Date.now(), 
             endDate:Date.now(), 
@@ -20,7 +22,7 @@ export const EditToolbar = ({setDetails, setChanges, id_project}) => {
             isNew: true 
         }
 
-        setDetails((oldRows) => [
+        setData((oldRows) => [
             ...oldRows,
             newPhase,
         ]);

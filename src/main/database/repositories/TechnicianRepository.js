@@ -51,7 +51,6 @@ export class TechnicianRepository {
           techniciansData.headquarter = techniciansData.Headquarter.name; // Extraemos el nombre de la sede
           delete techniciansData.Headquarter; // Eliminamos el objeto Headquarter 
         }
-        console.log("techniciansData",techniciansData);
         return techniciansData;
       });
     
@@ -127,8 +126,6 @@ export class TechnicianRepository {
         throw new Error(`No se encontro el tecnico con id ${id_technician} o ya esta inactivo.`);
       }
 
-      console.log(`Tecnico con id ${id_technician} desactivado.`);
-
       // Paso 2: Eliminar asignaciones con fecha_inicio posterior a la actual
       const currentDate = new Date();
       const deletedAssignments = await Assignments.destroy({
@@ -137,10 +134,6 @@ export class TechnicianRepository {
               startDate: { [Op.gt]: currentDate },
           },
       });
-
-      console.log(
-          `${deletedAssignments} asignaciones eliminadas para el técnico con id ${id_technician}.`
-      );
 
       return {
           message: `Tecnico con id ${id_technician} desactivado y ${deletedAssignments} asignaciones eliminadas.`,
