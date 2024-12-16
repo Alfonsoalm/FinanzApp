@@ -135,7 +135,6 @@ export const ProjectManagerProvider = ({ children }) => {
         setIsLoading(true)
         setError(null)
         const result = await window.api.getProjectDetails(id_project)
-        console.log(result)
 
         if(result.success){
           return result.data;
@@ -391,10 +390,25 @@ export const ProjectManagerProvider = ({ children }) => {
   }
 
   const insertWorkday = async (workday) => {
-    console.log(workday);
     try {
       setError(null);
       const result = await window.api.insertWorkday(workday);
+
+      if(result.success){
+        getWorkdays();
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+        setError(error);
+    }
+  };
+
+  const deleteWorkday = async (workday) => {
+    try {
+      setError(null);
+      const result = await window.api.deleteWorkday(workday);
 
       if(result.success){
         getWorkdays();
@@ -422,11 +436,43 @@ export const ProjectManagerProvider = ({ children }) => {
     }
   };
 
+  const getWorkdaysByTechnician = async (id) => {
+    try {
+      setError(null);
+      const result = await window.api.getWorkdaysByTechnician(id);
+      if(result.success){
+        return result.data;
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+      setError(error);
+    }
+  };
+
   const insertVacation = async (vacation) => {
     console.log(vacation);
     try {
       setError(null);
       const result = await window.api.insertVacation(vacation);
+
+      if(result.success){
+        getVacations();
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+        setError(error);
+    }
+  };
+
+  
+  const deleteVacation = async (vacation_id) => {
+    try {
+      setError(null);
+      const result = await window.api.deleteVacation(vacation_id);
 
       if(result.success){
         getVacations();
@@ -445,6 +491,21 @@ export const ProjectManagerProvider = ({ children }) => {
       const result = await window.api.getVacations();
       if(result.success){
         setVacations(result.data);
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+      setError(error);
+    }
+  };
+
+  const getVacationsByTechnician = async (id) => {
+    try {
+      setError(null);
+      const result = await window.api.getVacationsByTechnician(id);
+      if(result.success){
+        return result.data;
       }
       else{
         setError(result.error);
@@ -495,8 +556,8 @@ export const ProjectManagerProvider = ({ children }) => {
         setTechnicians, getTechnicians, deleteTechnician, deleteSoftTechnician,
         insertTechnician, getTechnicianDetails, getAssignmentsByTechnician,
         getSalaries, getSalariesByTechnician, insertSalary, deleteSalary, editSalary,
-        insertWorkday, getWorkdays, insertVacation, getVacations, insertHoliday, getHolidays,
-        deleteAssignment, addAssignment
+        insertWorkday, deleteWorkday, getWorkdays, getWorkdaysByTechnician, insertVacation, getVacations, getVacationsByTechnician,
+        insertHoliday, deleteVacation, getHolidays, deleteAssignment, addAssignment
         }}>
         {children}
       </ProjectManagerContext.Provider>

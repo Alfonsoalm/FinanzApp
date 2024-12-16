@@ -8,7 +8,6 @@ export class WorkDaysRepository {
         if (workdays) {
         return workdays.map(workday => {
             const workdayData = workday.dataValues;
-            console.log("workdayData: ",workdayData);
             return workdayData;
         });
         }
@@ -29,5 +28,24 @@ export class WorkDaysRepository {
             id: id_workday
             }
         })
+    }
+
+    static async findByTechnicianId(id_technician){
+        try {
+            const workdays = await WorkDays.findAll({
+            where: { technician: id_technician}, // Filtrar por ID del técnico
+            });
+
+            if (workdays) {
+                const workdayData = workdays.map(workday => {
+                const workdayData = workday.dataValues;
+                return workdayData;
+            });
+            return workdayData
+            }
+        } catch (error) {
+            console.error('Error al obtener vacaciones del tecnico:', error);
+            throw error; 
+        }
     }
 }                                                                                                                                                                                                                                                                                                                 

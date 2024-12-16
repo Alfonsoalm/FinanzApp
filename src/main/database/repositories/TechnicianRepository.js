@@ -83,7 +83,6 @@ export class TechnicianRepository {
 
       if (technician) {
           const technicianData = technician.dataValues;
-          // console.log("technicianData",technicianData);
           if (technicianData.Headquarter) {
             technicianData.headquarter = technicianData.Headquarter.name; // Extraemos el nombre de la sede
             delete technicianData.Headquarter; // Eliminamos el objeto Headquarter 

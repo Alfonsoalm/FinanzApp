@@ -8,7 +8,7 @@ export const Vacation = sequelize.define('Vacation', {
     allowNull: false,
     autoIncrement:true,
     primaryKey: true,
-    field: "id_vacation",
+    field: "id_vacaciones_tecnicos",
   },
   technician: {
     type: DataTypes.INTEGER,

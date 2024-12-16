@@ -1,27 +1,49 @@
-import { useContext, useState } from "react";
 import {
   Box,
-  Typography,
+  Button,
   Card,
   CardContent,
   Divider,
-  Button,
   TextField,
-  Grid2,
+  Typography,
 } from "@mui/material";
-import { DateCalendar, DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { useContext, useEffect, useState } from "react";
 import { ProjectManagerContext } from "../context/ProjectsManagerContext";
 
 export const VacationView = () => {
-  const { id, insertVacation, getVacations, getHolidays, vacations, holidays } = useContext(ProjectManagerContext);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date());
+  const {
+    id,
+    insertVacation,
+    getVacationsByTechnician,
+    getVacations,
+    getHolidays,
+    holidays,
+    deleteVacation,
+  } = useContext(ProjectManagerContext);
+
+  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [vacations, setVacations] = useState([]);
+  const [numberVac, setNumberVac] = useState(0);
+  const [currentDate, setCurrentDate] = useState(dayjs());
+
+  useEffect(() => {
+    const fetchVacations = async () => {
+      try {
+        const technicianId = id || 1; // Replace with the actual technician ID
+        const data = await getVacationsByTechnician(technicianId);
+        setVacations(data);
+        setNumberVac(data.length);
+      } catch (error) {
+        console.error("Error fetching vacations:", error);
+      }
+    };
+    fetchVacations();
+  }, [getVacationsByTechnician, id]);
 
   const totalVacationDays = 30;
-  const usedVacationDays = vacations?.length || 0;
+  const usedVacationDays = numberVac || 0;
   const remainingVacationDays = totalVacationDays - usedVacationDays;
 
   const handleVacationRequest = async () => {
@@ -31,53 +53,117 @@ export const VacationView = () => {
     }
 
     const vacation = {
-      technician:id, // ID del técnico
-      date: selectedDate, // Fecha seleccionada
-      status: "pendiente", // Estado inicial
+      technician: id,
+      date: selectedDate.format("YYYY-MM-DD"),
+      status: "pendiente",
     };
-    await insertVacation(vacation); // Llama a la función del contexto para insertar la vacación
-    alert("Vacación solicitada con éxito.");
-    getVacations(); // Refresca la lista de vacaciones
-    getHolidays();
+
+    try {
+      await insertVacation(vacation);
+      alert("Vacación solicitada con éxito.");
+      getVacations();
+      getHolidays();
+    } catch (error) {
+      console.error("Error al solicitar la vacación:", error);
+      alert("Hubo un problema al solicitar la vacación. Inténtalo de nuevo.");
+    }
   };
 
-  const renderDayContent = (day) => {
-    const formattedDay = day.toISOString().split("T")[0];
-    if (holidays.includes(formattedDay)) {
-      return (
-        <Box
-          sx={{
-            backgroundColor: "red",
-            color: "white",
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {day.getDate()}
-        </Box>
-      );
+  const isHoliday = (date) => holidays.includes(date.format("YYYY-MM-DD"));
+  const isVacation = (date) =>
+    vacations.some((vacation) => vacation.date === date.format("YYYY-MM-DD"));
+
+  const handlePreviousMonth = () => {
+    setCurrentDate(currentDate.subtract(1, "month"));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(currentDate.add(1, "month"));
+  };
+
+  const handleYearChange = (newYear) => {
+    if (newYear) {
+      setCurrentDate(currentDate.year(newYear.year()));
     }
-    if (vacations.some((workDay) => workDay.date === formattedDay)) {
-      return (
-        <Box
-          sx={{
-            backgroundColor: "blue",
-            color: "white",
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {day.getDate()}
-        </Box>
-      );
+  };
+
+  const handleMonthChange = (newMonth) => {
+    if (newMonth) {
+      setCurrentDate(currentDate.month(newMonth.month()));
     }
-    return <span>{day.getDate()}</span>;
+  };
+
+  const renderCustomCalendar = () => {
+    const daysInMonth = currentDate.daysInMonth();
+    const days = Array.from({ length: daysInMonth }, (_, i) =>
+      currentDate.date(i + 1)
+    );
+
+    const firstDayOfWeek = currentDate.startOf("month").day();
+    const emptyDays = Array.from({ length: firstDayOfWeek }, () => null);
+
+    return (
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, 1fr)",
+          gap: "10px",
+          padding: "10px",
+          backgroundColor: "#f5f5f5",
+          borderRadius: "8px",
+        }}
+      >
+        {/* Headers for Days of the Week */}
+        {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map((day) => (
+          <Typography
+            key={day}
+            sx={{
+              textAlign: "center",
+              fontWeight: "bold",
+              paddingBottom: "10px",
+            }}
+          >
+            {day}
+          </Typography>
+        ))}
+        {/* Empty Slots for Days Before the First of the Month */}
+        {emptyDays.map((_, index) => (
+          <Box key={`empty-${index}`} />
+        ))}
+        {/* Days in the Month */}
+        {days.map((day) => (
+          <Box
+            key={day.format("YYYY-MM-DD")}
+            onClick={() => setSelectedDate(day)}
+            sx={{
+              padding: "20px",
+              textAlign: "center",
+              borderRadius: "4px",
+              cursor: "pointer",
+              border:
+              selectedDate.format("YYYY-MM-DD") === day.format("YYYY-MM-DD")
+                ? "2px solid red"
+                : "2px solid transparent",
+              backgroundColor: isHoliday(day)
+                ? "red"
+                : isVacation(day)
+                ? "blue"
+                : "#fff",
+              color: isHoliday(day) || isVacation(day) ? "#fff" : "#000",
+              "&:hover": {
+                backgroundColor: isHoliday(day)
+                  ? "darkred"
+                  : isVacation(day)
+                  ? "darkblue"
+                  : "#ddd",
+              },
+            }}
+          >
+            {day.date()}
+          </Box>
+        ))}
+      </Box>
+    );
   };
 
   return (
@@ -89,7 +175,6 @@ export const VacationView = () => {
         backgroundColor: "#f9f9f9",
       }}
     >
-      {/* Column for Calendar */}
       <Box
         sx={{
           flex: 7,
@@ -100,58 +185,69 @@ export const VacationView = () => {
           borderRight: "1px solid #ddd",
         }}
       >
-        <Card sx={{ height: "100%", padding: 2 }}>
+        <Card sx={{ height: "80%", padding: 2 }}>
           <CardContent>
-            {/* Vacation Numbers */}
-            <Grid2 container spacing={2} sx={{ mb: 3 }}>
-              <Grid2 item xs={4}>
-                <Typography variant="h6" align="center">
-                  Total: {totalVacationDays} días
-                </Typography>
-              </Grid2>
-              <Grid2 item xs={4}>
-                <Typography variant="h6" align="center">
-                  Tomados: {usedVacationDays} días
-                </Typography>
-              </Grid2>
-              <Grid2 item xs={4}>
-                <Typography variant="h6" align="center">
-                  Restantes: {remainingVacationDays} días
-                </Typography>
-              </Grid2>
-            </Grid2>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-around",
+                marginBottom: 3,
+              }}
+            >
+              <Typography variant="h6">Total: {totalVacationDays} días</Typography>
+              <Typography variant="h6">Tomados: {usedVacationDays} días</Typography>
+              <Typography variant="h6">
+                Restantes: {remainingVacationDays} días
+              </Typography>
+            </Box>
 
             <Divider sx={{ mb: 3 }} />
 
-            {/* Year and Month Selection */}
+            {/* Year and Month Pickers */}
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
+                alignItems: "center",
                 mb: 3,
               }}
             >
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  views={["year"]}
-                  label="Año"
-                  value={new Date(year, 0)}
-                  onChange={(newValue) => setYear(newValue.getFullYear())}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  views={["month"]}
-                  label="Mes"
-                  value={month}
-                  onChange={(newValue) => setMonth(newValue)}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
+              <DatePicker
+                views={["year"]}
+                label="Año"
+                value={currentDate}
+                onChange={handleYearChange}
+                renderInput={(params) => <TextField {...params} />}
+              />
+              <DatePicker
+                views={["month"]}
+                label="Mes"
+                value={currentDate}
+                onChange={handleMonthChange}
+                renderInput={(params) => <TextField {...params} />}
+              />
             </Box>
 
-            {/* Calendar */}
+            {/* Month Navigation */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 3,
+              }}
+            >
+              <Button variant="outlined" onClick={handlePreviousMonth}>
+                Anterior
+              </Button>
+              <Typography variant="h6">
+                {currentDate.format("MMMM YYYY")}
+              </Typography>
+              <Button variant="outlined" onClick={handleNextMonth}>
+                Siguiente
+              </Button>
+            </Box>
+
             <Box
               sx={{
                 flexGrow: 1,
@@ -160,54 +256,16 @@ export const VacationView = () => {
                 backgroundColor: "#f5f5f5",
                 display: "flex",
                 justifyContent: "center",
-                alignItems: "center",
-                height: "calc(100vh - 300px)",
+                alignItems: "flex-start",
+                height: "500px",
               }}
             >
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DateCalendar
-                value={selectedDate}
-                onChange={(newValue) =>
-                  setSelectedDate(newValue?.toISOString().split("T")[0])
-                }
-                renderDay={renderDayContent}
-                sx={{
-                  width: "600px", // Aumenta el ancho
-                  maxHeight: "600px", // Aumenta la altura máxima
-                  height: "auto", // Ajusta automáticamente si es necesario
-                  overflow: "visible", // Quita el overflow si es necesario
-                  "& .MuiDateCalendar-root": {
-                    width: "100%",
-                    height: "100%",
-                  },
-                  "& .MuiPickersCalendarHeader-root": {
-                    fontSize: "1.5rem",
-                  },
-                  "& .MuiDayCalendar-root": {
-                    height: "100%",
-                  },
-                  "& .MuiPickersDay-root": {
-                    width: "80px", // Ajusta el tamaño de los días
-                    height: "80px",
-                    fontSize: "1.2rem",
-                  },
-                  "& .MuiPickersSlideTransition-root": {
-                    overflowX: "visible", // Sobrescribe el overflow-x
-                  },
-                  "& .MuiPickersSlideTransition-root > *": {
-                    position: "absolute", // Sobrescribe position
-                    top: "0px", // Cambiar la posición
-                    left: "10px", // Ajustar según tus necesidades
-                  },
-                }}
-              />
-            </LocalizationProvider>
+              {renderCustomCalendar()}
             </Box>
           </CardContent>
         </Card>
       </Box>
 
-      {/* Sidebar for Vacation Request Form */}
       <Box
         sx={{
           flex: 3,
@@ -215,20 +273,24 @@ export const VacationView = () => {
           flexDirection: "column",
           padding: 3,
           backgroundColor: "#ffffff",
+          width: "600px",
+          height: "auto",
+          overflow: "visible",
         }}
       >
         <Typography variant="h5" sx={{ mb: 3 }}>
           Solicitar Vacaciones
         </Typography>
-        <Card sx={{ height: "100%", padding: 2 }}>
+        <Card sx={{ height: "auto", padding: 2 }}>
           <CardContent>
-            {/* Form for Selecting Date Range */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <DatePicker
-                label="Fecha"
-                value={selectedDate}
-                onChange={(newValue) => setSelectedDate(newValue)}
-                renderInput={(params) => <TextField {...params} fullWidth />}
+              <TextField
+                label="Fecha seleccionada"
+                value={
+                  selectedDate ? dayjs(selectedDate).format("DD/MM/YYYY") : ""
+                }
+                disabled
+                fullWidth
               />
             </Box>
             <Box sx={{ mt: 3 }}>
@@ -237,7 +299,6 @@ export const VacationView = () => {
                 color="primary"
                 fullWidth
                 onClick={handleVacationRequest}
-                startIcon={<CalendarMonthOutlinedIcon />}
               >
                 Solicitar Vacaciones
               </Button>

@@ -1,3 +1,4 @@
+import { VacationView } from '../../../renderer/src/projectsManager/views/VacationView';
 import { Vacation} from '../models';
 
 export class VacationRepository {
@@ -8,7 +9,6 @@ export class VacationRepository {
         if (vacations) {
         return vacations.map(vacation => {
             const vacationData = vacation.dataValues;
-            console.log("vacationData: ",vacationData);
             return vacationData;
         });
         }
@@ -17,9 +17,8 @@ export class VacationRepository {
 
     static async insert(vacation){
         console.log("Dia de Vacaciones insertado");
-        console.log(vacation);
         await Vacation.create({
-            ...vacation
+            ...vacation,
         })
     }
 
@@ -30,5 +29,24 @@ export class VacationRepository {
             id: id_vacation
             }
         })
+    }
+
+    static async findByTechnicianId(id_technician){
+        try {
+            const vacations = await Vacation.findAll({
+            where: { technician: id_technician}, // Filtrar por ID del técnico
+            });
+
+            if (vacations) {
+                const vacationData = vacations.map(vacation => {
+                const vacationData = vacation.dataValues;
+                return vacationData;
+            });
+            return vacationData
+            }
+        } catch (error) {
+            console.error('Error al obtener vacaciones del tecnico:', error);
+            throw error; 
+        }
     }
 }                                                                                                                                                                                                                                                                                                                 

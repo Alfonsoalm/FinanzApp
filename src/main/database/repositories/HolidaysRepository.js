@@ -8,7 +8,6 @@ export class HolidaysRepository {
         if (holidays) {
         return holidays.map(holiday => {
             const holidayData = holiday.dataValues;
-            console.log("holidayData: ",holidayData);
             return holidayData;
         });
         }

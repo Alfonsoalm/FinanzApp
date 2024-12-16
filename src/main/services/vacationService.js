@@ -33,31 +33,51 @@ async function deleteVacation(id_vacation) {
   }
 }
 
+async function getVacationsByTechnician(id_technician) {
+  try{
+    const vacations = await VacationRepository.findByTechnicianId(id_technician)
+   
+    return {success: true, data: vacations};
+  }catch(error){
+    console.error('Error in getVacationsByTechnician:', error); 
+    return {success: false, error: "Error al obtener vacaciones del tecnico"}
+  }
+}
+
 export function handleVacations(ipcMain) {
     ipcMain.handle('get-vacations', async () => {
-      try {
+        try {
         return await getVacations(); 
-      } catch (error) {
+        } catch (error) {
         console.error('Error in getVacations:', error); 
         return { success: false, error: "No se pudieron cargar los dias de vacaciones" };
-      }
+        }
     });
 
     ipcMain.handle('insert-vacation', async (event, vacation) => {
-      try {
+        try {
         return await insertVacation(vacation); 
-      } catch (error) {
+        } catch (error) {
         console.error('Error in insertVacation:', error); 
         return { success: false, error: "No se pudo añadir el nuevo dia de vacaciones" };
-      }
+        }
     });
 
     ipcMain.handle('delete-vacation', async (event, id_vacation) => {
-      try {
+        try {
         return await deleteVacation(id_vacation); 
-      } catch (error) {
+        } catch (error) {
         console.error('Error in deleteVacation:', error); 
         return { success: false, error: "No se pudo eliminar el dia de vacaciones" };
-      }
+        }
+    });
+
+    ipcMain.handle('get-vacations-technician', async (event, id_technician) => {
+        try {
+            return await getVacationsByTechnician(id_technician); 
+        } catch (error) {
+            console.error('Error in getVacationsByTechnician:', error); 
+            return { success: false, error: "No se pudo obtener las vacaciones del tecnico" };
+        }
     });
 }

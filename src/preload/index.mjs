@@ -65,6 +65,8 @@ const api = {
     ipcRenderer.invoke('insert-vacation', vacation),
   deleteVacation: (id_vacation) =>
     ipcRenderer.invoke('delete-vacation', id_vacation),
+  getVacationsByTechnician: (id_technician) =>
+    ipcRenderer.invoke('get-vacations-technician', id_technician),
   // WorkDays
   getWorkdays: () =>
     ipcRenderer.invoke('get-workdays'),
@@ -72,6 +74,8 @@ const api = {
     ipcRenderer.invoke('insert-workday', workday),
   deleteWorkday: (id_workday) =>
     ipcRenderer.invoke('delete-workday', id_workday),
+  getWorkdaysByTechnician: (id_technician) =>
+    ipcRenderer.invoke('get-workdays-technician', id_technician),
 
   maximizeWindow: () => ipcRenderer.send('maximize-window'),
   resizeWindow: () => ipcRenderer.send('resize-window')
