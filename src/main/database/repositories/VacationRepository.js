@@ -1,5 +1,4 @@
-import { VacationView } from '../../../renderer/src/projectsManager/views/VacationView';
-import { Vacation} from '../models';
+import { Vacation } from '../models';
 
 export class VacationRepository {
 

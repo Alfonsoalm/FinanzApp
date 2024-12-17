@@ -109,7 +109,7 @@ export function handleTechnicians(ipcMain) {
       }
     });
 
-    ipcMain.handle('get-technicians', async (event) => {
+    ipcMain.handle('get-technicians', async () => {
       try {   
         return await getTechnicians(); // Llamada a la base de datos
       } catch (error) {

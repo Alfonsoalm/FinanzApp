@@ -21,7 +21,7 @@ function createWindow() {
     show: false, // Ventana no visible hasta que esté lista
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.mjs'),
+      preload: join(app.getAppPath(), '../preload/index.mjs'),
       sandbox: false,
       nodeIntegration:true,
       
@@ -44,7 +44,7 @@ function createWindow() {
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadFile(join(app.getAppPath(), '../renderer/index.html'))
   }
 
   // Cambiar la ventana a maximizable y redimensionable

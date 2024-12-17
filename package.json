@@ -46,8 +46,24 @@
   "build": {
     "extraResources": [
       {
-        "from": "src/main/database.js",
-        "to": "database.js"
+        "from": "src/main/database/",
+        "to": "database/"
+      },
+      {
+        "from": "src/main/services/",
+        "to": "services/"
+      },
+      {
+        "from": "src/main/helpers/",
+        "to": "helpers/"
+      },
+      {
+        "from": "src/preload",
+        "to": "preload/"
+      },
+      {
+        "from": "src/renderer",
+        "to": "renderer/"
       }
     ]
   },

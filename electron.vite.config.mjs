@@ -10,12 +10,24 @@ export default defineConfig({
       viteStaticCopy({
         targets: [
           {
-            src: 'src/main/database/', // Ruta relativa al archivo que quieres incluir
-            dest: '.' // Copiar directamente a la raíz de la carpeta de salida
+            src: 'src/main/database/',
+            dest: 'database/' // Carpeta de salida
           },
           {
-            src: 'src/main/services/', // Ruta relativa al archivo que quieres incluir
-            dest: '.' // Copiar directamente a la raíz de la carpeta de salida
+            src: 'src/main/services/',
+            dest: 'services/' // Carpeta de salida
+          },
+          {
+            src: 'src/main/helpers/',
+            dest: 'helpers/' // Carpeta de salida
+          },
+          {
+            src: 'src/preload/',
+            dest: 'preload/' // Carpeta de salida
+          },
+          {
+            src: 'src/renderer/',
+            dest: 'renderer/' // Carpeta de salida
           },
         ]
       })
@@ -31,5 +43,8 @@ export default defineConfig({
       }
     },
     plugins: [react()]
-  }
+  },
+  build: {
+    outDir: 'dist',
+  },
 })
