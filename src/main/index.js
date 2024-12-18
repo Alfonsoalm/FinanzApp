@@ -21,8 +21,9 @@ function createWindow() {
     show: false, // Ventana no visible hasta que esté lista
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      //preload: join(app.getAppPath(), '../preload/index.mjs'), //Para build
-      preload: join(__dirname, '../preload/index.mjs'), //Para dev
+      preload: process.env.NODE_ENV === 'development'
+      ? join(__dirname, '../preload/index.mjs') // Para desarrollo
+      : join(app.getAppPath(), '../preload/index.mjs'), // Para producción
       sandbox: false,
       nodeIntegration:true,
       
