@@ -43,7 +43,6 @@ export const WorkDaysView = () => {
         console.error("Error al obtener los datos:", error);
       }
     };
-
     fetchData();
   }, [technicianId, getProjects, getHolidays, getWorkdaysByTechnician]);
 
