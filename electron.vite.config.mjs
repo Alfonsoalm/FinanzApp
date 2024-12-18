@@ -5,6 +5,13 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig({
   main: {
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/main/index.js')
+        }
+      }
+    },
     plugins: [
       externalizeDepsPlugin(),
       viteStaticCopy({
@@ -21,27 +28,45 @@ export default defineConfig({
             src: 'src/main/helpers/',
             dest: 'helpers/' // Carpeta de salida
           },
-          {
-            src: 'src/preload/',
-            dest: 'preload/' // Carpeta de salida
-          },
-          {
-            src: 'src/renderer/',
-            dest: 'renderer/' // Carpeta de salida
-          },
         ]
       })
     ]
   },
   preload: {
-    plugins: [externalizeDepsPlugin()]
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/preload/index.mjs')
+        }
+      }
+
+      
+    },
+    plugins: [
+      externalizeDepsPlugin(),
+      viteStaticCopy({
+        targets:[
+          {
+            src: 'src/preload/',
+            dest: 'preload/' // Carpeta de salida
+          }
+        ]
+      })
+    ]
   },
   renderer: {
-    resolve: {
-      alias: {
-        '@renderer': resolve('src/renderer/src')
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/renderer/index.html')
+        }
       }
     },
+    // resolve: {
+    //   alias: {
+    //     '@renderer': resolve('src/renderer/src')
+    //   }
+    // },
     plugins: [react()]
   },
   build: {

@@ -46,24 +46,24 @@
   "build": {
     "extraResources": [
       {
-        "from": "src/main/database/",
-        "to": "database/"
-      },
-      {
-        "from": "src/main/services/",
-        "to": "services/"
-      },
-      {
-        "from": "src/main/helpers/",
-        "to": "helpers/"
-      },
-      {
         "from": "src/preload",
         "to": "preload/"
       },
       {
-        "from": "src/renderer",
+        "from": "out/renderer",
         "to": "renderer/"
+      },
+      {
+        "from": "out/main/database",
+        "to": "main/databse/"
+      },
+      {
+        "from": "out/main/services",
+        "to": "main/services/"
+      },
+      {
+        "from": "out/main/helpers",
+        "to": "main/helpers/"
       }
     ]
   },
