@@ -52,6 +52,8 @@ export const DataTable = ({
                         width: "auto",  // Esto asegura que el DataGrid ocupe solo el ancho mínimo necesario
                         maxWidth: "100%",  // Asegura que no se expanda más allá de su contenedor
                     }}
+                    onRowDoubleClick={()=> {}}
+                    onCellDoubleClick={() => {}}
                 />
             
         </Box>

@@ -1,13 +1,16 @@
+import { NetworkWifiSharp } from "@mui/icons-material";
 
 export class RowActions {
-    constructor(data, setData, setChanges, fetchData) {
+    constructor(data, setData, changes, setChanges, fetchData) {
       this.data = data;
       this.setData = setData;
+      this.changes = changes;
       this.setChanges = setChanges;
       this.fetchData = fetchData;
     }
   
     handleAddClick(rowId) {
+      console.log("HANDCLICK")
       const index = this.data.findIndex(item => item.id === rowId);
       if (index !== -1) {
         const newAssignment = {
@@ -21,12 +24,60 @@ export class RowActions {
         this.fetchData();
       }
     } 
-    async addAssignment(newAssignment) {
-      // Logic to add assignment goes here (e.g., calling an API or context)
+    
+    editAssignment(newRow) {
+
+      const prevData = this.data.find((row) => (row.id === newRow.index))
+      const newData =  structuredClone(prevData);
+
+      newData.technicians[newRow.index_tech] = newRow.technicians
+      newData.techniciansIds[newRow.index_tech]  = newRow.technician_id
+      newData.assignmentHours[newRow.index_tech] = Number(newRow.hours_assigned)
+      newData.hours_assigned = newData.assignmentHours.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+
+      const newChange = {
+        type:"assignment",
+        action: "edit",
+        prevData: prevData,
+        newData: newData,
+      }
+
+      this.addNewChange(newChange)
+      console.log(this.data.find(item => item.id === newRow.index))
+      
+      this.setData(
+        this.data.map(item => {
+          if (item.id === newRow.index) {
+            return newData; // Actualización basada en index
+          }
+          if (item.id === newRow.id) {
+            return newRow; // Actualización basada en id
+          }
+          return item; // Mantener sin cambios
+        })
+      );
+
+    }
+
+    editPhase(newRow) {
+      
+      const prevRow = this.data.find((item) => (item.id === newRow.id))
+  
+      const newChange = {
+        type:"phase",
+        action:"edit",
+        prevData:prevRow,
+        newData:newRow,
+      }
+      this.addNewChange(newChange)
+      this.setData(this.data.map(item => item.id === newRow.id ? newRow : item))
     }
   
-    handleDeleteClick(deletedRow) {
-      // Logic to delete a row goes here
+
+
+    addNewChange(newChange){
+      this.setChanges([...this.changes, newChange])
     }
   }
   
