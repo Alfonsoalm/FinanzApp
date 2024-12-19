@@ -84,7 +84,7 @@ export const TechniciansView = () => {
             spacing={1}  // Ajuste del espaciado
             display="flex"
             alignItems="flex-start"  // Alineación a la izquierda del contenido
-            sx={{pt: 4, pl:4, pr:4, overflowY: "auto", height:"120%", width:"80%"}}
+            sx={{pt: 4, pl:4, pr:4, overflowY: "auto", height:"120%", width:"100%"}}
             width={"100%"}
             overflow
         >
