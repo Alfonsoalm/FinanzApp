@@ -15,10 +15,20 @@ export const Salaries = sequelize.define('Salaries', {
     allowNull: false,
     field: "grupo_cotizacion",
   },
-  hourCost: {
+  grossSalary: {
     type: DataTypes.DOUBLE,
     allowNull: false,
-    field: "coste_hora",
+    field: "salario_bruto",
+  },
+  contributionSalary: {
+    type: DataTypes.DOUBLE,
+    allowNull: false,
+    field: "cuota_patronal",
+  },
+  workLoad: {
+    type: DataTypes.DOUBLE,
+    allowNull: false,
+    field: "porcentaje_jornada",
   },
   startDate:{
     type: DataTypes.DATE,

@@ -64,7 +64,9 @@ CREATE TABLE tecnicos (
 CREATE TABLE salarios (
 	id_salario INT NOT NULL auto_increment,
 	grupo_cotizacion INT NOT NULL,
-    coste_hora DOUBLE NOT NULL,
+    salario_bruto DOUBLE NOT NULL,
+    cuota_patronal DOUBLE NOT NULL,
+    porcentaje_jornada int NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE,
     id_tecnico int NOT NULL,
@@ -382,28 +384,11 @@ VALUES ('Alfonso Almenara', 'Ingeniero de Sistemas', 1, 1, 8, '2000-12-27', '123
 ;
 
 -- Insertar salarios
-INSERT INTO salarios (grupo_cotizacion, coste_hora, fecha_inicio, fecha_fin, id_tecnico)
-VALUES ( 1, 19.71, '2023-12-20', null,1),
-( 1, 16.17, '2020-12-20', '2023-12-20',2),
-( 1, 18.17, '2023-12-21', '2025-12-20',2),
-( 2, 19.33, '2020-12-20', '2025-12-20', 3),
-(2, 18.17, '2020-12-20', '2025-12-20', 4),
-(2, 7.65, '2020-12-20', '2025-12-20', 5),
-(2 ,12.07, '2020-12-20', '2025-12-20', 6),
-(1, 12.98, '2020-12-20', '2025-12-20', 7),
-(1, 18.67, '2020-12-20', '2025-12-20', 8),
-(1, 18.67, '2020-12-20', '2025-12-20', 9),
-(2, 12.6, '2020-12-20', '2025-12-20', 10),
-(1, 25.92, '2020-12-20', '2025-12-20', 11),
-(1, 17.4, '2020-12-12', '2025-12-20', 12), 
-(1, 17.4, '2020-12-20', '2025-12-20', 13),
-(1, 17.4, '2020-12-20', '2025-12-20', 14),
-(1, 17.4, '2020-12-20', '2025-12-20', 15),
-(1, 17.4, '2020-12-20', '2025-12-20', 16),
-(1, 17.4, '2020-12-20', '2025-12-20', 17),
-(1, 17.4, '2020-12-20', '2025-12-20', 18),
-(1, 17.4, '2020-12-20', '2025-12-20', 19)
-;	
+INSERT INTO salarios (grupo_cotizacion, salario_bruto, cuota_patronal, porcentaje_jornada, fecha_inicio, fecha_fin, id_tecnico)
+VALUES 
+( 1, 33000, 1000, 100, '2023-12-20', '2024-12-20',1),
+( 2, 25000, 900, 100, '2023-12-20', '2024-12-20',1),
+( 2, 28000, 900, 100, '2023-12-20', '2024-12-20',1);	
 
 -- Insertar las fases de los proyectos
 INSERT INTO fases (id_proyecto, nombre, fecha_inicio, fecha_fin, horas)

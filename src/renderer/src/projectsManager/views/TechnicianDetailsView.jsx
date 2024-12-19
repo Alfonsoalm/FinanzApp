@@ -41,7 +41,9 @@ export const TechnicianDetailsView = () => {
 
     const [newSalary, setNewSalary] = useState({
         contributionGroup: "",
-        hourCost: "",
+        contributionSalary: "",
+        grossSalary: "",
+        workLoad: "",
         startDate: "",
         endDate: "",
     });
@@ -86,7 +88,7 @@ export const TechnicianDetailsView = () => {
     };
 
     const handleSaveSalary = async () => {
-        if (!newSalary.contributionGroup || !newSalary.hourCost || !newSalary.startDate) {
+        if (!newSalary.contributionGroup || !newSalary.grossSalary || !newSalary.workLoad || !newSalary.startDate || !newSalary.contributionSalary) {
             alert("Por favor, rellena todos los campos obligatorios.");
             return;
         }
@@ -97,7 +99,7 @@ export const TechnicianDetailsView = () => {
         });
 
         fetchDetails(); // Refresca la lista de salarios
-        setNewSalary({ contributionGroup: "", hourCost: "", startDate: "", endDate: "" }); // Limpia el formulario
+        setNewSalary({ contributionGroup: "", grossSalary: "", contributionSalary:"", workLoad:"", startDate: "", endDate: "" }); // Limpia el formulario
     };
 
     const handleDeleteSalary = async (salaryId) => {
@@ -155,7 +157,8 @@ export const TechnicianDetailsView = () => {
     const exportSalariesToExcel = () => {
         const formattedSalaries = details.salaries.map((salary) => ({
             "Grupo Cotización": salary.contributionGroup,
-            "Coste Hora (€)": salary.hourCost,
+            "Salario bruto anual (€)": salary.grossSalary,
+            "Cuota patronal anual (€)": salary.contributionSalary,
             "Fecha Inicio": salary.startDate,
             "Fecha Fin": salary.endDate || "N/A",
         }));
@@ -251,7 +254,9 @@ export const TechnicianDetailsView = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell><strong>Grupo Cotización</strong></TableCell>
-                                    <TableCell><strong>Coste Hora (€)</strong></TableCell>
+                                    <TableCell><strong>Salario bruto anual (€)</strong></TableCell>
+                                    <TableCell><strong>Cuota patronal anual (€)</strong></TableCell>
+                                    <TableCell><strong>Porcentaje de jornada (%)</strong></TableCell>
                                     <TableCell><strong>Fecha Inicio</strong></TableCell>
                                     <TableCell><strong>Fecha Fin</strong></TableCell>
                                     <TableCell><strong>Acciones</strong></TableCell>
@@ -273,9 +278,27 @@ export const TechnicianDetailsView = () => {
                                                     </TableCell>
                                                     <TableCell>
                                                         <TextField
-                                                            name="hourCost"
+                                                            name="grossSalary"
                                                             type="number"
-                                                            value={editingSalary.hourCost}
+                                                            value={editingSalary.grossSalary}
+                                                            onChange={handleEditInputChange}
+                                                            fullWidth
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <TextField
+                                                            name="contributionSalary"
+                                                            type="number"
+                                                            value={editingSalary.contributionSalary}
+                                                            onChange={handleEditInputChange}
+                                                            fullWidth
+                                                        />
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <TextField
+                                                            name="workLoad"
+                                                            type="number"
+                                                            value={editingSalary.workLoad}
                                                             onChange={handleEditInputChange}
                                                             fullWidth
                                                         />
@@ -320,7 +343,9 @@ export const TechnicianDetailsView = () => {
                                             ) : (
                                                 <>
                                                     <TableCell>{salary.contributionGroup.toString()}</TableCell>
-                                                    <TableCell>{salary.hourCost.toString()}</TableCell>
+                                                    <TableCell>{salary.grossSalary.toString()}</TableCell>
+                                                    <TableCell>{salary.contributionSalary.toString()}</TableCell>
+                                                    <TableCell>{salary.workLoad.toString()}</TableCell>
                                                     <TableCell>{salary.startDate.toString()}</TableCell>
                                                     <TableCell>{salary.endDate.toString() || "N/A"}</TableCell>
                                                     <TableCell>
@@ -369,10 +394,30 @@ export const TechnicianDetailsView = () => {
                                 </Grid2>
                                 <Grid2  xs={12} sm={3}>
                                     <TextField
-                                        label="Coste Hora (€)"
-                                        name="hourCost"
+                                        label="Salario bruto anual (€)"
+                                        name="grossSalary"
                                         type="number"
-                                        value={newSalary.hourCost}
+                                        value={newSalary.grossSalary}
+                                        onChange={handleInputChange}
+                                        fullWidth
+                                    />
+                                </Grid2>
+                                <Grid2  xs={12} sm={3}>
+                                    <TextField
+                                        label="Cuota patronal anual (€)"
+                                        name="contributionSalary"
+                                        type="number"
+                                        value={newSalary.contributionSalary}
+                                        onChange={handleInputChange}
+                                        fullWidth
+                                    />
+                                </Grid2>
+                                <Grid2  xs={12} sm={3}>
+                                    <TextField
+                                        label="porcentaje de jornada (%)"
+                                        name="WordLoad"
+                                        type="number"
+                                        value={newSalary.workLoad}
                                         onChange={handleInputChange}
                                         fullWidth
                                     />

@@ -36,7 +36,9 @@ export class SalariesRepository {
     await Salaries.update(
         {
           contributionGroup: salary.contributionGroup,
-          hourCost: salary.hourCost,
+          grossSalary: salary.grossSalary,
+          contributionSalary: salary.contributionSalary,
+          workLoad: salary.workLoad,
           startDate: salary.startDate,
           endDate: salary.endDate,
           id_technician: salary.id_technician, // Actualizar también id_technician
