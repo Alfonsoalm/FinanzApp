@@ -43,7 +43,6 @@ export const WorkDaysView = () => {
         console.error("Error al obtener los datos:", error);
       }
     };
-
     fetchData();
   }, [technicianId, getProjects, getHolidays, getWorkdaysByTechnician]);
 
@@ -221,11 +220,11 @@ export const WorkDaysView = () => {
     <Box
       sx={{
         display: "flex",
-        height: "100vh",
+        height: "100vh", // Altura total de la ventana
         backgroundColor: "#f9f9f9",
-        width: "100%",
       }}
     >
+      {/* Panel izquierdo */}
       <Box
         sx={{
           flex: 7,
@@ -234,13 +233,12 @@ export const WorkDaysView = () => {
           padding: 3,
           backgroundColor: "#ffffff",
           borderRight: "1px solid #ddd",
+          overflow: "auto", // Permitir desplazamiento si es necesario
         }}
       >
-        <Card sx={{ height: "80%", padding: 2 }}>
+        <Card sx={{ width: "100%", height: "120%", padding: 2}}>
           <CardContent>
-
-                        {/* Year and Month Pickers */}
-                        <Box
+            <Box
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -263,7 +261,7 @@ export const WorkDaysView = () => {
                 renderInput={(params) => <TextField {...params} />}
               />
             </Box>
-            
+  
             <Box
               sx={{
                 display: "flex",
@@ -282,6 +280,7 @@ export const WorkDaysView = () => {
                 Siguiente
               </Button>
             </Box>
+  
             <Box
               sx={{
                 flexGrow: 1,
@@ -291,6 +290,7 @@ export const WorkDaysView = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "flex-start",
+                overflow: "auto", // Permitir desplazamiento si el calendario excede
                 height: "500px",
               }}
             >
@@ -299,6 +299,8 @@ export const WorkDaysView = () => {
           </CardContent>
         </Card>
       </Box>
+  
+      {/* Panel derecho */}
       <Box
         sx={{
           flex: 3,
@@ -306,12 +308,13 @@ export const WorkDaysView = () => {
           flexDirection: "column",
           padding: 3,
           backgroundColor: "#ffffff",
+          overflow: "auto", // Permitir desplazamiento si es necesario
         }}
       >
         <Typography variant="h5" sx={{ mb: 3 }}>
           Añadir nueva jornada
         </Typography>
-        <Card sx={{ height: "auto", padding: 2 }}>
+        <Card sx={{ height: "100%", padding: 2, pb: "200px" }}>
           <CardContent>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <TextField
@@ -348,8 +351,13 @@ export const WorkDaysView = () => {
                 fullWidth
               />
             </Box>
-            <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-              <Button variant="contained" color="primary" onClick={handleAddWorkDay}>
+            <Box sx={{ mt: 3 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleAddWorkDay}
+              >
                 Añadir
               </Button>
             </Box>
@@ -384,4 +392,5 @@ export const WorkDaysView = () => {
       </Box>
     </Box>
   );
+  
 };

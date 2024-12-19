@@ -1,4 +1,4 @@
-import { Button, Grid2, Typography } from "@mui/material";
+import { Box, Button, Grid2, Typography } from "@mui/material";
 import { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "../../../hooks";
@@ -51,20 +51,19 @@ export const ProjectsListPage = () => {
             container
             spacing={2}  // Ajuste del espaciado
             direction="column"
+            height= "100vh"
             alignItems="flex-start"  // Alineación a la izquierda del contenido
-            sx={{pt: 2, pr:4,}}
-            width={"100%"}
-        >
+            sx={{pt: 4, pl:4,}}
+            width={"100%"} >
 
-            {/* Título alineado a la izquierda */}
-            <Typography variant="h2" fontSize={30} fontWeight={500} sx={{ alignSelf: "flex-start" }}>
-                Proyectos
-            </Typography>
+            {/* Title */}
+            <Box sx={{ textAlign: "left", mb: 3 }}> {/* Alineación del título a la izquierda */}
+                <Typography variant="h4">Proyectos</Typography>
+            </Box>
 
             <Grid2 container sx={{ width: "100%", pl: 4 , pr:4}} spacing={1} alignItems="center">
 
-                <SearchForm searchText={searchText} onInputChange={onInputChange}/>
-                                
+                <SearchForm searchText={searchText} onInputChange={onInputChange}/>        
                 <Grid2>
                     <Button sx={{ width: "auto" }} variant="contained" color="secondary" onClick={goToAddProjectView}>
                         <Typography color="white">+ Añadir</Typography>

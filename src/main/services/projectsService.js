@@ -40,14 +40,11 @@ async function deleteProject(id_project) {
 
 async function getProjectDetails(id_project) {
   try {
-
     const phases = await PhasesRepository.getByProjectId(id_project)
 
     if(phases){
       const phasesIds = phases.map(phase => phase.id)
-
       const assignments = await AssignmentsRepository.getByPhasesIds(phasesIds);
-
       if(assignments){
         const techIds = assignments.map(assignment => assignment.technician)
         const technicians = await TechnicianRepository.findByIds( [...new Set(techIds)]);
@@ -86,6 +83,17 @@ async function deleteProjectAssignment(id_phase, id_technician){
   }
 }
 
+async function getPhases(){
+  try{
+    const phases = await PhasesRepository.getAll();
+    console.log("phases obtenidas; ",phases);
+    return {success: true, data: phases};
+  }catch(error){
+    console.error('Error in getPhases:', error); 
+    return {success: false, error: "Error al obtener las fases"}
+  }
+}
+
 export function handleProjects(ipcMain) {
     ipcMain.handle('get-projects', async () => {
       try {
@@ -93,6 +101,16 @@ export function handleProjects(ipcMain) {
       } catch (error) {
         console.error('Error in getProjects:', error); 
         return { success: false, error: "No se pudo cargar los proyectos" };
+      }
+    });
+
+    ipcMain.handle('get-phases', async () => {
+      try {
+        console.log("get-phases entró");
+        return await getPhases(); 
+      } catch (error) {
+        console.error('Error in getPhases:', error); 
+        return { success: false, error: "No se pudo cargar las fases de los proyectos" };
       }
     });
 

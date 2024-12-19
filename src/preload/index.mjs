@@ -5,6 +5,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 const api = {
   login: (username, password) =>
     ipcRenderer.invoke('login', { username, password }),
+  // Phases
+  getPhases: () => 
+    ipcRenderer.invoke('get-phases'),
   // Projects
   getProjects: () => 
     ipcRenderer.invoke('get-projects'),

@@ -1,4 +1,4 @@
-import { Button, Grid2, Typography } from "@mui/material";
+import { Box, Button, Grid2, Typography } from "@mui/material";
 import queryString from "query-string";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -84,15 +84,15 @@ export const TechniciansView = () => {
             spacing={1}  // Ajuste del espaciado
             display="flex"
             alignItems="flex-start"  // Alineación a la izquierda del contenido
-            sx={{pt: 4, pl:4, pr:4, overflowY: "auto", height:"120%", width:"80%"}}
+            sx={{pt: 4, pl:4, pr:4, overflowY: "auto", height:"120%", width:"100%"}}
             width={"100%"}
             overflow
         >
 
-            {/* Título alineado a la izquierda */}
-            <Typography variant="h2" fontSize={30} fontWeight={500} sx={{ alignSelf: "flex-start" }}>
-                Tecnicos
-            </Typography>
+            {/* Title */}
+            <Box sx={{ textAlign: "left", mb: 3 }}> {/* Alineación del título a la izquierda */}
+                <Typography variant="h4">Técnicos</Typography>
+            </Box>
 
             <Grid2 container sx={{ width: "100%", pl: 4 , pr:4}} spacing={1} alignItems="center">
                 <SearchForm searchText={searchText} onInputChange={onInputChange}/>     
