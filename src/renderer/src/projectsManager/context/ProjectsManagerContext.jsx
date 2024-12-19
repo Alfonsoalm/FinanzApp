@@ -11,6 +11,7 @@ export const ProjectManagerProvider = ({ children }) => {
     const [workdays, setWorkdays] = useState([]);
     const [vacations, setVacations] = useState([]);
     const [holidays, setHolidays] = useState([]);
+    const [phases, setPhases] = useState([]);
     const [error, setError] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const id = 1;
@@ -547,12 +548,27 @@ export const ProjectManagerProvider = ({ children }) => {
     }
   };
 
+  const getPhases = async () => {
+    try{
+      setError(null);
+      const result = await window.api.getPhases();
+      if(result.success){
+        setPhases(result.data);
+      }
+      else{
+        setError(result.error);
+      }
+    }catch(error){
+      setError(error);
+    }
+  }
+
     return (
       <ProjectManagerContext.Provider value={{
         id, error, projects, calls, headquarters, technicians, 
-        salaries, workdays, vacations, holidays,
+        salaries, workdays, vacations, holidays, phases,
         getCalls, getHeadquarters, getProjects, deleteProject,
-        insertProject, insertCall, getProjectDetails, 
+        insertProject, insertCall, getProjectDetails, getPhases,
         setTechnicians, getTechnicians, deleteTechnician, deleteSoftTechnician,
         insertTechnician, getTechnicianDetails, getAssignmentsByTechnician,
         getSalaries, getSalariesByTechnician, insertSalary, deleteSalary, editSalary,

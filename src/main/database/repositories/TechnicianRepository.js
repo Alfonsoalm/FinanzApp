@@ -53,7 +53,6 @@ export class TechnicianRepository {
         }
         return techniciansData;
       });
-    
     }
     return []
   }

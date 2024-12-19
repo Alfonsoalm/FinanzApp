@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardContent,
-  Divider,
   TextField,
   Typography,
 } from "@mui/material";
@@ -11,6 +10,9 @@ import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
 import { ProjectManagerContext } from "../context/ProjectsManagerContext";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
 export const VacationView = () => {
   const {
@@ -20,7 +22,6 @@ export const VacationView = () => {
     getVacations,
     getHolidays,
     holidays,
-    deleteVacation,
   } = useContext(ProjectManagerContext);
 
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -167,145 +168,203 @@ export const VacationView = () => {
   };
 
   return (
+  <Box
+    sx={{
+      display: "flex",
+      height: "100vh",
+      backgroundColor: "#f9f9f9",
+    }}
+  >
+    {/* Panel izquierdo */}
     <Box
       sx={{
+        flex: 7,
         display: "flex",
-        height: "100vh",
-        overflow: "hidden",
-        backgroundColor: "#f9f9f9",
+        flexDirection: "column",
+        padding: 3,
+        backgroundColor: "#ffffff",
+        borderRight: "1px solid #ddd",
+        overflow: "auto", // Desplazamiento si es necesario
       }}
     >
-      <Box
-        sx={{
-          flex: 7,
-          display: "flex",
-          flexDirection: "column",
-          padding: 3,
-          backgroundColor: "#ffffff",
-          borderRight: "1px solid #ddd",
-        }}
-      >
-        <Card sx={{ height: "80%", padding: 2 }}>
-          <CardContent>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-around",
-                marginBottom: 3,
-              }}
-            >
-              <Typography variant="h6">Total: {totalVacationDays} días</Typography>
-              <Typography variant="h6">Tomados: {usedVacationDays} días</Typography>
-              <Typography variant="h6">
-                Restantes: {remainingVacationDays} días
-              </Typography>
-            </Box>
+      <Card sx={{ width: "100%", height: "100%", padding: 2 }}>
+        <CardContent>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 3,
+            }}
+          >
+            <DatePicker
+              views={["year"]}
+              label="Año"
+              value={currentDate}
+              onChange={handleYearChange}
+              renderInput={(params) => <TextField {...params} />}
+            />
+            <DatePicker
+              views={["month"]}
+              label="Mes"
+              value={currentDate}
+              onChange={handleMonthChange}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </Box>
 
-            <Divider sx={{ mb: 3 }} />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 3,
+            }}
+          >
+            <Button variant="outlined" onClick={handlePreviousMonth}>
+              Anterior
+            </Button>
+            <Typography variant="h6">{currentDate.format("MMMM YYYY")}</Typography>
+            <Button variant="outlined" onClick={handleNextMonth}>
+              Siguiente
+            </Button>
+          </Box>
 
-            {/* Year and Month Pickers */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 3,
-              }}
-            >
-              <DatePicker
-                views={["year"]}
-                label="Año"
-                value={currentDate}
-                onChange={handleYearChange}
-                renderInput={(params) => <TextField {...params} />}
-              />
-              <DatePicker
-                views={["month"]}
-                label="Mes"
-                value={currentDate}
-                onChange={handleMonthChange}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </Box>
-
-            {/* Month Navigation */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 3,
-              }}
-            >
-              <Button variant="outlined" onClick={handlePreviousMonth}>
-                Anterior
-              </Button>
-              <Typography variant="h6">
-                {currentDate.format("MMMM YYYY")}
-              </Typography>
-              <Button variant="outlined" onClick={handleNextMonth}>
-                Siguiente
-              </Button>
-            </Box>
-
-            <Box
-              sx={{
-                flexGrow: 1,
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                backgroundColor: "#f5f5f5",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "flex-start",
-                height: "500px",
-              }}
-            >
-              {renderCustomCalendar()}
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Box
-        sx={{
-          flex: 3,
-          display: "flex",
-          flexDirection: "column",
-          padding: 3,
-          backgroundColor: "#ffffff",
-          width: "600px",
-          height: "auto",
-          overflow: "visible",
-        }}
-      >
-        <Typography variant="h5" sx={{ mb: 3 }}>
-          Solicitar Vacaciones
-        </Typography>
-        <Card sx={{ height: "auto", padding: 2 }}>
-          <CardContent>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <TextField
-                label="Fecha seleccionada"
-                value={
-                  selectedDate ? dayjs(selectedDate).format("DD/MM/YYYY") : ""
-                }
-                disabled
-                fullWidth
-              />
-            </Box>
-            <Box sx={{ mt: 3 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={handleVacationRequest}
-              >
-                Solicitar Vacaciones
-              </Button>
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
+          <Box
+            sx={{
+              flexGrow: 1,
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              backgroundColor: "#f5f5f5",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              overflow: "auto", // Desplazamiento si el calendario excede
+              height: "500px",
+            }}
+          >
+            {renderCustomCalendar()}
+          </Box>
+        </CardContent>
+      </Card>
     </Box>
+      
+    {/* Panel derecho */}
+    <Box
+      sx={{
+        flex: 3,
+        display: "flex",
+        flexDirection: "column",
+        padding: 3,
+        backgroundColor: "#ffffff",
+        overflow: "auto", // Desplazamiento si es necesario
+      }}
+  >
+      <Typography variant="h5" sx={{ mb: 3 }}>
+        Solicitar Vacaciones
+      </Typography>
+      <Card sx={{ height: "auto", padding: 2 }}>
+        <CardContent>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <TextField
+              label="Fecha seleccionada"
+              value={
+                selectedDate ? dayjs(selectedDate).format("DD/MM/YYYY") : ""
+              }
+              disabled
+              fullWidth
+            />
+          </Box>
+          <Box sx={{ mt: 3 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleVacationRequest}
+            >
+              Solicitar Vacaciones
+            </Button>
+          </Box>
+          
+        </CardContent>
+      </Card>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2, // Espaciado entre tarjetas
+          alignItems: "center",
+        }}>
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2, // Espaciado entre tarjetas
+          alignItems: "center",
+          mt: 5,
+        }}
+      >
+        <Card
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            padding: 1,
+            backgroundColor: "#f5f5f5",
+            borderRadius: "8px",
+            boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
+            <CalendarTodayIcon sx={{ color: "#000" }} />
+            Total: {totalVacationDays} días
+          </Typography>
+        </Card>
+        <Card
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            padding: 1,
+            backgroundColor: "#e3f2fd",
+            borderRadius: "8px",
+            boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
+            <CheckCircleIcon sx={{ color: "#1976d2" }} />
+            Tomados: {usedVacationDays} días
+          </Typography>
+        </Card>
+        <Card
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            padding: 1,
+            backgroundColor: "#e8f5e9",
+            borderRadius: "8px",
+            boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          >
+            <HourglassEmptyIcon sx={{ color: "#388e3c" }} />
+            Restantes: {remainingVacationDays} días
+          </Typography>
+        </Card>
+      </Box>
+
+
+    </Box>
+  </Box>
+
   );
 };

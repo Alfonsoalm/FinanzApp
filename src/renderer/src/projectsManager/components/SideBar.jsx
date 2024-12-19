@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import logo from '../../assets/logo.png'
-import {Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography, useTheme } from "@mui/material"
+import logo from '../../assets/logo.png';
+import {Box, Divider, Drawer, List, ListItem, ListItemButton, Toolbar, Typography, useTheme } from "@mui/material"
 
 
 const navLinks = [
@@ -18,7 +18,7 @@ const navLinks = [
   },
   {
     name:"Informes",
-    path:"/",
+    path:"/inform",
   },
   {
     name:"Avisos",
@@ -34,7 +34,6 @@ const navLinks = [
   },
 ]
 
-
 export const SideBar = ({drawerWidth = 240}) => {
   const theme = useTheme();
   return (
@@ -42,7 +41,6 @@ export const SideBar = ({drawerWidth = 240}) => {
       component="nav"
       sx={{width: {sm: {drawerWidth}}, flexShrink:{sm: 0}}}
     >
-
       <Drawer
         variant='permanent'
         open
@@ -53,7 +51,6 @@ export const SideBar = ({drawerWidth = 240}) => {
         }
         }}
       >
-
         <Toolbar>
           <Typography variant="h6" noWrap component="div"> 
             Alberto Adamuz Priego
@@ -78,8 +75,6 @@ export const SideBar = ({drawerWidth = 240}) => {
 
             ))
           }
-             
-          
         </List>
 
         <Box sx={{
