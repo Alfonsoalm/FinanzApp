@@ -4,8 +4,8 @@ import "../../styles/pages/incomesPage.css";
 import { FinanceManagerContext } from "../../context/FinanceManagerContext";
 
 export const IncomesPage = () => {
-  const { incomes, insertIncome, deleteIncome, getIncomes, error } =
-    useContext(FinanceManagerContext); // Eliminamos isLoading del contexto
+  const { incomes, insertIncome, deleteIncome, updateIncome, getIncomes, error } =
+    useContext(FinanceManagerContext);
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
@@ -13,11 +13,11 @@ export const IncomesPage = () => {
     category: "",
     type: "recurrent",
   });
+  const [editingId, setEditingId] = useState(null); // Estado para manejar edición
   const [formError, setFormError] = useState("");
-  const [shouldFetch, setShouldFetch] = useState(false); // Nuevo estado para controlar cuándo ejecutar el useEffect
+  const [shouldFetch, setShouldFetch] = useState(false);
 
   useEffect(() => {
-    // Cargar los ingresos al montar el componente o después de enviar el formulario
     const fetchIncomes = async () => {
       try {
         await getIncomes();
@@ -25,16 +25,15 @@ export const IncomesPage = () => {
         console.error("Error al cargar los ingresos:", err);
       }
     };
-
     fetchIncomes();
-  }, [shouldFetch]); // Se ejecuta solo al montar el componente o cuando shouldFetch cambia
+  }, [shouldFetch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddIncome = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validación del formulario
@@ -49,27 +48,42 @@ export const IncomesPage = () => {
     }
 
     try {
-      setFormError(""); // Limpiar errores previos
-      const newIncome = {
-        description: formData.description,
-        amount: parseFloat(formData.amount),
-        date: formData.date,
-        category: formData.category,
-        type: formData.type,
-      };
+      setFormError("");
 
-      await insertIncome(newIncome); // Insertar ingreso
-      setShouldFetch((prev) => !prev); // Cambiar el estado para disparar useEffect y actualizar la tabla
+      if (editingId) {
+        // Actualizar ingreso existente
+        await updateIncome(editingId, formData);
+        setEditingId(null); // Limpiar modo edición
+      } else {
+        // Crear nuevo ingreso
+        await insertIncome({
+          ...formData,
+          amount: parseFloat(formData.amount),
+        });
+      }
+
+      setShouldFetch((prev) => !prev);
       setFormData({ description: "", amount: "", date: "", category: "", type: "recurrent" });
     } catch (err) {
-      console.error("Error al agregar el ingreso", err);
+      console.error("Error al guardar el ingreso", err);
     }
+  };
+
+  const handleEditIncome = (income) => {
+    setEditingId(income.id); // Establecer modo edición con el ID
+    setFormData({
+      description: income.description,
+      amount: income.amount,
+      date: income.date,
+      category: income.category,
+      type: income.type,
+    });
   };
 
   const handleDeleteIncome = async (id) => {
     try {
       await deleteIncome(id);
-      setShouldFetch((prev) => !prev); // Cambiar el estado para disparar useEffect y actualizar la tabla
+      setShouldFetch((prev) => !prev);
     } catch (err) {
       console.error("Error al eliminar el ingreso", err);
     }
@@ -79,8 +93,8 @@ export const IncomesPage = () => {
     <div className="incomes-page">
       <h2>Ingresos</h2>
 
-      {/* Formulario para agregar ingresos */}
-      <form onSubmit={handleAddIncome} className="incomes-form">
+      {/* Formulario para agregar/editar ingresos */}
+      <form onSubmit={handleSubmit} className="incomes-form">
         <input
           name="amount"
           type="number"
@@ -98,12 +112,12 @@ export const IncomesPage = () => {
           required
         />
         <input
-            name="category"
-            type="text"
-            placeholder="Categoría"
-            value={formData.category}
-            onChange={handleChange}
-            required
+          name="category"
+          type="text"
+          placeholder="Categoría"
+          value={formData.category}
+          onChange={handleChange}
+          required
         />
         <input
           name="date"
@@ -116,13 +130,10 @@ export const IncomesPage = () => {
           <option value="recurrent">Recurrente</option>
           <option value="one-time">Puntual</option>
         </select>
-        <button type="submit">Añadir Ingreso</button>
+        <button type="submit">{editingId ? "Actualizar Ingreso" : "Añadir Ingreso"}</button>
       </form>
 
-      {/* Mostrar errores del formulario */}
       {formError && <p className="form-error">{formError}</p>}
-
-      {/* Mostrar errores globales */}
       {error && <p className="error">Error: {error}</p>}
 
       {/* Resumen de ingresos */}
@@ -156,7 +167,8 @@ export const IncomesPage = () => {
                   <td>{income.category}</td>
                   <td>{income.type === "recurrent" ? "Recurrente" : "Puntual"}</td>
                   <td>
-                    <button onClick={() => handleDeleteIncome(income.id)}>Eliminar</button>
+                    <button className="edit-btn" onClick={() => handleEditIncome(income)}>Editar</button>
+                    <button className="delete-btn" onClick={() => handleDeleteIncome(income.id)}>Eliminar</button>
                   </td>
                 </tr>
               ))}

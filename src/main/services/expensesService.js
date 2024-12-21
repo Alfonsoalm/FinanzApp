@@ -2,7 +2,6 @@ import ExpensesRepository from '../database/repositories/expensesRepository.js';
 
 async function getExpenses() {
   try {
-    console.log("Entrando getExpense en expensesService.js");
     const expenses = await ExpensesRepository.getAll();
     return { success: true, data: expenses };
   } catch (error) {
@@ -13,7 +12,7 @@ async function getExpenses() {
 
 async function insertExpense(expense) {
   try {
-    console.log("Entrando insertExpense en expensesService.js");
+    // console.log("Entrando insertExpense en expensesService.js");
     await ExpensesRepository.create(expense);
     return { success: true };
   } catch (error) {
@@ -30,6 +29,17 @@ async function deleteExpense(id) {
   } catch (error) {
     console.error('Error in deleteExpense:', error);
     return { success: false, error: 'Error al eliminar el gasto' };
+  }
+}
+
+async function updateExpense(id, updatedData) {
+  try {
+    console.log("Entrando updateExpense en expensesService.js");
+    await ExpensesRepository.update(id, updatedData);
+    return { success: true };
+  } catch (error) {
+    console.error("Error in updateExpense:", error);
+    return { success: false, error: "Error al actualizar el gasto" };
   }
 }
 
@@ -73,6 +83,16 @@ export function handleExpenses(ipcMain) {
       return { success: false, error: "No se pudo eliminar el gasto" };
     }
   });
+
+  ipcMain.handle("update-expense", async (event, { id, updatedData }) => {
+    try {
+      return await updateExpense(id, updatedData);
+    } catch (error) {
+      console.error("Error in updateExpense IPC handler:", error);
+      return { success: false, error: "No se pudo actualizar el gasto" };
+    }
+  });
+  
 
   ipcMain.handle('find-expenses-by-category', async (event, category) => {
     try {

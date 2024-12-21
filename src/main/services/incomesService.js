@@ -2,7 +2,7 @@ import IncomesRepository from '../database/repositories/incomesRepository.js';
 
 async function getIncomes() {
   try {
-    console.log("Entrando getIncomes en incomesService.js");
+    // console.log("Entrando getIncomes en incomesService.js");
     const incomes = await IncomesRepository.getAll();
     return { success: true, data: incomes };
   } catch (error) {
@@ -32,6 +32,18 @@ async function deleteIncome(id) {
     return { success: false, error: 'Error al eliminar el ingreso' };
   }
 }
+
+async function updateIncome(id, updatedData) {
+  try {
+    console.log("Entrando updateIncome en incomesService.js");
+    await IncomesRepository.update(id, updatedData);
+    return { success: true };
+  } catch (error) {
+    console.error("Error in updateIncome:", error);
+    return { success: false, error: "Error al actualizar el ingreso" };
+  }
+}
+
 
 async function findIncomesByCategory(category) {
   try {
@@ -71,6 +83,15 @@ export function handleIncomes(ipcMain) {
     } catch (error) {
       console.error('Error in deleteIncome:', error);
       return { success: false, error: "No se pudo eliminar el ingreso" };
+    }
+  });
+
+  ipcMain.handle("update-income", async (event, { id, updatedData }) => {
+    try {
+      return await updateIncome(id, updatedData);
+    } catch (error) {
+      console.error("Error in updateIncome IPC handler:", error);
+      return { success: false, error: "No se pudo actualizar el ingreso" };
     }
   });
 

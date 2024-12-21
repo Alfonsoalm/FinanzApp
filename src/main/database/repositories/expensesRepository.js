@@ -23,9 +23,9 @@ class ExpensesRepository {
 
   // Actualizar un gasto por ID
   async update(id, data) {
-    const expenses = await Expenses.findByPk(id);
-    if (!expenses) return null;
-    return await Expenses.update(data);
+    const expense = await Expenses.findByPk(id);
+    if (!expense) return null;
+    return await expense.update(data);
   }
 
   // Eliminar un gasto por ID

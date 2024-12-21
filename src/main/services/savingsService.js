@@ -2,7 +2,7 @@ import SavingsRepository from '../database/repositories/savingsRepository.js';
 
 async function getSavings() {
   try {
-    console.log("Entrando getSavings en savingsService.js");
+    // console.log("Entrando getSavings en savingsService.js");
     const savings = await SavingsRepository.getAll();
     return { success: true, data: savings };
   } catch (error) {
@@ -31,6 +31,17 @@ async function deleteSaving(id) {
   } catch (error) {
     console.error('Error in deleteSaving:', error);
     return { success: false, error: 'Error al eliminar el ahorro' };
+  }
+}
+
+async function updateSaving(id, updatedData) {
+  try {
+    console.log("Entrando updateSaving en savingsService.js");
+    await SavingsRepository.update(id, updatedData);
+    return { success: true };
+  } catch (error) {
+    console.error("Error in updateSaving:", error);
+    return { success: false, error: "Error al actualizar el ahorro" };
   }
 }
 
@@ -72,6 +83,15 @@ export function handleSavings(ipcMain) {
     } catch (error) {
       console.error('Error in deleteSaving:', error);
       return { success: false, error: "No se pudo eliminar el ahorro" };
+    }
+  });
+
+  ipcMain.handle("update-saving", async (event, { id, updatedData }) => {
+    try {
+      return await updateSaving(id, updatedData);
+    } catch (error) {
+      console.error("Error in updateSaving IPC handler:", error);
+      return { success: false, error: "No se pudo actualizar el ahorro" };
     }
   });
 

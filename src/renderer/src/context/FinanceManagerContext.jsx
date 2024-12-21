@@ -61,6 +61,24 @@ export const FinanceManagerProvider = ({ children }) => {
     }
   };
 
+  const updateIncome = async (id, updatedData) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const result = await window.api.updateIncome(id, updatedData);
+      if (result.success) {
+        getIncomes();
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+
   // Funciones para gastos
   const getExpenses = async () => {
     try {
@@ -69,7 +87,6 @@ export const FinanceManagerProvider = ({ children }) => {
       const result = await window.api.getExpenses();
       if (result.success) {
         setExpenses(result.data);
-        console.log("Expenses: ",expenses);
       } else {
         setError(result.error);
       }
@@ -114,6 +131,23 @@ export const FinanceManagerProvider = ({ children }) => {
     }
   };
 
+  const updateExpense = async (id, updatedData) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const result = await window.api.updateExpense(id, updatedData);
+      if (result.success) {
+        getIncomes();
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Funciones para ahorros
   const getSavings = async () => {
     try {
@@ -122,7 +156,6 @@ export const FinanceManagerProvider = ({ children }) => {
       const result = await window.api.getSavings();
       if (result.success) {
         setSavings(result.data);
-        console.log("Savings: ",savings);
       } else {
         setError(result.error);
       }
@@ -167,23 +200,31 @@ export const FinanceManagerProvider = ({ children }) => {
     }
   };
 
+  const updateSaving = async (id, updatedData) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const result = await window.api.updateSaving(id, updatedData);
+      if (result.success) {
+        getIncomes();
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
   return (
     <FinanceManagerContext.Provider
       value={{
-        incomes,
-        expenses,
-        savings,
-        error,
-        isLoading,
-        getIncomes,
-        insertIncome,
-        deleteIncome,
-        getExpenses,
-        insertExpense,
-        deleteExpense,
-        getSavings,
-        insertSaving,
-        deleteSaving,
+        incomes, expenses, savings, error, isLoading,
+        getIncomes, insertIncome, deleteIncome, updateIncome,
+        getExpenses, insertExpense, deleteExpense, updateExpense,
+        getSavings, insertSaving, deleteSaving, updateSaving,
       }}
     >
       {children}

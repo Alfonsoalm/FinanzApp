@@ -5,7 +5,6 @@ class SavingsRepository {
     // Obtener todos los ahorros
     async getAll() {
       const savings = await Savings.findAll()
-      console.log("savings",savings);
 
       if (savings) {
         return savings.map(saving => {
@@ -18,7 +17,8 @@ class SavingsRepository {
   
     // Insertar un nuevo ahorro
     async create(data) {
-      return await Savings.create(data);
+      await Savings.create(data)
+      return {success: true};
     }
   
     // Actualizar un ahorro por ID

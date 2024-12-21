@@ -3,7 +3,7 @@ import "../../styles/pages/savingsPage.css";
 import { FinanceManagerContext } from "../../context/FinanceManagerContext";
 
 export const SavingsPage = () => {
-  const { savings, insertSaving, deleteSaving, getSavings, error } =
+  const { savings, insertSaving, updateSaving, deleteSaving, getSavings, error } =
     useContext(FinanceManagerContext);
   const [formData, setFormData] = useState({
     description: "",
@@ -14,10 +14,11 @@ export const SavingsPage = () => {
     type: "recurrent",
   });
   const [formError, setFormError] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
   const [shouldFetch, setShouldFetch] = useState(false);
 
   useEffect(() => {
-    // Cargar ahorros al montar el componente o cuando se realiza un cambio
     const fetchSavings = async () => {
       try {
         await getSavings();
@@ -27,14 +28,14 @@ export const SavingsPage = () => {
     };
 
     fetchSavings();
-  }, [shouldFetch]); // Ejecutar al montar el componente o cuando cambia shouldFetch
+  }, [shouldFetch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddSaving = async (e) => {
+  const handleSubmitSaving = async (e) => {
     e.preventDefault();
 
     // Validación del formulario
@@ -55,16 +56,18 @@ export const SavingsPage = () => {
 
     try {
       setFormError(""); // Limpiar errores previos
-      const newSaving = {
-        description: formData.description,
-        amount: parseFloat(formData.amount),
-        interest_rate: parseFloat(formData.interest_rate) || 0,
-        date: formData.date,
-        category: formData.category,
-        type: formData.type,
-      };
-
-      await insertSaving(newSaving); // Insertar ahorro
+      if (editMode) {
+        // Actualizar ahorro existente
+        await updateSaving(editId, formData);
+        setEditMode(false);
+        setEditId(null);
+      } else {
+        // Insertar nuevo ahorro
+        await insertSaving({
+          ...formData,
+          interest_rate: parseFloat(formData.interest_rate) || 0,
+        });
+      }
       setShouldFetch((prev) => !prev); // Actualizar la tabla
       setFormData({
         description: "",
@@ -75,8 +78,21 @@ export const SavingsPage = () => {
         type: "recurrent",
       });
     } catch (err) {
-      console.error("Error al agregar el ahorro", err);
+      console.error("Error al guardar el ahorro:", err);
     }
+  };
+
+  const handleEditSaving = (saving) => {
+    setEditMode(true);
+    setEditId(saving.id);
+    setFormData({
+      description: saving.description,
+      amount: saving.amount,
+      date: saving.date,
+      category: saving.category,
+      interest_rate: saving.interest_rate,
+      type: saving.type,
+    });
   };
 
   const handleDeleteSaving = async (id) => {
@@ -92,8 +108,8 @@ export const SavingsPage = () => {
     <div className="savings-page">
       <h2>Ahorros</h2>
 
-      {/* Formulario para agregar ahorros */}
-      <form onSubmit={handleAddSaving} className="savings-form">
+      {/* Formulario para agregar/editar ahorros */}
+      <form onSubmit={handleSubmitSaving} className="savings-form">
         <input
           name="amount"
           type="number"
@@ -137,13 +153,10 @@ export const SavingsPage = () => {
           <option value="recurrent">Recurrente</option>
           <option value="one-time">Puntual</option>
         </select>
-        <button type="submit">Añadir Ahorro</button>
+        <button type="submit">{editMode ? "Actualizar Ahorro" : "Añadir Ahorro"}</button>
       </form>
 
-      {/* Mostrar errores del formulario */}
       {formError && <p className="form-error">{formError}</p>}
-
-      {/* Mostrar errores globales */}
       {error && <p className="error">Error: {error}</p>}
 
       {/* Resumen de ahorros */}
@@ -179,7 +192,10 @@ export const SavingsPage = () => {
                   <td>{saving.interest_rate}%</td>
                   <td>{saving.type === "recurrent" ? "Recurrente" : "Puntual"}</td>
                   <td>
-                    <button onClick={() => handleDeleteSaving(saving.id)}>
+                    <button className="edit-btn" onClick={() => handleEditSaving(saving)}>
+                      Editar
+                    </button>
+                    <button className="delete-btn" onClick={() => handleDeleteSaving(saving.id)}>
                       Eliminar
                     </button>
                   </td>

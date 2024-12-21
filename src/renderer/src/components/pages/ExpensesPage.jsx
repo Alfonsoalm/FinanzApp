@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from "react";
+import { FinanceManagerContext } from "../../context/FinanceManagerContext";
 import "../../styles/pages/expensesPage.css";
 
-import { FinanceManagerContext } from "../../context/FinanceManagerContext";
-
 export const ExpensesPage = () => {
-  const { expenses, insertExpense, deleteExpense, getExpenses, error } =
-    useContext(FinanceManagerContext); // Eliminamos isLoading del contexto
+  const { expenses, insertExpense, updateExpense, deleteExpense, getExpenses, error } =
+    useContext(FinanceManagerContext);
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
@@ -14,10 +13,11 @@ export const ExpensesPage = () => {
     type: "recurrent",
   });
   const [formError, setFormError] = useState("");
-  const [shouldFetch, setShouldFetch] = useState(false); // Nuevo estado para controlar cuándo ejecutar el useEffect
+  const [editMode, setEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [shouldFetch, setShouldFetch] = useState(false);
 
   useEffect(() => {
-    // Cargar los gastos al montar el componente o después de enviar el formulario
     const fetchExpenses = async () => {
       try {
         await getExpenses();
@@ -27,17 +27,16 @@ export const ExpensesPage = () => {
     };
 
     fetchExpenses();
-  }, [shouldFetch]); // Se ejecuta solo al montar el componente o cuando shouldFetch cambia
+  }, [shouldFetch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddExpense = async (e) => {
+  const handleSubmitExpense = async (e) => {
     e.preventDefault();
 
-    // Validación del formulario
     if (!formData.description || !formData.amount || !formData.date || !formData.category) {
       setFormError("Por favor, completa todos los campos.");
       return;
@@ -49,29 +48,41 @@ export const ExpensesPage = () => {
     }
 
     try {
-      setFormError(""); // Limpiar errores previos
-      const newExpense = {
-        description: formData.description,
-        amount: parseFloat(formData.amount),
-        date: formData.date,
-        category: formData.category,
-        type: formData.type,
-      };
-
-      await insertExpense(newExpense); // Insertar gasto
-      setShouldFetch((prev) => !prev); // Cambiar el estado para disparar useEffect y actualizar la tabla
+      setFormError("");
+      if (editMode) {
+        // Update existing expense
+        await updateExpense(editId, formData);
+        setEditMode(false);
+        setEditId(null);
+      } else {
+        // Insert new expense
+        await insertExpense(formData);
+      }
+      setShouldFetch((prev) => !prev);
       setFormData({ description: "", amount: "", date: "", category: "", type: "recurrent" });
     } catch (err) {
-      console.error("Error al agregar el gasto", err);
+      console.error("Error al guardar el gasto:", err);
     }
+  };
+
+  const handleEditExpense = (expense) => {
+    setEditMode(true);
+    setEditId(expense.id);
+    setFormData({
+      description: expense.description,
+      amount: expense.amount,
+      date: expense.date,
+      category: expense.category,
+      type: expense.type,
+    });
   };
 
   const handleDeleteExpense = async (id) => {
     try {
       await deleteExpense(id);
-      setShouldFetch((prev) => !prev); // Cambiar el estado para disparar useEffect y actualizar la tabla
+      setShouldFetch((prev) => !prev);
     } catch (err) {
-      console.error("Error al eliminar el gasto", err);
+      console.error("Error al eliminar el gasto:", err);
     }
   };
 
@@ -79,8 +90,7 @@ export const ExpensesPage = () => {
     <div className="expenses-page">
       <h2>Gastos</h2>
 
-      {/* Formulario para agregar gastos */}
-      <form onSubmit={handleAddExpense} className="expenses-form">
+      <form onSubmit={handleSubmitExpense} className="expenses-form">
         <input
           name="amount"
           type="number"
@@ -116,16 +126,12 @@ export const ExpensesPage = () => {
           <option value="recurrent">Recurrente</option>
           <option value="one-time">Puntual</option>
         </select>
-        <button type="submit">Añadir Gasto</button>
+        <button type="submit">{editMode ? "Actualizar Gasto" : "Añadir Gasto"}</button>
       </form>
 
-      {/* Mostrar errores del formulario */}
       {formError && <p className="form-error">{formError}</p>}
-
-      {/* Mostrar errores globales */}
       {error && <p className="error">Error: {error}</p>}
 
-      {/* Resumen de gastos */}
       <div className="expenses-summary">
         <h3>Resumen</h3>
         {expenses.length === 0 ? (
@@ -156,7 +162,12 @@ export const ExpensesPage = () => {
                   <td>{expense.category}</td>
                   <td>{expense.type === "recurrent" ? "Recurrente" : "Puntual"}</td>
                   <td>
-                    <button onClick={() => handleDeleteExpense(expense.id)}>Eliminar</button>
+                    <button className="edit-btn" onClick={() => handleEditExpense(expense)}>
+                      Editar
+                    </button>
+                    <button className="delete-btn" onClick={() => handleDeleteExpense(expense.id)}>
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -71,7 +71,25 @@
   background-color: #f1f1f1; /* Color al pasar el cursor */
 }
 
-.incomes-summary button {
+.incomes-summary .edit-btn {
+  width: 80%;
+  margin: 3px; /* Separación entre botones */
+  background-color: #0275d8; /* Color azul para el botón de editar */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.incomes-summary .edit-btn:hover {
+  background-color: #025aa5; /* Oscurecer el botón de editar al pasar el cursor */
+}
+
+.incomes-summary .delete-btn {
+  width: 80%;
+  margin: 3px; /* Separación entre botones */
   background-color: #d9534f; /* Color rojo para los botones de eliminar */
   color: white;
   border: none;
@@ -81,7 +99,7 @@
   transition: background-color 0.3s ease;
 }
 
-.incomes-summary button:hover {
+.incomes-summary .delete-btn:hover {
   background-color: #c9302c; /* Oscurecer el botón al pasar el cursor */
 }
 

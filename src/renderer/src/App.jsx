@@ -5,10 +5,6 @@ import { Header } from "./layout/Header";
 import { FinanceManagerProvider } from "./context/FinanceManagerContext";
 import "./styles/styles.css";
 import "./styles/navbar.css";
-import "./styles/pages/errorPage.css";
-import "./styles/pages/incomesPage.css";
-import "./styles/pages/expensesPage.css";
-import "./styles/pages/projectionPage.css";
 
 function App() {
   return (

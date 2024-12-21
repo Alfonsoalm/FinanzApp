@@ -1,0 +1,88 @@
+.summary-page {
+    width: 100%;
+    max-width: 1200px; /* Limitar el ancho máximo */
+    margin: 0 auto; /* Centrar la página dentro del contenedor */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.summary-layout {
+    display: flex;
+    gap: 20px;
+}
+
+.summary-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.summary-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.data-container {
+    width: 60%;
+}
+
+.chart-container {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.month-filter {
+    margin-bottom: 20px;
+}
+
+.month-filter label {
+    margin-right: 10px;
+}
+
+.month-filter select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.filter-buttons button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #f5f5f5;
+    transition: background-color 0.3s ease;
+}
+
+.filter-buttons button.active {
+    background-color: #4caf50;
+    color: white;
+    border-color: #4caf50;
+}
+
+.filter-buttons button:hover {
+    background-color: #e0e0e0;
+}
+
+.line-chart-container {
+    margin-top: 30px;
+}
