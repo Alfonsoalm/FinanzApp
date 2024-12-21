@@ -1,4 +1,4 @@
-# gestorhoras
+## Finanzapp
 
 An Electron application with React
 

@@ -1,11 +1,19 @@
 import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('gestion_de_proyectos', 'root', '1234', {
+const sequelize = new Sequelize('gestion_finanzas_personales', 'root', '1234', {
   host: 'localhost',
   dialect: 'mysql',
   port: 3306,
-  logging: false, // Deshabilitar el registro de las consultas (opcional)
+  logging: false,
 });
+
+sequelize.authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch((error) => {
+    console.error('Unable to connect to the database:', error);
+  });
 
 export default sequelize;
 

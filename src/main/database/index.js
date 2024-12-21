@@ -1,3 +1,3 @@
-export * from "./authentication"
-export * from "./connection"
-export * from "./projects"
+export * from "./authentication.js"
+export * from "./connection.js"
+export * from "./projects.js"
