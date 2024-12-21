@@ -212,7 +212,6 @@ export const SummaryPage = () => {
           </div>
         </div>
         <div className="chart-container" style={{ width: '35%' }}>
-          <h3>Incomes vs. Expenses</h3>
           <Pie data={pieData} options={{ animation: false }} />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import "../../styles/pages/summaryPage.css";
 import { FinanceManagerContext } from "../../context/FinanceManagerContext";
 import { Line } from "react-chartjs-2";
+import "../../styles/pages/projectionPage.css";
 import {
   Chart as ChartJS,
   CategoryScale,
