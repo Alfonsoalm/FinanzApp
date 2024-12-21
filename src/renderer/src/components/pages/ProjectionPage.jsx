@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import "../../styles/pages/projectionPage.css";
+import "../../styles/pages/summaryPage.css";
 import { FinanceManagerContext } from "../../context/FinanceManagerContext";
 import { Line } from "react-chartjs-2";
 import {
@@ -40,26 +40,50 @@ export const ProjectionPage = () => {
     const monthlyInterestRate = (rate) => rate / 100 / 12;
     const projectionsData = [];
 
-    // Initialize accumulated amount for all savings combined
-    let accumulatedTotal = 0;
+    let accumulatedTotal = 0; // Total acumulado de todos los ahorros
+    const startDate = new Date(); // Fecha actual
 
     for (let year = 1; year <= range; year++) {
-      for (let month = 1; month <= 12; month++) {
+      for (let month = 0; month < 12; month++) {
+        const currentDate = new Date(startDate.getFullYear() + year - 1, month);
+
         savings.forEach((saving) => {
-          let monthlyAmount = parseFloat(saving.amount);
-          const interestRate = saving.interest_rate || 0;
+          const savingStartDate = new Date(saving.date);
 
-          // Add interest to the current saving amount
-          accumulatedTotal += monthlyAmount;
-          accumulatedTotal += accumulatedTotal * monthlyInterestRate(interestRate);
+          if (
+            currentDate.getFullYear() > savingStartDate.getFullYear() ||
+            (currentDate.getFullYear() === savingStartDate.getFullYear() && currentDate.getMonth() >= savingStartDate.getMonth())
+          ) {
+            let monthlyAmount = parseFloat(saving.amount);
+            const interestRate = saving.interest_rate || 0;
 
-          console.log(
-            `Año ${year}, Mes ${month}, Ahorro: €${monthlyAmount.toFixed(2)}, Acumulado: €${accumulatedTotal.toFixed(2)}`
-          );
+            if (saving.type === "recurrent") {
+              // Agregar la contribución recurrente al total acumulado
+              accumulatedTotal += monthlyAmount;
+            } else if (
+              saving.type === "one-time" &&
+              currentDate.getFullYear() === savingStartDate.getFullYear() &&
+              currentDate.getMonth() === savingStartDate.getMonth()
+            ) {
+              // Agregar la contribución puntual solo una vez en su mes correspondiente
+              accumulatedTotal += monthlyAmount;
+              console.log(
+                `Contribución puntual agregada: Fecha ${currentDate.toISOString().slice(0, 7)}, Cantidad: €${monthlyAmount.toFixed(2)}`
+              );
+            }
+
+            // Aplicar interés mensual al total acumulado
+            const previousTotal = accumulatedTotal;
+            accumulatedTotal += accumulatedTotal * monthlyInterestRate(interestRate);
+
+            console.log(
+              `Fecha: ${currentDate.toISOString().slice(0, 7)}, Tipo: ${saving.type}, Ahorro: €${monthlyAmount.toFixed(2)}, Acumulado previo: €${previousTotal.toFixed(2)}, Acumulado después de interés: €${accumulatedTotal.toFixed(2)}`
+            );
+          }
         });
       }
 
-      // Add the yearly total to the projections data
+      // Guardar el total acumulado al final del año
       projectionsData.push({ year, totalSavings: accumulatedTotal });
     }
 

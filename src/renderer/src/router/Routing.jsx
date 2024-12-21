@@ -4,7 +4,7 @@ import { IncomesPage, ExpensesPage, SavingsPage, SummaryPage, ProjectionPage, Er
 export const Routing = () => {
   return (
     <Routes>
-      <Route path="/" />
+      <Route path="/" element={<IncomesPage />}/>
       <Route path="/incomes" element={<IncomesPage />} />
       <Route path="/expenses" element={<ExpensesPage />} />
       <Route path="/savings" element={<SavingsPage />} />
