@@ -37,15 +37,15 @@ Esta aplicación permite a los usuarios gestionar y proyectar sus finanzas perso
 4. Exporta los datos detallados y resúmenes a archivos Excel o PDF para un análisis más profundo.
 
 ## Pasos
-Clonar repositorio: 
+- Clonar repositorio: 
 `git clone git@github.com:Alfonsoalm/Finanzapp.git`
-Entrar en carpeta:
+- Entrar en carpeta:
 `cd Finanzapp`
-Instalar dependencias
+- Instalar dependencias
 `npm install`
-Compilar la aplicación (opcional, solo para produccion):
+- Compilar la aplicación (opcional, solo para produccion):
 `npm run build`
-Ejecutar la aplicacion en modo desarrollo
+- Ejecutar la aplicacion en modo desarrollo
 `npm run dev`
 
 ***Este proyecto está en constante evolución, y estamos abiertos a recibir sugerencias y contribuciones para seguir mejorando la experiencia del usuario***
