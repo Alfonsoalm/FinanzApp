@@ -1,53 +1,44 @@
 # Proyección de Ahorros - Aplicación
-Esta aplicación permite a los usuarios realizar proyecciones financieras basadas en sus ahorros actuales y futuros. Integra datos de ingresos, gastos y ahorros, considerando tasas de interés y periodicidad de las contribuciones.
+
+Esta aplicación permite a los usuarios gestionar y proyectar sus finanzas personales, integrando datos de ingresos, gastos y ahorros. Proporciona herramientas avanzadas para el análisis financiero, visualización interactiva y exportación de datos.
 
 ## Características
 1. **Cálculo de Proyecciones**:
    - Genera proyecciones detalladas de los ahorros hasta 60 años.
-   - Considera contribuciones recurrentes (mensuales) y puntuales (única vez en la fecha específica).
-   - Aplica tasas de interés mensuales para calcular el crecimiento acumulado de los ahorros.
+   - Incluye contribuciones recurrentes (mensuales) y puntuales (única vez).
+   - Aplica tasas de interés mensuales para calcular el crecimiento acumulado.
 
-2. **Interfaz Interactiva**:
-   - Botones de rango para seleccionar proyecciones de 1, 3, 5, 10, 20, 30, 40, 50 y 60 años.
-   - Gráficos dinámicos que muestran el crecimiento de los ahorros a lo largo del tiempo.
-
-3. **Gestión de Fechas**:
-   - Las contribuciones puntuales solo se aplican en la fecha específica correspondiente.
-   - Las contribuciones recurrentes comienzan desde su fecha inicial y se acumulan mes a mes.
-
-## Tecnologías Utilizadas
-- **React.js**: Para la creación de componentes interactivos.
-- **Chart.js**: Para generar gráficos dinámicos y visualización de datos.
-- **Context API**: Para la gestión de estado global (ahorros, ingresos, gastos).
-- **Electron**: Para el desarrollo del entorno de la aplicacion.
-
-## Cálculos y Lógica
-### Ahorros Recurrentes
-Se acumulan mes a mes desde la fecha de inicio hasta el final del rango seleccionado. Cada mes, se aplica la tasa de interés al total acumulado.
-
-### Ahorros Puntuales
-Se suman únicamente en el mes y año definidos por su fecha. No se acumulan en meses posteriores.
-
-### Beneficio Neto
-En el futuro, se incorporará el **beneficio neto acumulado** a lo largo de los años en las proyecciones. Esto significa que las diferencias entre ingresos y gastos proyectados impactarán directamente en el total acumulado y el cálculo de interés compuesto.
-
-## Cómo Usar
-1. Selecciona un rango de años en los botones disponibles.
-2. Observa cómo se proyectan tus ahorros a lo largo del tiempo en el gráfico.
-3. Revisa los cálculos en la consola para validar los valores generados.
-
-## Próximas Mejoras
-1. **Cálculo del Beneficio Neto**:
-   - Incorporar las diferencias entre ingresos y gastos acumulados al cálculo de la proyección.
-
-2. **Mejoras Visuales**:
-   - Añadir etiquetas detalladas a los gráficos.
-   - Opciones para personalizar tasas de interés y contribuciones futuras.
+2. **Resumen Financiero**:
+   - Resumen mensual de ingresos, gastos y balance.
+   - Detalle de ingresos, gastos y ahorros, incluyendo categorías, fechas y tipo.
 
 3. **Exportación de Datos**:
-   - Permitir exportar proyecciones a archivos CSV o PDF.
+   - Exporta el resumen financiero y detalles a archivos Excel y PDF.
 
----
+4. **Visualización Interactiva**:
+   - Gráficos dinámicos (circular y de línea) para analizar tendencias y distribución.
+   - Filtros por mes, año y rango de tiempo.
 
-Este proyecto sigue en desarrollo activo. Si tienes sugerencias o encuentras errores, no dudes en contribuir o reportarlos.
+5. **Gestión de Datos**:
+   - Administración de ingresos, gastos y ahorros con categorías y fechas específicas.
 
+## Tecnologías Utilizadas
+- **React.js**: Para la creación de una interfaz de usuario dinámica e interactiva.
+- **Electron**: Para desarrollar la aplicación como un entorno de escritorio multiplataforma.
+- **Chart.js**: Para gráficos dinámicos y visualización avanzada de datos financieros.
+- **Context API**: Para la gestión de estado global de la aplicación (ingresos, gastos, ahorros).
+- **XLSX**: Para la exportación de datos financieros a Excel.
+- **jsPDF**: Para la generación y exportación de reportes en PDF.
+
+## Cómo Usar
+1. Registra tus ingresos, gastos y ahorros con sus respectivas fechas, cantidades y categorías.
+2. Selecciona un rango de tiempo o un mes y año específicos para visualizar el resumen financiero.
+3. Analiza tus finanzas a través de gráficos y resúmenes interactivos.
+4. Exporta los datos detallados y resúmenes a archivos Excel o PDF para un análisis más profundo.
+
+## Características Añadidas
+- **Exportación a Excel y PDF**: Los usuarios pueden descargar resúmenes financieros completos, incluidos los detalles de ingresos, gastos y ahorros.
+- **Gráficos Detallados**: Visualización mejorada con gráficos circulares y de línea interactivos.
+- **Gestión Detallada de Datos**: Administración sencilla y precisa de ingresos, gastos y ahorros con detalles como categorías, fechas y tipos (recurrentes o puntuales).
+
+Este proyecto está en constante evolución, y estamos abiertos a recibir sugerencias y contribuciones para seguir mejorando la experiencia del usuario.
