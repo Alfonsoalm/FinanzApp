@@ -14,6 +14,9 @@ import {
   Title,
 } from "chart.js";
 
+// Import icons
+import { FaArrowUp, FaArrowDown, FaBalanceScale } from "react-icons/fa";
+
 ChartJS.register(
   ArcElement,
   Tooltip,
@@ -26,122 +29,96 @@ ChartJS.register(
 );
 
 export const SummaryPage = () => {
-  const { incomes, expenses, savings, getIncomes, getExpenses, getSavings } =
-    useContext(FinanceManagerContext);
-  const [range, setRange] = useState(3); // Estado para controlar el rango temporal (últimos meses)
+  const { incomes, expenses, getIncomes, getExpenses } = useContext(FinanceManagerContext);
+  const [range, setRange] = useState(3);
   const [selectedMonth, setSelectedMonth] = useState("2024-12");
+  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedMonthOnly, setSelectedMonthOnly] = useState("12");
 
   useEffect(() => {
+    // Load data on component mount
     getIncomes();
     getExpenses();
-    getSavings();
-  }, [getIncomes, getExpenses, getSavings]);
+  }, [getIncomes, getExpenses]);
 
-  // Helper to calculate totals for each month
+  useEffect(() => {
+    setSelectedMonth(`${selectedYear}-${selectedMonthOnly}`);
+  }, [selectedYear, selectedMonthOnly]);
+
   const calculateTotals = (data) => {
-    const monthlyData = {};
-
+    const monthlyData = { recurrent: {}, oneTime: {} };
     data.forEach((item) => {
       const startDate = new Date(item.date);
       const startMonthKey = startDate.toISOString().slice(0, 7);
 
       if (item.type === "recurrent") {
-        // Populate all months from startMonthKey onward
         const currentDate = new Date();
         let tempDate = new Date(startDate);
         while (tempDate <= currentDate) {
           const monthKey = tempDate.toISOString().slice(0, 7);
-          if (!monthlyData[monthKey]) {
-            monthlyData[monthKey] = 0;
+          if (!monthlyData.recurrent[monthKey]) {
+            monthlyData.recurrent[monthKey] = 0;
           }
-          monthlyData[monthKey] += parseFloat(item.amount);
+          monthlyData.recurrent[monthKey] += parseFloat(item.amount);
           tempDate.setMonth(tempDate.getMonth() + 1);
         }
       } else if (item.type === "one-time") {
-        // Only populate the specific month
-        if (!monthlyData[startMonthKey]) {
-          monthlyData[startMonthKey] = 0;
+        if (!monthlyData.oneTime[startMonthKey]) {
+          monthlyData.oneTime[startMonthKey] = 0;
         }
-        monthlyData[startMonthKey] += parseFloat(item.amount);
+        monthlyData.oneTime[startMonthKey] += parseFloat(item.amount);
       }
     });
-
     return monthlyData;
-  };
-
-  const calculateSavingsWithInterest = (savings) => {
-    const savingsWithInterest = {};
-    const currentDate = new Date();
-
-    savings.forEach((saving) => {
-      const startDate = new Date(saving.date);
-      const startMonthKey = startDate.toISOString().slice(0, 7);
-      let accumulatedAmount = parseFloat(saving.amount);
-
-      let tempDate = new Date(startDate);
-      while (tempDate <= currentDate) {
-        const monthKey = tempDate.toISOString().slice(0, 7);
-        if (!savingsWithInterest[monthKey]) {
-          savingsWithInterest[monthKey] = 0;
-        }
-
-        // Add the accumulated amount to the current month
-        savingsWithInterest[monthKey] += accumulatedAmount;
-
-        // Apply interest for the next month
-        const monthlyInterestRate = (saving.interest_rate || 0) / 100 / 12;
-        accumulatedAmount += accumulatedAmount * monthlyInterestRate;
-
-        tempDate.setMonth(tempDate.getMonth() + 1);
-      }
-    });
-
-    return savingsWithInterest;
   };
 
   const incomesByMonth = calculateTotals(incomes);
   const expensesByMonth = calculateTotals(expenses);
-  const savingsWithInterest = calculateSavingsWithInterest(savings);
 
-  const totalSavings = Object.values(savingsWithInterest).reduce((sum, value) => sum + value, 0);
+  const totalIncomesRecurrent = incomesByMonth.recurrent[selectedMonth] || 0;
+  const totalIncomesOneTime = incomesByMonth.oneTime[selectedMonth] || 0;
+  const totalExpensesRecurrent = expensesByMonth.recurrent[selectedMonth] || 0;
+  const totalExpensesOneTime = expensesByMonth.oneTime[selectedMonth] || 0;
 
-  // Combine data for all months
-  const months = Array.from(
-    new Set([...Object.keys(incomesByMonth), ...Object.keys(expensesByMonth), ...Object.keys(savingsWithInterest)])
-  ).sort();
+  const totalIncome = totalIncomesRecurrent + totalIncomesOneTime;
+  const totalExpense = totalExpensesRecurrent + totalExpensesOneTime;
+  const netBalance = totalIncome - totalExpense;
 
-  // Filter months based on the selected range
-  const filteredMonths = months.slice(-range);
-
-  const monthlyData = filteredMonths.map((month) => {
-    const income = incomesByMonth[month] || 0;
-    const expense = expensesByMonth[month] || 0;
-    const saving = savingsWithInterest[month] || 0;
-
-    return {
-      month,
-      income,
-      expense,
-      saving,
-      net: income - expense, // Net balance: incomes - expenses
-    };
-  });
-
-  // Pie chart data (specific to the selected month)
   const pieData = {
-    labels: ["Ingresos", "Gastos"],
+    labels: [
+      "Ingresos Recurrentes",
+      "Ingresos Puntuales",
+      "Gastos Recurrentes",
+      "Gastos Puntuales",
+    ],
     datasets: [
       {
         data: [
-          incomesByMonth[selectedMonth] || 0,
-          expensesByMonth[selectedMonth] || 0,
+          totalIncomesRecurrent,
+          totalIncomesOneTime,
+          totalExpensesRecurrent,
+          totalExpensesOneTime,
         ],
-        backgroundColor: ["#4caf50", "#f44336"],
+        backgroundColor: ["#2e7d32", "#81c784", "#f44336", "#e57373"],
       },
     ],
   };
 
-  // Line chart data
+  const monthlyData = Object.keys(incomesByMonth.recurrent).map((month) => ({
+    month,
+    income:
+      (incomesByMonth.recurrent[month] || 0) +
+      (incomesByMonth.oneTime[month] || 0),
+    expense:
+      (expensesByMonth.recurrent[month] || 0) +
+      (expensesByMonth.oneTime[month] || 0),
+    net:
+      (incomesByMonth.recurrent[month] || 0) +
+      (incomesByMonth.oneTime[month] || 0) -
+      ((expensesByMonth.recurrent[month] || 0) +
+        (expensesByMonth.oneTime[month] || 0)),
+  }));
+
   const lineData = {
     labels: monthlyData.map((data) => data.month),
     datasets: [
@@ -160,13 +137,6 @@ export const SummaryPage = () => {
         fill: true,
       },
       {
-        label: "Ahorros (€)",
-        data: monthlyData.map((data) => data.saving),
-        borderColor: "#ff9800",
-        backgroundColor: "#ff980050",
-        fill: true,
-      },
-      {
         label: "Balance (€)",
         data: monthlyData.map((data) => data.net),
         borderColor: "#2196f3",
@@ -180,48 +150,82 @@ export const SummaryPage = () => {
     <div className="summary-page">
       <h2>Resumen</h2>
 
-      {/* Filtro de mes */}
+      {/* Filtro de mes y año */}
       <div className="month-filter">
-        <label htmlFor="month">Seleccionar mes:</label>
+        <label htmlFor="month"> Mes:</label>
         <select
           id="month"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
+          value={selectedMonthOnly}
+          onChange={(e) => setSelectedMonthOnly(e.target.value)}
         >
-          {months.map((month) => (
+          {Array.from({ length: 12 }, (_, i) =>
+            String(i + 1).padStart(2, "0")
+          ).map((month) => (
             <option key={month} value={month}>
               {month}
             </option>
           ))}
         </select>
+
+        <label htmlFor="year"> Año:</label>
+        <select
+          id="year"
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(e.target.value)}
+        >
+          {[2023, 2024, 2025].map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div className="summary-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div className="data-container" style={{ width: '60%' }}>
-          <div className="savings-card">
-            <h3>Ingresos totales este mes</h3>
-            <p>{new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(incomesByMonth[selectedMonth] || 0)}</p>
+      <div className="summary-container">
+        <div className="data-container">
+          <div className="card">
+            <div className="card-header" style={{ color: "#2e7d32" }}>
+              <FaArrowUp /> <h3>Ingresos totales este mes</h3>
+            </div>
+            <span className="total">
+              {new Intl.NumberFormat("es-ES", {
+                style: "currency",
+                currency: "EUR",
+              }).format(totalIncome)}
+            </span>
           </div>
-          <div className="savings-card">
-            <h3>Gastos totales este mes</h3>
-            <p>{new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(expensesByMonth[selectedMonth] || 0)}</p>
+
+          <div className="card">
+            <div className="card-header" style={{ color: "#f44336" }}>
+              <FaArrowDown /> <h3>Gastos totales este mes</h3>
+            </div>
+            <span className="total">
+              {new Intl.NumberFormat("es-ES", {
+                style: "currency",
+                currency: "EUR",
+              }).format(totalExpense)}
+            </span>
           </div>
-          <div className="savings-card">
-            <h3>Balance neto este mes</h3>
-            <p>{new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format((incomesByMonth[selectedMonth] || 0) - (expensesByMonth[selectedMonth] || 0))}</p>
+
+          <div className="card">
+            <div className="card-header" style={{ color: "#2196f3" }}>
+              <FaBalanceScale /> <h3>Balance neto este mes</h3>
+            </div>
+            <span className="total">
+              {new Intl.NumberFormat("es-ES", {
+                style: "currency",
+                currency: "EUR",
+              }).format(netBalance)}
+            </span>
           </div>
         </div>
-        <div className="chart-container" style={{ width: '35%' }}>
+
+        <div className="chart-container">
           <Pie data={pieData} options={{ animation: false }} />
         </div>
       </div>
 
-      <div className="savings-total-container" style={{ marginTop: '20px', borderTop: '2px solid #ccc', paddingTop: '20px' }}>
-        <h3>Ahorros totales históricos</h3>
-        <p>{new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(totalSavings)}</p>
-      </div>
-
-      {/* Range Filter Buttons */}
+      {/* Filtro por rango */}
       <div className="filter-buttons">
         <button onClick={() => setRange(3)} className={range === 3 ? "active" : ""}>
           Últimos 3 Meses
@@ -234,7 +238,6 @@ export const SummaryPage = () => {
         </button>
       </div>
 
-      {/* Line Chart */}
       <div className="line-chart-container">
         <h3>Temporal Trends</h3>
         <Line data={lineData} options={{ animation: false }} />

@@ -3,8 +3,17 @@ import { FinanceManagerContext } from "../../context/FinanceManagerContext";
 import "../../styles/pages/savingsPage.css";
 
 export const SavingsPage = () => {
-  const { savings, insertSaving, updateSaving, deleteSaving, getSavings, error } =
-    useContext(FinanceManagerContext);
+  const {
+    savings,
+    insertSaving,
+    updateSaving,
+    deleteSaving,
+    getSavings,
+    incomes,
+    expenses,
+    error,
+  } = useContext(FinanceManagerContext);
+
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
@@ -17,18 +26,41 @@ export const SavingsPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
   const [shouldFetch, setShouldFetch] = useState(false);
+  const [averageNetBalance, setAverageNetBalance] = useState(0);
 
   useEffect(() => {
     const fetchSavings = async () => {
       try {
         await getSavings();
+        calculateAverageNetBalance();
       } catch (err) {
         console.error("Error al cargar los ahorros:", err);
       }
     };
 
     fetchSavings();
-  }, [shouldFetch]);
+  }, [shouldFetch, incomes, expenses]);
+
+  const calculateAverageNetBalance = () => {
+    // Calcular el balance neto promedio
+    const months = new Set();
+    let totalNetBalance = 0;
+
+    incomes.forEach((income) => {
+      const monthKey = new Date(income.date).toISOString().slice(0, 7);
+      months.add(monthKey);
+      totalNetBalance += parseFloat(income.amount);
+    });
+
+    expenses.forEach((expense) => {
+      const monthKey = new Date(expense.date).toISOString().slice(0, 7);
+      months.add(monthKey);
+      totalNetBalance -= parseFloat(expense.amount);
+    });
+
+    const average = months.size > 0 ? totalNetBalance / months.size : 0;
+    setAverageNetBalance(average);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,6 +83,18 @@ export const SavingsPage = () => {
 
     if (parseFloat(formData.amount) <= 0) {
       setFormError("La cantidad debe ser mayor a cero.");
+      return;
+    }
+
+    if (
+      formData.type === "recurrent" &&
+      parseFloat(formData.amount) > averageNetBalance
+    ) {
+      setFormError(
+        `El ahorro recurrente no puede superar el balance neto promedio (${averageNetBalance.toFixed(
+          2
+        )} €).`
+      );
       return;
     }
 
@@ -107,6 +151,17 @@ export const SavingsPage = () => {
   return (
     <div className="savings-page">
       <h2>Ahorros</h2>
+
+      {/* Mostrar el balance neto promedio */}
+      <div className="average-net-balance">
+        <p>
+          <strong>Balance Neto Promedio:</strong>{" "}
+          {new Intl.NumberFormat("es-ES", {
+            style: "currency",
+            currency: "EUR",
+          }).format(averageNetBalance)}
+        </p>
+      </div>
 
       {/* Formulario para agregar/editar ahorros */}
       <form onSubmit={handleSubmitSaving} className="savings-form">

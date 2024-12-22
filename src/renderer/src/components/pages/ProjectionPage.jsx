@@ -11,6 +11,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from "chart.js";
 
 ChartJS.register(
@@ -20,82 +21,96 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 export const ProjectionPage = () => {
-  const { savings, getSavings } = useContext(FinanceManagerContext);
+  const { savings } = useContext(FinanceManagerContext); // Obtener ahorros del contexto
   const [selectedRange, setSelectedRange] = useState(1); // Rango seleccionado (en años)
-  const [projections, setProjections] = useState([]);
+  const [projections, setProjections] = useState([]); // Datos de proyecciones
 
-  useEffect(() => {
-    getSavings();
-  }, [getSavings]);
-
-  useEffect(() => {
-    calculateProjections(selectedRange);
-  }, [savings, selectedRange]);
-
-  const calculateProjections = (range) => {
+  // Calcular proyecciones localmente sin afectar el contexto global
+  const calculateProjections = (savingsData, range) => {
     const monthlyInterestRate = (rate) => rate / 100 / 12;
-    const projectionsData = [];
+    const categories = [...new Set(savingsData.map((saving) => saving.category))];
+    const projectionsByCategory = {};
+    const totalProjections = [];
+    let totalAccumulated = 0;
 
-    let accumulatedTotal = 0; // Total acumulado de todos los ahorros
-    const startDate = new Date(); // Fecha actual
+    categories.forEach((category) => {
+      projectionsByCategory[category] = [];
+      let categoryAccumulated = 0;
 
-    for (let year = 1; year <= range; year++) {
-      for (let month = 0; month < 12; month++) {
-        const currentDate = new Date(startDate.getFullYear() + year - 1, month);
+      for (let year = 1; year <= range; year++) {
+        for (let month = 0; month < 12; month++) {
+          const currentDate = new Date(new Date().getFullYear() + year - 1, month);
 
-        savings.forEach((saving) => {
-          const savingStartDate = new Date(saving.date);
+          savingsData
+            .filter((saving) => saving.category === category)
+            .forEach((saving) => {
+              const savingStartDate = new Date(saving.date);
 
-          if (
-            currentDate.getFullYear() > savingStartDate.getFullYear() ||
-            (currentDate.getFullYear() === savingStartDate.getFullYear() && currentDate.getMonth() >= savingStartDate.getMonth())
-          ) {
-            let monthlyAmount = parseFloat(saving.amount);
-            const interestRate = saving.interest_rate || 0;
+              if (
+                currentDate.getFullYear() > savingStartDate.getFullYear() ||
+                (currentDate.getFullYear() === savingStartDate.getFullYear() &&
+                  currentDate.getMonth() >= savingStartDate.getMonth())
+              ) {
+                let monthlyAmount = parseFloat(saving.amount);
+                const interestRate = saving.interest_rate || 0;
 
-            if (saving.type === "recurrent") {
-              // Agregar la contribución recurrente al total acumulado
-              accumulatedTotal += monthlyAmount;
-            } else if (
-              saving.type === "one-time" &&
-              currentDate.getFullYear() === savingStartDate.getFullYear() &&
-              currentDate.getMonth() === savingStartDate.getMonth()
-            ) {
-              // Agregar la contribución puntual solo una vez en su mes correspondiente
-              accumulatedTotal += monthlyAmount;
-              console.log(
-                `Contribución puntual agregada: Fecha ${currentDate.toISOString().slice(0, 7)}, Cantidad: €${monthlyAmount.toFixed(2)}`
-              );
-            }
+                if (saving.type === "recurrent") {
+                  // Agregar contribuciones recurrentes
+                  categoryAccumulated += monthlyAmount;
+                } else if (
+                  saving.type === "one-time" &&
+                  currentDate.getFullYear() === savingStartDate.getFullYear() &&
+                  currentDate.getMonth() === savingStartDate.getMonth()
+                ) {
+                  // Agregar contribuciones puntuales
+                  categoryAccumulated += monthlyAmount;
+                }
 
-            // Aplicar interés mensual al total acumulado
-            const previousTotal = accumulatedTotal;
-            accumulatedTotal += accumulatedTotal * monthlyInterestRate(interestRate);
-
-            console.log(
-              `Fecha: ${currentDate.toISOString().slice(0, 7)}, Tipo: ${saving.type}, Ahorro: €${monthlyAmount.toFixed(2)}, Acumulado previo: €${previousTotal.toFixed(2)}, Acumulado después de interés: €${accumulatedTotal.toFixed(2)}`
-            );
-          }
-        });
+                // Aplicar interés mensual
+                categoryAccumulated += categoryAccumulated * monthlyInterestRate(interestRate);
+              }
+            });
+        }
+        projectionsByCategory[category].push(categoryAccumulated);
       }
+    });
 
-      // Guardar el total acumulado al final del año
-      projectionsData.push({ year, totalSavings: accumulatedTotal });
+    // Sumar acumulados por categorías para calcular el total
+    for (let i = 0; i < range; i++) {
+      let yearlyTotal = 0;
+      Object.keys(projectionsByCategory).forEach((category) => {
+        yearlyTotal += projectionsByCategory[category][i];
+      });
+      totalProjections.push(yearlyTotal);
     }
 
-    setProjections(projectionsData);
+    return { projectionsByCategory, totalProjections };
   };
 
+  // Recalcular proyecciones cuando el rango o ahorros cambian
+  useEffect(() => {
+    const { projectionsByCategory, totalProjections } = calculateProjections(savings, selectedRange);
+    setProjections({ projectionsByCategory, totalProjections });
+  }, [savings, selectedRange]);
+
   const lineData = {
-    labels: projections.map((p) => `${p.year} años`),
+    labels: Array.from({ length: selectedRange }, (_, i) => `${i + 1} años`),
     datasets: [
+      ...Object.keys(projections.projectionsByCategory || {}).map((category, index) => ({
+        label: `Proyección (${category})`,
+        data: projections.projectionsByCategory[category],
+        borderColor: `hsl(${index * 60}, 70%, 50%)`, // Colores dinámicos
+        backgroundColor: `hsla(${index * 60}, 70%, 50%, 0.5)`,
+        fill: true,
+      })),
       {
-        label: "Proyección de Ahorros (€)",
-        data: projections.map((p) => p.totalSavings),
+        label: "Total Proyección (€)",
+        data: projections.totalProjections || [],
         borderColor: "#4caf50",
         backgroundColor: "#4caf5050",
         fill: true,
