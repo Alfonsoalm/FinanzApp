@@ -36,15 +36,6 @@ body {
   border-bottom: #333 solid 5px;
 }
 
-.navbar {
-  grid-area: navbar;
-  background-color: #333;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
-
 .main {
   grid-area: main;
   padding: 20px;

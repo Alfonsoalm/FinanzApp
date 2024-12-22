@@ -150,80 +150,92 @@ export const SummaryPage = () => {
     <div className="summary-page">
       <h2>Resumen</h2>
 
-      {/* Filtro de mes y año */}
-      <div className="month-filter">
-        <label htmlFor="month"> Mes:</label>
-        <select
-          id="month"
-          value={selectedMonthOnly}
-          onChange={(e) => setSelectedMonthOnly(e.target.value)}
-        >
-          {Array.from({ length: 12 }, (_, i) =>
-            String(i + 1).padStart(2, "0")
-          ).map((month) => (
-            <option key={month} value={month}>
-              {month}
-            </option>
-          ))}
-        </select>
-
-        <label htmlFor="year"> Año:</label>
-        <select
-          id="year"
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-        >
-          {[2023, 2024, 2025].map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <div className="summary-container">
-        <div className="data-container">
-          <div className="card">
-            <div className="card-header" style={{ color: "#2e7d32" }}>
-              <FaArrowUp /> <h3>Ingresos totales este mes</h3>
-            </div>
-            <span className="total">
-              {new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
-              }).format(totalIncome)}
-            </span>
+        {/* Columna izquierda: Filtros y tarjetas */}
+        <div className="left-column">
+                {/* Filtro de mes y año */}
+          <div className="month-filter">
+            <label htmlFor="month"> Mes:</label>
+            <select
+              id="month"
+              value={selectedMonthOnly}
+              onChange={(e) => setSelectedMonthOnly(e.target.value)}
+            >
+              {Array.from({ length: 12 }, (_, i) =>
+                String(i + 1).padStart(2, "0")
+              ).map((month) => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))}
+            </select>
+
+            <label htmlFor="year"> Año:</label>
+            <select
+              id="year"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+            >
+              {[2023, 2024, 2025].map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="card">
-            <div className="card-header" style={{ color: "#f44336" }}>
-              <FaArrowDown /> <h3>Gastos totales este mes</h3>
-            </div>
-            <span className="total">
-              {new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
-              }).format(totalExpense)}
-            </span>
-          </div>
+            {/* Tarjetas de ingresos, gastos y balance */}
+            <div className="data-container">
+                <div className="card">
+                    <div className="card-header" style={{ color: "#2e7d32" }}>
+                        <FaArrowUp /> <h3>Ingresos totales este mes</h3>
+                    </div>
+                    <span className="total">
+                        {new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(totalIncome)}
+                    </span>
+                </div>
 
-          <div className="card">
-            <div className="card-header" style={{ color: "#2196f3" }}>
-              <FaBalanceScale /> <h3>Balance neto este mes</h3>
+                <div className="card">
+                    <div className="card-header" style={{ color: "#f44336" }}>
+                        <FaArrowDown /> <h3>Gastos totales este mes</h3>
+                    </div>
+                    <span className="total">
+                        {new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(totalExpense)}
+                    </span>
+                </div>
+
+                <div className="card">
+                    <div className="card-header" style={{ color: "#2196f3" }}>
+                        <FaBalanceScale /> <h3>Balance neto este mes</h3>
+                    </div>
+                    <span className="total">
+                        {new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(netBalance)}
+                    </span>
+                </div>
             </div>
-            <span className="total">
-              {new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
-              }).format(netBalance)}
-            </span>
-          </div>
         </div>
 
-        <div className="chart-container">
-          <Pie data={pieData} options={{ animation: false }} />
+        {/* Columna derecha: Gráfico circular */}
+        <div className="right-column chart-container">
+            <Pie
+                data={pieData}
+                options={{
+                    animation: false,
+                    plugins: {
+                        legend: {
+                            position: "top",
+                            align: "center",
+                            labels: {
+                                boxWidth: 10,
+                                padding: 10,
+                            },
+                        },
+                    },
+                }}
+            />
         </div>
-      </div>
+    </div>
+
 
       {/* Filtro por rango */}
       <div className="filter-buttons">
