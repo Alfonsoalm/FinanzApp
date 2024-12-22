@@ -36,9 +36,16 @@ Esta aplicación permite a los usuarios gestionar y proyectar sus finanzas perso
 3. Analiza tus finanzas a través de gráficos y resúmenes interactivos.
 4. Exporta los datos detallados y resúmenes a archivos Excel o PDF para un análisis más profundo.
 
-## Características Añadidas
-- **Exportación a Excel y PDF**: Los usuarios pueden descargar resúmenes financieros completos, incluidos los detalles de ingresos, gastos y ahorros.
-- **Gráficos Detallados**: Visualización mejorada con gráficos circulares y de línea interactivos.
-- **Gestión Detallada de Datos**: Administración sencilla y precisa de ingresos, gastos y ahorros con detalles como categorías, fechas y tipos (recurrentes o puntuales).
+## Pasos
+Clonar repositorio: 
+`git clone git@github.com:Alfonsoalm/Finanzapp.git`
+Entrar en carpeta:
+`cd Finanzapp`
+Instalar dependencias
+`npm install`
+Compilar la aplicación (opcional, solo para produccion):
+`npm run build`
+Ejecutar la aplicacion en modo desarrollo
+`npm run dev`
 
-Este proyecto está en constante evolución, y estamos abiertos a recibir sugerencias y contribuciones para seguir mejorando la experiencia del usuario.
+***Este proyecto está en constante evolución, y estamos abiertos a recibir sugerencias y contribuciones para seguir mejorando la experiencia del usuario***
