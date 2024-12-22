@@ -1,4 +1,4 @@
-# Proyección de Ahorros - Aplicación
+# Finanzapp
 
 Esta aplicación permite a los usuarios gestionar y proyectar sus finanzas personales, integrando datos de ingresos, gastos y ahorros. Proporciona herramientas avanzadas para el análisis financiero, visualización interactiva y exportación de datos.
 
