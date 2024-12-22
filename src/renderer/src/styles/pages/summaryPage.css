@@ -37,6 +37,9 @@
 }
 
 .month-filter {
+    display: flex;
+    justify-content: space-between; /* Asegura espacio entre elementos */
+    align-items: center; /* Alinea verticalmente */
     margin-bottom: 20px;
 }
 
@@ -48,13 +51,14 @@
     padding: 5px;
     border-radius: 4px;
     border: 1px solid #ccc;
+    margin-right: 10px;
 }
 
 .filter-buttons {
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 20px; /* Separar de las tarjetas */
+    margin-bottom: 20px;
 }
 
 .filter-buttons button {
@@ -77,6 +81,27 @@
 .filter-buttons button:hover {
     background-color: #e0e0e0;
 }
+
+.export-buttons {
+    display: flex;
+    gap: 10px;
+    margin-left: 20px;
+  }
+  
+  .export-buttons button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    background-color: #535151;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .export-buttons button:hover {
+    background-color: #0056b3;
+  }
 
 .card {
     background-color: #f5f5f5;
