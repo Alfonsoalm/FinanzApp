@@ -4,7 +4,6 @@ import path, { join } from 'path'
 import { handleExpenses } from './services/expensesService.js'
 import { handleIncomes } from './services/incomesService.js'
 import { handleSavings } from './services/savingsService.js'
-import icon from '../../resources/icon.png?asset'
 
 function createWindow() {
   // Obtener las dimensiones de la pantalla principal
@@ -19,7 +18,6 @@ function createWindow() {
     maximizable: true, // Permitir maximizar la ventana
     autoHideMenuBar: true, // Oculta el menú automáticamente
     show: false, // Ventana no visible hasta que esté lista
-    ...(process.platform === 'linux' ? { icon } : {}),
     icon: path.join(__dirname, './resources/finanzapp_icon.ico'), // Ruta relativa
     webPreferences: {
       preload: process.env.NODE_ENV === 'development'
