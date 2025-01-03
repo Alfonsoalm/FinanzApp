@@ -69,6 +69,10 @@
       {
         "from": "out/main/helpers",
         "to": "main/helpers/"
+      },
+      {
+        "from": "out/main/resources",
+        "to": "main/resources/"
       }
     ]
   },

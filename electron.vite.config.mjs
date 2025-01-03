@@ -17,16 +17,20 @@ export default defineConfig({
       viteStaticCopy({
         targets: [
           {
-            src: 'src/main/database/',
+            src: 'src/main/database/*',
             dest: 'database/' // Carpeta de salida
           },
           {
-            src: 'src/main/services/',
+            src: 'src/main/services/*',
             dest: 'services/' // Carpeta de salida
           },
           {
-            src: 'src/main/helpers/',
+            src: 'src/main/helpers/*',
             dest: 'helpers/' // Carpeta de salida
+          },
+          {
+            src: 'src/main/resources/*',
+            dest: 'resources/' // Carpeta de salida
           },
         ]
       })

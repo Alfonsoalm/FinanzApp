@@ -27,22 +27,23 @@ export const SavingsPage = () => {
   const [editId, setEditId] = useState(null);
   const [shouldFetch, setShouldFetch] = useState(false);
   const [averageNetBalance, setAverageNetBalance] = useState(0);
+  const [remainingSavingsBalance, setRemainingSavingsBalance] = useState(0);
 
   useEffect(() => {
     const fetchSavings = async () => {
       try {
         await getSavings();
         calculateAverageNetBalance();
+        calculateRemainingSavingsBalance();
       } catch (err) {
         console.error("Error al cargar los ahorros:", err);
       }
     };
 
     fetchSavings();
-  }, [shouldFetch, incomes, expenses]);
+  }, [shouldFetch, incomes, expenses, savings]);
 
   const calculateAverageNetBalance = () => {
-    // Calcular el balance neto promedio
     const months = new Set();
     let totalNetBalance = 0;
 
@@ -62,6 +63,14 @@ export const SavingsPage = () => {
     setAverageNetBalance(average);
   };
 
+  const calculateRemainingSavingsBalance = () => {
+    const recurrentSavings = savings
+      .filter((saving) => saving.type === "recurrent")
+      .reduce((sum, saving) => sum + parseFloat(saving.amount), 0);
+
+    setRemainingSavingsBalance(averageNetBalance - recurrentSavings);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -70,7 +79,6 @@ export const SavingsPage = () => {
   const handleSubmitSaving = async (e) => {
     e.preventDefault();
 
-    // Validación del formulario
     if (
       !formData.description ||
       !formData.amount ||
@@ -81,38 +89,36 @@ export const SavingsPage = () => {
       return;
     }
 
-    if (parseFloat(formData.amount) <= 0) {
+    const amount = parseFloat(formData.amount);
+
+    if (amount <= 0) {
       setFormError("La cantidad debe ser mayor a cero.");
       return;
     }
 
-    if (
-      formData.type === "recurrent" &&
-      parseFloat(formData.amount) > averageNetBalance
-    ) {
+    if (formData.type === "recurrent" && amount > remainingSavingsBalance) {
       setFormError(
-        `El ahorro recurrente no puede superar el balance neto promedio (${averageNetBalance.toFixed(
-          2
-        )} €).`
+        `La cantidad del ahorro no puede superar el balance restante 
+        (${remainingSavingsBalance.toFixed(2)} €).`
       );
       return;
     }
 
     try {
-      setFormError(""); // Limpiar errores previos
+      setFormError("");
+
       if (editMode) {
-        // Actualizar ahorro existente
         await updateSaving(editId, formData);
         setEditMode(false);
         setEditId(null);
       } else {
-        // Insertar nuevo ahorro
         await insertSaving({
           ...formData,
           interest_rate: parseFloat(formData.interest_rate) || 0,
         });
       }
-      setShouldFetch((prev) => !prev); // Actualizar la tabla
+
+      setShouldFetch((prev) => !prev);
       setFormData({
         description: "",
         amount: "",
@@ -142,7 +148,7 @@ export const SavingsPage = () => {
   const handleDeleteSaving = async (id) => {
     try {
       await deleteSaving(id);
-      setShouldFetch((prev) => !prev); // Actualizar la tabla
+      setShouldFetch((prev) => !prev);
     } catch (err) {
       console.error("Error al eliminar el ahorro", err);
     }
@@ -152,7 +158,6 @@ export const SavingsPage = () => {
     <div className="savings-page">
       <h2>Ahorros</h2>
 
-      {/* Mostrar el balance neto promedio */}
       <div className="average-net-balance">
         <p>
           <strong>Balance Neto Promedio:</strong>{" "}
@@ -161,9 +166,15 @@ export const SavingsPage = () => {
             currency: "EUR",
           }).format(averageNetBalance)}
         </p>
+        <p>
+          <strong>Balance Restante para Ahorros:</strong>{" "}
+          {new Intl.NumberFormat("es-ES", {
+            style: "currency",
+            currency: "EUR",
+          }).format(remainingSavingsBalance)}
+        </p>
       </div>
 
-      {/* Formulario para agregar/editar ahorros */}
       <form onSubmit={handleSubmitSaving} className="savings-form">
         <input
           name="amount"
@@ -214,7 +225,6 @@ export const SavingsPage = () => {
       {formError && <p className="form-error">{formError}</p>}
       {error && <p className="error">Error: {error}</p>}
 
-      {/* Resumen de ahorros */}
       <div className="savings-summary">
         <h3>Resumen</h3>
         {savings.length === 0 ? (
@@ -247,10 +257,16 @@ export const SavingsPage = () => {
                   <td>{saving.interest_rate}%</td>
                   <td>{saving.type === "recurrent" ? "Recurrente" : "Puntual"}</td>
                   <td>
-                    <button className="edit-btn" onClick={() => handleEditSaving(saving)}>
+                    <button
+                      className="edit-btn"
+                      onClick={() => handleEditSaving(saving)}
+                    >
                       Editar
                     </button>
-                    <button className="delete-btn" onClick={() => handleDeleteSaving(saving.id)}>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDeleteSaving(saving.id)}
+                    >
                       Eliminar
                     </button>
                   </td>

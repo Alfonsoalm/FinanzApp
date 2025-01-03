@@ -34,8 +34,8 @@ ChartJS.register(
 export const SummaryPage = () => {
   const { incomes, expenses, savings, getIncomes, getExpenses, getSavings } = useContext(FinanceManagerContext);
   const [range, setRange] = useState(3);
-  const [selectedMonth, setSelectedMonth] = useState("2024-12");
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedMonth, setSelectedMonth] = useState("2025-12");
+  const [selectedYear, setSelectedYear] = useState("2025");
   const [selectedMonthOnly, setSelectedMonthOnly] = useState("12");
 
   useEffect(() => {
@@ -49,168 +49,147 @@ export const SummaryPage = () => {
     setSelectedMonth(`${selectedYear}-${selectedMonthOnly}`);
   }, [selectedYear, selectedMonthOnly]);
 
-  // Función para exportar ingresos a Excel
-  const exportToExcel = () => {
-    // Crear hojas de cálculo separadas para Resumen, Ingresos, Gastos y Ahorros
-    const summaryData = [
-      { Tipo: "Ingresos Totales", Cantidad: `${totalIncome} €` },
-      { Tipo: "Ingresos Recurrentes", Cantidad: `${totalIncomesRecurrent} €` },
-      { Tipo: "Ingresos Puntuales", Cantidad: `${totalIncomesOneTime} €` },
-      { Tipo: "Gastos Totales", Cantidad: `${totalExpense} €` },
-      { Tipo: "Gastos Recurrentes", Cantidad: `${totalExpensesRecurrent} €` },
-      { Tipo: "Gastos Puntuales", Cantidad: `${totalExpensesOneTime} €` },
-      { Tipo: "Balance Neto", Cantidad: `${netBalance} €` },
-    ];
-  
-    const incomesData = incomes.map((income) => ({
-      Descripción: income.description,
-      Cantidad: `${income.amount} €`,
-      Fecha: income.date,
-      Categoría: income.category,
-      Tipo: income.type,
-    }));
-  
-    const expensesData = expenses.map((expense) => ({
-      Descripción: expense.description,
-      Cantidad: `${expense.amount} €`,
-      Fecha: expense.date,
-      Categoría: expense.category,
-      Tipo: expense.type,
-    }));
-  
-    const savingsData = savings.map((saving) => ({
-      Descripción: saving.description,
-      Cantidad: `${saving.amount} €`,
-      Fecha: saving.date,
-      Categoría: saving.category,
-      Tipo: saving.type,
-    }));
-  
-    // Crear hojas de Excel
-    const workbook = XLSX.utils.book_new();
-  
-    // Hoja Resumen
-    const summarySheet = XLSX.utils.json_to_sheet(summaryData);
-    XLSX.utils.book_append_sheet(workbook, summarySheet, "Resumen");
-  
-    // Hoja Ingresos
-    const incomesSheet = XLSX.utils.json_to_sheet(incomesData);
-    XLSX.utils.book_append_sheet(workbook, incomesSheet, "Ingresos");
-  
-    // Hoja Gastos
-    const expensesSheet = XLSX.utils.json_to_sheet(expensesData);
-    XLSX.utils.book_append_sheet(workbook, expensesSheet, "Gastos");
-  
-    // Hoja Ahorros (si hay datos)
-    if (savings && savings.length > 0) {
-      const savingsSheet = XLSX.utils.json_to_sheet(savingsData);
-      XLSX.utils.book_append_sheet(workbook, savingsSheet, "Ahorros");
-    }
-  
-    // Exportar el archivo Excel
-    XLSX.writeFile(workbook, `Resumen_Completo_${selectedMonth}.xlsx`);
-  };
-  
+// Función para calcular totales del año
+const calculateYearlyTotals = (data, year) => {
+  return data
+    .filter((item) => new Date(item.date).getFullYear() === parseInt(year))
+    .reduce((acc, item) => acc + parseFloat(item.amount), 0);
+};
 
-  // Función para exportar ingresos a PDF
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-  
-    // Título
-    doc.setFontSize(16);
-    doc.text("Resumen Mensual", 10, 10);
-  
-    // Datos totales (resumen)
-    const summaryData = [
-      ["Tipo", "Cantidad"],
-      ["Ingresos Totales", `${totalIncome} €`],
-      ["Ingresos Recurrentes", `${totalIncomesRecurrent} €`],
-      ["Ingresos Puntuales", `${totalIncomesOneTime} €`],
-      ["Gastos Totales", `${totalExpense} €`],
-      ["Gastos Recurrentes", `${totalExpensesRecurrent} €`],
-      ["Gastos Puntuales", `${totalExpensesOneTime} €`],
-      ["Balance Neto", `${netBalance} €`],
-    ];
-  
-    doc.autoTable({
-      head: [summaryData[0]],
-      body: summaryData.slice(1),
-      startY: 20
-    });
-  
-    // Espacio entre las tablas
-    let startY = doc.lastAutoTable.finalY + 10;
-  
-    // Detalles de ingresos
-    doc.setFontSize(14);
-    doc.text("Detalles de Ingresos", 10, startY);
-  
-    const incomesData = incomes.map((income) => [
+// Calcular totales del año seleccionado
+const yearlyIncomeTotal = calculateYearlyTotals(incomes, selectedYear);
+const yearlyExpenseTotal = calculateYearlyTotals(expenses, selectedYear);
+const yearlySavingsTotal = calculateYearlyTotals(savings, selectedYear);
+const yearlyNetBalance = yearlyIncomeTotal - yearlyExpenseTotal;
+
+// Ajuste en la exportación a Excel
+const exportToExcel = () => {
+  const filteredIncomes = incomes.filter(
+    (income) => new Date(income.date).getFullYear() === parseInt(selectedYear)
+  );
+  const filteredExpenses = expenses.filter(
+    (expense) => new Date(expense.date).getFullYear() === parseInt(selectedYear)
+  );
+  const filteredSavings = savings.filter(
+    (saving) => new Date(saving.date).getFullYear() === parseInt(selectedYear)
+  );
+
+  const summaryData = [
+    { Tipo: "Ingresos Totales", Cantidad: `${yearlyIncomeTotal} €` },
+    { Tipo: "Gastos Totales", Cantidad: `${yearlyExpenseTotal} €` },
+    { Tipo: "Balance Neto", Cantidad: `${yearlyNetBalance} €` },
+    { Tipo: "Ahorros Totales", Cantidad: `${yearlySavingsTotal} €` },
+  ];
+
+  const incomesData = filteredIncomes.map((income) => ({
+    Descripción: income.description,
+    Cantidad: `${income.amount} €`,
+    Fecha: new Date(income.date).toLocaleDateString("es-ES"),
+    Categoría: income.category,
+    Tipo: income.type,
+  }));
+
+  const expensesData = filteredExpenses.map((expense) => ({
+    Descripción: expense.description,
+    Cantidad: `${expense.amount} €`,
+    Fecha: new Date(expense.date).toLocaleDateString("es-ES"),
+    Categoría: expense.category,
+    Tipo: expense.type,
+  }));
+
+  const savingsData = filteredSavings.map((saving) => ({
+    Descripción: saving.description,
+    Cantidad: `${saving.amount} €`,
+    Fecha: new Date(saving.date).toLocaleDateString("es-ES"),
+    Categoría: saving.category,
+    Tipo: saving.type,
+  }));
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(summaryData), "Resumen");
+  XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(incomesData), "Ingresos");
+  XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(expensesData), "Gastos");
+
+  if (savingsData.length > 0) {
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(savingsData), "Ahorros");
+  }
+
+  XLSX.writeFile(workbook, `Resumen_${selectedYear}.xlsx`);
+};
+
+// Ajuste en la exportación a PDF
+const exportToPDF = () => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(16);
+  doc.text(`Resumen Anual: ${selectedYear}`, 10, 10);
+
+  const summaryData = [
+    ["Tipo", "Cantidad"],
+    ["Ingresos Totales", `${yearlyIncomeTotal} €`],
+    ["Gastos Totales", `${yearlyExpenseTotal} €`],
+    ["Balance Neto", `${yearlyNetBalance} €`],
+    ["Ahorros Totales", `${yearlySavingsTotal} €`],
+  ];
+
+  doc.autoTable({ head: [summaryData[0]], body: summaryData.slice(1), startY: 20 });
+
+  const incomesData = incomes
+    .filter((income) => new Date(income.date).getFullYear() === parseInt(selectedYear))
+    .map((income) => [
       income.description,
       `${income.amount} €`,
-      income.date,
+      new Date(income.date).toLocaleDateString("es-ES"),
       income.category,
       income.type,
     ]);
-  
-    doc.autoTable({
-      head: [["Descripción", "Cantidad", "Fecha", "Categoría", "Tipo"]],
-      body: incomesData,
-      startY: startY + 10,
-      theme: "grid",
-    });
-  
-    // Espacio entre las tablas
-    startY = doc.lastAutoTable.finalY + 10;
-  
-    // Detalles de gastos
-    doc.setFontSize(14);
-    doc.text("Detalles de Gastos", 10, startY);
-  
-    const expensesData = expenses.map((expense) => [
+
+  doc.autoTable({
+    head: [["Ingresos", "Cantidad", "Fecha", "Categoría", "Tipo"]],
+    body: incomesData,
+    startY: doc.lastAutoTable.finalY + 10,
+    theme: "grid",
+  });
+
+  const expensesData = expenses
+    .filter((expense) => new Date(expense.date).getFullYear() === parseInt(selectedYear))
+    .map((expense) => [
       expense.description,
       `${expense.amount} €`,
-      expense.date,
+      new Date(expense.date).toLocaleDateString("es-ES"),
       expense.category,
       expense.type,
     ]);
-  
-    doc.autoTable({
-      head: [["Descripción", "Cantidad", "Fecha", "Categoría", "Tipo"]],
-      body: expensesData,
-      startY: startY + 10,
-      theme: "grid",
-    });
-  
-    // Espacio entre las tablas
-    startY = doc.lastAutoTable.finalY + 10;
-  
-    // Detalles de ahorros (si existen)
-    if (savings && savings.length > 0) {
-      doc.setFontSize(14);
-      doc.text("Detalles de Ahorros", 10, startY);
-  
-      const savingsData = savings.map((saving) => [
+
+  doc.autoTable({
+    head: [["Gastos", "Cantidad", "Fecha", "Categoría", "Tipo"]],
+    body: expensesData,
+    startY: doc.lastAutoTable.finalY + 10,
+    theme: "grid",
+  });
+
+  if (savings.length > 0) {
+    const savingsData = savings
+      .filter((saving) => new Date(saving.date).getFullYear() === parseInt(selectedYear))
+      .map((saving) => [
         saving.description,
         `${saving.amount} €`,
-        saving.date,
+        new Date(saving.date).toLocaleDateString("es-ES"),
         saving.category,
         saving.type,
       ]);
-  
-      doc.autoTable({
-        head: [["Descripción", "Cantidad", "Fecha", "Categoría", "Tipo"]],
-        body: savingsData,
-        startY: startY + 10,
-        theme: "grid",
-      });
-    }
-  
-    // Guardar el PDF
-    doc.save(`Resumen_Completo_${selectedMonth}.pdf`);
-  };
-  
-  
+
+    doc.autoTable({
+      head: [["Ahorros", "Cantidad", "Fecha", "Categoría", "Tipo"]],
+      body: savingsData,
+      startY: doc.lastAutoTable.finalY + 10,
+      theme: "grid",
+    });
+  }
+
+  doc.save(`Resumen_${selectedYear}.pdf`);
+};
 
   const calculateTotals = (data) => {
     const monthlyData = { recurrent: {}, oneTime: {} };

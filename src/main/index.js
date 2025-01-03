@@ -1,6 +1,6 @@
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, shell, screen } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
 import { handleExpenses } from './services/expensesService.js'
 import { handleIncomes } from './services/incomesService.js'
 import { handleSavings } from './services/savingsService.js'
@@ -20,6 +20,7 @@ function createWindow() {
     autoHideMenuBar: true, // Oculta el menú automáticamente
     show: false, // Ventana no visible hasta que esté lista
     ...(process.platform === 'linux' ? { icon } : {}),
+    icon: path.join(__dirname, './resources/finanzapp_icon.ico'), // Ruta relativa
     webPreferences: {
       preload: process.env.NODE_ENV === 'development'
         ? join(__dirname, '../preload/index.mjs') // Para desarrollo
