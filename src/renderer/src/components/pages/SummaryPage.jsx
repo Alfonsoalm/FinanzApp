@@ -43,156 +43,155 @@ export const SummaryPage = () => {
     getIncomes();
     getExpenses();
     getSavings();
-  }, [getIncomes, getExpenses, getSavings]);
+  }, []);
 
   useEffect(() => {
     setSelectedMonth(`${selectedYear}-${selectedMonthOnly}`);
   }, [selectedYear, selectedMonthOnly]);
 
-// Función para calcular totales del año
-const calculateYearlyTotals = (data, year) => {
-  return data
-    .filter((item) => new Date(item.date).getFullYear() === parseInt(year))
-    .reduce((acc, item) => acc + parseFloat(item.amount), 0);
-};
+  // Función para calcular totales del año
+  const calculateYearlyTotals = (data, year) => {
+    return data
+      .filter((item) => new Date(item.date).getFullYear() === parseInt(year))
+      .reduce((acc, item) => acc + parseFloat(item.amount), 0);
+  };
 
-// Calcular totales del año seleccionado
-const yearlyIncomeTotal = calculateYearlyTotals(incomes, selectedYear);
-const yearlyExpenseTotal = calculateYearlyTotals(expenses, selectedYear);
-const yearlySavingsTotal = calculateYearlyTotals(savings, selectedYear);
-const yearlyNetBalance = yearlyIncomeTotal - yearlyExpenseTotal;
+  // Calcular totales del año seleccionado
+  const yearlyIncomeTotal = calculateYearlyTotals(incomes, selectedYear);
+  const yearlyExpenseTotal = calculateYearlyTotals(expenses, selectedYear);
+  const yearlySavingsTotal = calculateYearlyTotals(savings, selectedYear);
+  const yearlyNetBalance = yearlyIncomeTotal - yearlyExpenseTotal;
 
-// Ajuste en la exportación a Excel
-const exportToExcel = () => {
-  const filteredIncomes = incomes.filter(
-    (income) => new Date(income.date).getFullYear() === parseInt(selectedYear)
-  );
-  const filteredExpenses = expenses.filter(
-    (expense) => new Date(expense.date).getFullYear() === parseInt(selectedYear)
-  );
-  const filteredSavings = savings.filter(
-    (saving) => new Date(saving.date).getFullYear() === parseInt(selectedYear)
-  );
+  const exportToExcel = () => {
+    const filteredIncomes = incomes.filter(
+      (income) => new Date(income.date).getFullYear() === parseInt(selectedYear)
+    );
+    const filteredExpenses = expenses.filter(
+      (expense) => new Date(expense.date).getFullYear() === parseInt(selectedYear)
+    );
+    const filteredSavings = savings.filter(
+      (saving) => new Date(saving.date).getFullYear() === parseInt(selectedYear)
+    );
 
-  const summaryData = [
-    { Tipo: "Ingresos Totales", Cantidad: `${yearlyIncomeTotal} €` },
-    { Tipo: "Gastos Totales", Cantidad: `${yearlyExpenseTotal} €` },
-    { Tipo: "Balance Neto", Cantidad: `${yearlyNetBalance} €` },
-    { Tipo: "Ahorros Totales", Cantidad: `${yearlySavingsTotal} €` },
-  ];
+    const summaryData = [
+      { Tipo: "Ingresos Totales", Cantidad: `${yearlyIncomeTotal} €` },
+      { Tipo: "Gastos Totales", Cantidad: `${yearlyExpenseTotal} €` },
+      { Tipo: "Balance Neto", Cantidad: `${yearlyNetBalance} €` },
+      { Tipo: "Ahorros Totales", Cantidad: `${yearlySavingsTotal} €` },
+    ];
 
-  const incomesData = filteredIncomes.map((income) => ({
-    Descripción: income.description,
-    Cantidad: `${income.amount} €`,
-    Fecha: new Date(income.date).toLocaleDateString("es-ES"),
-    Categoría: income.category,
-    Tipo: income.type,
-  }));
+    const incomesData = filteredIncomes.map((income) => ({
+      Descripción: income.description,
+      Cantidad: `${income.amount} €`,
+      Fecha: new Date(income.date).toLocaleDateString("es-ES"),
+      Categoría: income.category,
+      Tipo: income.type,
+    }));
 
-  const expensesData = filteredExpenses.map((expense) => ({
-    Descripción: expense.description,
-    Cantidad: `${expense.amount} €`,
-    Fecha: new Date(expense.date).toLocaleDateString("es-ES"),
-    Categoría: expense.category,
-    Tipo: expense.type,
-  }));
+    const expensesData = filteredExpenses.map((expense) => ({
+      Descripción: expense.description,
+      Cantidad: `${expense.amount} €`,
+      Fecha: new Date(expense.date).toLocaleDateString("es-ES"),
+      Categoría: expense.category,
+      Tipo: expense.type,
+    }));
 
-  const savingsData = filteredSavings.map((saving) => ({
-    Descripción: saving.description,
-    Cantidad: `${saving.amount} €`,
-    Fecha: new Date(saving.date).toLocaleDateString("es-ES"),
-    Categoría: saving.category,
-    Tipo: saving.type,
-  }));
+    const savingsData = filteredSavings.map((saving) => ({
+      Descripción: saving.description,
+      Cantidad: `${saving.amount} €`,
+      Fecha: new Date(saving.date).toLocaleDateString("es-ES"),
+      Categoría: saving.category,
+      Tipo: saving.type,
+    }));
 
-  const workbook = XLSX.utils.book_new();
+    const workbook = XLSX.utils.book_new();
 
-  XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(summaryData), "Resumen");
-  XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(incomesData), "Ingresos");
-  XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(expensesData), "Gastos");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(summaryData), "Resumen");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(incomesData), "Ingresos");
+    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(expensesData), "Gastos");
 
-  if (savingsData.length > 0) {
-    XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(savingsData), "Ahorros");
-  }
+    if (savingsData.length > 0) {
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(savingsData), "Ahorros");
+    }
 
-  XLSX.writeFile(workbook, `Resumen_${selectedYear}.xlsx`);
-};
+    XLSX.writeFile(workbook, `Resumen_${selectedYear}.xlsx`);
+  };
 
-// Ajuste en la exportación a PDF
-const exportToPDF = () => {
-  const doc = new jsPDF();
+  const exportToPDF = () => {
+    const doc = new jsPDF();
 
-  doc.setFontSize(16);
-  doc.text(`Resumen Anual: ${selectedYear}`, 10, 10);
+    doc.setFontSize(16);
+    doc.text(`Resumen Anual: ${selectedYear}`, 10, 10);
 
-  const summaryData = [
-    ["Tipo", "Cantidad"],
-    ["Ingresos Totales", `${yearlyIncomeTotal} €`],
-    ["Gastos Totales", `${yearlyExpenseTotal} €`],
-    ["Balance Neto", `${yearlyNetBalance} €`],
-    ["Ahorros Totales", `${yearlySavingsTotal} €`],
-  ];
+    const summaryData = [
+      ["Tipo", "Cantidad"],
+      ["Ingresos Totales", `${yearlyIncomeTotal} €`],
+      ["Gastos Totales", `${yearlyExpenseTotal} €`],
+      ["Balance Neto", `${yearlyNetBalance} €`],
+      ["Ahorros Totales", `${yearlySavingsTotal} €`],
+    ];
 
-  doc.autoTable({ head: [summaryData[0]], body: summaryData.slice(1), startY: 20 });
+    doc.autoTable({ head: [summaryData[0]], body: summaryData.slice(1), startY: 20 });
 
-  const incomesData = incomes
-    .filter((income) => new Date(income.date).getFullYear() === parseInt(selectedYear))
-    .map((income) => [
-      income.description,
-      `${income.amount} €`,
-      new Date(income.date).toLocaleDateString("es-ES"),
-      income.category,
-      income.type,
-    ]);
-
-  doc.autoTable({
-    head: [["Ingresos", "Cantidad", "Fecha", "Categoría", "Tipo"]],
-    body: incomesData,
-    startY: doc.lastAutoTable.finalY + 10,
-    theme: "grid",
-  });
-
-  const expensesData = expenses
-    .filter((expense) => new Date(expense.date).getFullYear() === parseInt(selectedYear))
-    .map((expense) => [
-      expense.description,
-      `${expense.amount} €`,
-      new Date(expense.date).toLocaleDateString("es-ES"),
-      expense.category,
-      expense.type,
-    ]);
-
-  doc.autoTable({
-    head: [["Gastos", "Cantidad", "Fecha", "Categoría", "Tipo"]],
-    body: expensesData,
-    startY: doc.lastAutoTable.finalY + 10,
-    theme: "grid",
-  });
-
-  if (savings.length > 0) {
-    const savingsData = savings
-      .filter((saving) => new Date(saving.date).getFullYear() === parseInt(selectedYear))
-      .map((saving) => [
-        saving.description,
-        `${saving.amount} €`,
-        new Date(saving.date).toLocaleDateString("es-ES"),
-        saving.category,
-        saving.type,
+    const incomesData = incomes
+      .filter((income) => new Date(income.date).getFullYear() === parseInt(selectedYear))
+      .map((income) => [
+        income.description,
+        `${income.amount} €`,
+        new Date(income.date).toLocaleDateString("es-ES"),
+        income.category,
+        income.type,
       ]);
 
     doc.autoTable({
-      head: [["Ahorros", "Cantidad", "Fecha", "Categoría", "Tipo"]],
-      body: savingsData,
+      head: [["Ingresos", "Cantidad", "Fecha", "Categoría", "Tipo"]],
+      body: incomesData,
       startY: doc.lastAutoTable.finalY + 10,
       theme: "grid",
     });
-  }
 
-  doc.save(`Resumen_${selectedYear}.pdf`);
-};
+    const expensesData = expenses
+      .filter((expense) => new Date(expense.date).getFullYear() === parseInt(selectedYear))
+      .map((expense) => [
+        expense.description,
+        `${expense.amount} €`,
+        new Date(expense.date).toLocaleDateString("es-ES"),
+        expense.category,
+        expense.type,
+      ]);
+
+    doc.autoTable({
+      head: [["Gastos", "Cantidad", "Fecha", "Categoría", "Tipo"]],
+      body: expensesData,
+      startY: doc.lastAutoTable.finalY + 10,
+      theme: "grid",
+    });
+
+    if (savings.length > 0) {
+      const savingsData = savings
+        .filter((saving) => new Date(saving.date).getFullYear() === parseInt(selectedYear))
+        .map((saving) => [
+          saving.description,
+          `${saving.amount} €`,
+          new Date(saving.date).toLocaleDateString("es-ES"),
+          saving.category,
+          saving.type,
+        ]);
+
+      doc.autoTable({
+        head: [["Ahorros", "Cantidad", "Fecha", "Categoría", "Tipo"]],
+        body: savingsData,
+        startY: doc.lastAutoTable.finalY + 10,
+        theme: "grid",
+      });
+    }
+
+    doc.save(`Resumen_${selectedYear}.pdf`);
+  };
 
   const calculateTotals = (data) => {
     const monthlyData = { recurrent: {}, oneTime: {} };
+    // console.log("data",data);
     data.forEach((item) => {
       const startDate = new Date(item.date);
       const startMonthKey = startDate.toISOString().slice(0, 7);
@@ -204,6 +203,7 @@ const exportToPDF = () => {
           const monthKey = tempDate.toISOString().slice(0, 7);
           if (!monthlyData.recurrent[monthKey]) {
             monthlyData.recurrent[monthKey] = 0;
+            
           }
           monthlyData.recurrent[monthKey] += parseFloat(item.amount);
           tempDate.setMonth(tempDate.getMonth() + 1);
@@ -219,7 +219,11 @@ const exportToPDF = () => {
   };
 
   const incomesByMonth = calculateTotals(incomes);
+  console.log("incomesByMonth.recurrent",incomesByMonth.recurrent);
+  console.log("incomesByMonth.oneTime",incomesByMonth.oneTime);
   const expensesByMonth = calculateTotals(expenses);
+  console.log("expensesByMonth.recurrent",expensesByMonth.recurrent);
+  console.log("expensesByMonth.oneTime",expensesByMonth.oneTime);
 
   const totalIncomesRecurrent = incomesByMonth.recurrent[selectedMonth] || 0;
   const totalIncomesOneTime = incomesByMonth.oneTime[selectedMonth] || 0;
@@ -231,26 +235,37 @@ const exportToPDF = () => {
   const netBalance = totalIncome - totalExpense;
 
   const pieData = {
-    labels: [
-      "Ingresos Recurrentes",
-      "Ingresos Puntuales",
-      "Gastos Recurrentes",
-      "Gastos Puntuales",
-    ],
-    datasets: [
-      {
-        data: [
-          totalIncomesRecurrent,
-          totalIncomesOneTime,
-          totalExpensesRecurrent,
-          totalExpensesOneTime,
-        ],
-        backgroundColor: ["#2e7d32", "#81c784", "#f44336", "#e57373"],
-      },
-    ],
+      labels: [
+        "Ingresos Recurrentes",
+        "Ingresos Puntuales",
+        "Gastos Recurrentes",
+        "Gastos Puntuales",
+      ],
+      datasets: [
+        {
+          data: [
+            totalIncomesRecurrent,
+            totalIncomesOneTime,
+            totalExpensesRecurrent,
+            totalExpensesOneTime,
+          ],
+          backgroundColor: ["#2e7d32", "#81c784", "#f44336", "#e57373"],
+        },
+      ],
   };
 
-  const monthlyData = Object.keys(incomesByMonth.recurrent).map((month) => ({
+  // Combinar todas las claves de los meses de ingresos y gastos
+  const allMonths = [
+    ...new Set([
+      ...Object.keys(incomesByMonth.recurrent),
+      ...Object.keys(incomesByMonth.oneTime),
+      ...Object.keys(expensesByMonth.recurrent),
+      ...Object.keys(expensesByMonth.oneTime),
+    ]),
+  ].sort((a, b) => new Date(a) - new Date(b)); // Ordenar cronológicamente
+
+  // Construir monthlyData asegurándose de recorrer todos los meses combinados
+  const monthlyData = allMonths.map((month) => ({
     month,
     income:
       (incomesByMonth.recurrent[month] || 0) +
@@ -264,6 +279,8 @@ const exportToPDF = () => {
       ((expensesByMonth.recurrent[month] || 0) +
         (expensesByMonth.oneTime[month] || 0)),
   }));
+
+  console.log("monthlyData:", monthlyData);
 
   const lineData = {
     labels: monthlyData.map((data) => data.month),
