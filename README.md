@@ -32,6 +32,7 @@ Esta aplicación permite a los usuarios gestionar y proyectar sus finanzas perso
 - **jsPDF**: Para la generación y exportación de reportes en PDF.
 
 ## Cómo Usar
+
 1. Registra tus ingresos, gastos con sus respectivas fechas, cantidades y categorías.
 2. En la vista de ahorros en base al balance mensual promedio establece ahorros actuales y del mes.
 3. Selecciona un rango de tiempo o un mes y año específicos para visualizar el resumen financiero.
@@ -39,6 +40,12 @@ Esta aplicación permite a los usuarios gestionar y proyectar sus finanzas perso
 5. Exporta los datos detallados y resúmenes a archivos Excel o PDF para un análisis más profundo.
 6. Observa la proyeccion de como van a ir tus finanzas a corto, medio y largo plazo.
 7. Obten un consejo financiero para mejorar tus finanzas (en proceso)
+
+## Requisitos previos
+- Instalar MySQL adapta a tu SO: `https://dev.mysql.com/downloads/installer/`Ç
+- Sigue las instrucciones del instalador. Durante la instalación, selecciona la opción Developer Default.
+- Configura una contraseña (1234) para el usuario administrador (root).
+- Configurar base de datos ejecutan en la terminal de MySQL el archivo: `creacion_bbdd.sql`
 
 ## Pasos
 - Clonar repositorio: 
