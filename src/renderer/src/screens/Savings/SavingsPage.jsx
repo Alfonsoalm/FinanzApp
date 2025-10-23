@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { FinanceManagerContext } from "../../context/FinanceManagerContext";
-import "../../styles/pages/savingsPage.css";
+import "./styles/savingsPage.css";
 
 export const SavingsPage = () => {
   const {

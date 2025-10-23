@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { FinanceManagerContext } from "../../context/FinanceManagerContext";
-import "../../styles/pages/expensesPage.css";
+import "./styles/incomesPage.css";
 
-export const ExpensesPage = () => {
-  const { expenses, insertExpense, updateExpense, deleteExpense, getExpenses, error } =
+import { FinanceManagerContext } from "../../context/FinanceManagerContext";
+
+export const IncomesPage = () => {
+  const { incomes, insertIncome, deleteIncome, updateIncome, getIncomes, error } =
     useContext(FinanceManagerContext);
   const [formData, setFormData] = useState({
     description: "",
@@ -12,21 +13,19 @@ export const ExpensesPage = () => {
     category: "",
     type: "recurrent",
   });
+  const [editingId, setEditingId] = useState(null); // Estado para manejar edición
   const [formError, setFormError] = useState("");
-  const [editMode, setEditMode] = useState(false);
-  const [editId, setEditId] = useState(null);
   const [shouldFetch, setShouldFetch] = useState(false);
 
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchIncomes = async () => {
       try {
-        await getExpenses();
+        await getIncomes();
       } catch (err) {
-        console.error("Error al cargar los gastos:", err);
+        console.error("Error al cargar los ingresos:", err);
       }
     };
-
-    fetchExpenses();
+    fetchIncomes();
   }, [shouldFetch]);
 
   const handleChange = (e) => {
@@ -34,9 +33,10 @@ export const ExpensesPage = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmitExpense = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validación del formulario
     if (!formData.description || !formData.amount || !formData.date || !formData.category) {
       setFormError("Por favor, completa todos los campos.");
       return;
@@ -49,48 +49,52 @@ export const ExpensesPage = () => {
 
     try {
       setFormError("");
-      if (editMode) {
-        // Update existing expense
-        await updateExpense(editId, formData);
-        setEditMode(false);
-        setEditId(null);
+
+      if (editingId) {
+        // Actualizar ingreso existente
+        await updateIncome(editingId, formData);
+        setEditingId(null);
       } else {
-        // Insert new expense
-        await insertExpense(formData);
+        // Crear nuevo ingreso
+        await insertIncome({
+          ...formData,
+          amount: parseFloat(formData.amount),
+        });
       }
+
       setShouldFetch((prev) => !prev);
       setFormData({ description: "", amount: "", date: "", category: "", type: "recurrent" });
     } catch (err) {
-      console.error("Error al guardar el gasto:", err);
+      console.error("Error al guardar el ingreso", err);
     }
   };
 
-  const handleEditExpense = (expense) => {
-    setEditMode(true);
-    setEditId(expense.id);
+  const handleEditIncome = (income) => {
+    setEditingId(income.id); // Establecer modo edición con el ID
     setFormData({
-      description: expense.description,
-      amount: expense.amount,
-      date: expense.date,
-      category: expense.category,
-      type: expense.type,
+      description: income.description,
+      amount: income.amount,
+      date: income.date,
+      category: income.category,
+      type: income.type,
     });
   };
 
-  const handleDeleteExpense = async (id) => {
+  const handleDeleteIncome = async (id) => {
     try {
-      await deleteExpense(id);
+      await deleteIncome(id);
       setShouldFetch((prev) => !prev);
     } catch (err) {
-      console.error("Error al eliminar el gasto:", err);
+      console.error("Error al eliminar el ingreso", err);
     }
   };
 
   return (
-    <div className="expenses-page">
-      <h2>Gastos</h2>
+    <div className="incomes-page">
+      <h2>Ingresos</h2>
 
-      <form onSubmit={handleSubmitExpense} className="expenses-form">
+      {/* Formulario para agregar/editar ingresos */}
+      <form onSubmit={handleSubmit} className="incomes-form">
         <input
           name="amount"
           type="number"
@@ -126,16 +130,17 @@ export const ExpensesPage = () => {
           <option value="recurrent">Recurrente</option>
           <option value="one-time">Puntual</option>
         </select>
-        <button type="submit">{editMode ? "Actualizar Gasto" : "Añadir Gasto"}</button>
+        <button type="submit">{editingId ? "Actualizar Ingreso" : "Añadir Ingreso"}</button>
       </form>
 
       {formError && <p className="form-error">{formError}</p>}
       {error && <p className="error">Error: {error}</p>}
 
-      <div className="expenses-summary">
+      {/* Resumen de ingresos */}
+      <div className="incomes-summary">
         <h3>Resumen</h3>
-        {expenses.length === 0 ? (
-          <p>No hay gastos registrados.</p>
+        {incomes.length === 0 ? (
+          <p>No hay ingresos registrados.</p>
         ) : (
           <table>
             <thead>
@@ -149,25 +154,21 @@ export const ExpensesPage = () => {
               </tr>
             </thead>
             <tbody>
-              {expenses.map((expense) => (
-                <tr key={expense.id}>
-                  <td>{expense.description}</td>
+              {incomes.map((income) => (
+                <tr key={income.id}>
+                  <td>{income.description}</td>
                   <td>
                     {new Intl.NumberFormat("es-ES", {
                       style: "currency",
                       currency: "EUR",
-                    }).format(expense.amount)}
+                    }).format(income.amount)}
                   </td>
-                  <td>{new Date(expense.date).toLocaleDateString("es-ES")}</td>
-                  <td>{expense.category}</td>
-                  <td>{expense.type === "recurrent" ? "Recurrente" : "Puntual"}</td>
+                  <td>{new Date(income.date).toLocaleDateString("es-ES")}</td>
+                  <td>{income.category}</td>
+                  <td>{income.type === "recurrent" ? "Recurrente" : "Puntual"}</td>
                   <td>
-                    <button className="edit-btn" onClick={() => handleEditExpense(expense)}>
-                      Editar
-                    </button>
-                    <button className="delete-btn" onClick={() => handleDeleteExpense(expense.id)}>
-                      Eliminar
-                    </button>
+                    <button className="edit-btn" onClick={() => handleEditIncome(income)}>Editar</button>
+                    <button className="delete-btn" onClick={() => handleDeleteIncome(income.id)}>Eliminar</button>
                   </td>
                 </tr>
               ))}

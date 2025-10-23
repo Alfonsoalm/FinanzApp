@@ -1,15 +1,13 @@
 import { HashRouter as Router } from "react-router-dom";
-import { Navbar } from "./layout/Navbar";
+import { Navbar } from "./layout/components/Navbar";
+import { Header } from "./layout/components/Header";
 import { Routing } from "./router/Routing";
-import { Header } from "./layout/Header";
 import { FinanceManagerProvider } from "./context/FinanceManagerContext";
-import "./styles/styles.css";
-import "./styles/navbar.css";
+import "./styles.css";
 
 function App() {
   return (
     <FinanceManagerProvider>
-      {/* Envuelve la aplicación con el contexto */}
       <Router>
         <div className="app">
           <Header className="header" />

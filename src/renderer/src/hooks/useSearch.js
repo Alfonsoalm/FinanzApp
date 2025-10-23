@@ -12,13 +12,13 @@ export const useSearch = ({list, searchText, field}) => {
         }else{
             setFilteredList(
                 list.filter((item) => {
-                    const { [field]: propertyValue } = item; // Extrae la propiedad
+                    const { [field]: propertyValue } = item;
             
                     if (propertyValue && typeof propertyValue === "string") {
                         return propertyValue.toLowerCase().includes(searchText?.toLowerCase() || "");
                     }
             
-                    return false; // Ignorar elementos donde la propiedad no es una cadena
+                    return false;
                 })
             )
         }

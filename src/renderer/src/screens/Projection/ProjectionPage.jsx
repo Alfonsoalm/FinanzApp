@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { FinanceManagerContext } from "../../context/FinanceManagerContext";
 import { Line } from "react-chartjs-2";
-import "../../styles/pages/projectionPage.css";
+import "./styles/projectionPage.css";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -36,7 +36,6 @@ export const ProjectionPage = () => {
     const categories = [...new Set(savingsData.map((saving) => saving.category))];
     const projectionsByCategory = {};
     const totalProjections = [];
-    let totalAccumulated = 0;
 
     categories.forEach((category) => {
       projectionsByCategory[category] = [];

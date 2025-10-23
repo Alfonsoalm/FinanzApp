@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('gestion_finanzas_personales', 'root', '1234', {
+const sequelize = new Sequelize('gestion_finanzas_personales', 'root', 'root', {
   host: 'localhost',
   dialect: 'mysql',
   port: 3306,
