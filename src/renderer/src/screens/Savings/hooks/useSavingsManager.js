@@ -115,7 +115,7 @@ export const useSavingsManager = () => {
     }
 
     // Validación específica para ahorros recurrentes
-    if (formData.type === "recurrent" && amount > remainingSavingsBalance) {
+    if (!editMode && formData.type === "recurrent" && amount > remainingSavingsBalance) {
       setFormError(
         `La cantidad del ahorro no puede superar el balance restante 
         (${remainingSavingsBalance.toFixed(2)} €).`
