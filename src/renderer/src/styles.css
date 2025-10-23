@@ -13,6 +13,7 @@ code {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
 .app {
@@ -38,9 +39,10 @@ body {
 
 .main {
   grid-area: main;
-  padding: 20px;
-  margin-left: 20px;
+  padding: 10px;
+  overflow-y: auto; 
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Asegura que los elementos estén alineados al inicio */
+  align-items: flex-start;
 }

@@ -8,8 +8,8 @@ export const Routing = () => {
       <Route path="/incomes" element={<IncomesPage />} />
       <Route path="/expenses" element={<ExpensesPage />} />
       <Route path="/savings" element={<SavingsPage />} />
-      <Route path="/summary" element={<SummaryPage ahorroActual={1000} tasaCrecimiento={5} años={10} />} />
-      <Route path="/projection" element={<ProjectionPage ahorroActual={1000} tasaCrecimiento={5} años={10} />} />
+      <Route path="/summary" element={<SummaryPage />} />
+      <Route path="/projection" element={<ProjectionPage />} />
       <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
